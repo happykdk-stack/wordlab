@@ -323,8 +323,9 @@ cancelTransition();
 level=g;document.querySelectorAll('.grades button').forEach(b=>b.classList.toggle('active',b.id==='g'+g));switchTab('card');
 }
 function switchTab(m){
-cancelTransition();mode=m;index=0;flipped=false;choices=[];answered=false;score=0;combo=0;maxCombo=0;completionSavedKey='';
+cancelTransition();const previousCardFirst=mode==='card'&&deck.length?deck[0][0]:null;mode=m;index=0;flipped=false;choices=[];answered=false;score=0;combo=0;maxCombo=0;completionSavedKey='';
 deck=m==='review'?DATA[level].filter(x=>state()[x[0]]==='missed'):m==='quiz'?shuffle(DATA[level]).slice(0,30):m==='card'?shuffle(DATA[level]):DATA[level];
+if(m==='card'&&previousCardFirst&&deck.length>1&&deck[0][0]===previousCardFirst){const next=1+Math.floor(Math.random()*(deck.length-1));[deck[0],deck[next]]=[deck[next],deck[0]];}
 document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===m));
 render();
 if(rankTimer){clearInterval(rankTimer);rankTimer=null}if(m==='rank'){rankComments=[];commentError='';refreshKidsRank();rankTimer=setInterval(()=>{if(mode==='rank')refreshKidsRank()},30000)}
