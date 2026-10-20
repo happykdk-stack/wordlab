@@ -357,29 +357,40 @@ function speakNatural(text,lang='en-US',rate=.94){
 if(!('speechSynthesis' in window))return;
 try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1;const v=bestVoice(lang);if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}
 }
-function playApplause(isCombo=false){
+function playApplause(){
 try{
 const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
 const ctx=new Ctx();if(ctx.state==='suspended')ctx.resume().catch(()=>{});
-const length=isCombo?.95:.55;
-const buffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.065),ctx.sampleRate);
-const data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,1.8);
-const count=isCombo?17:9;
-for(let i=0;i<count;i++){
-const t=ctx.currentTime+.035+i*(length/count)+(Math.random()*.022);
+const len=Math.ceil(ctx.sampleRate*.085),buffer=ctx.createBuffer(1,len,ctx.sampleRate),data=buffer.getChannelData(0);
+for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/len,1.35);
+for(let i=0;i<10;i++){
+const t=ctx.currentTime+.025+i*.051+(Math.random()*.018);
 const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
-src.buffer=buffer;filter.type='bandpass';filter.frequency.value=1050+Math.random()*1700;filter.Q.value=.7;
-gain.gain.value=isCombo?.18:.13;
-src.connect(filter).connect(gain).connect(ctx.destination);src.start(t);src.stop(t+.064);
+src.buffer=buffer;filter.type='bandpass';filter.frequency.value=650+Math.random()*1550;filter.Q.value=.65;
+gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.18,t+.009);gain.gain.exponentialRampToValueAtTime(.0001,t+.079);
+src.connect(filter).connect(gain).connect(ctx.destination);src.start(t);src.stop(t+.083);
 }
-if(isCombo){
-[523.25,659.25,783.99,1046.5].forEach((hz,i)=>{
-const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*.105;
-o.type='triangle';o.frequency.value=hz;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.055,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.19);
-o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+.2);
+setTimeout(()=>ctx.close().catch(()=>{}),1000);
+}catch(e){}
+}
+function playComboSound(count){
+try{
+const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+const ctx=new Ctx();if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+const notes=count>=10?[523.25,659.25,783.99,1046.5,1318.51]:count>=5?[523.25,659.25,783.99,1046.5]:[659.25,783.99,1046.5];
+const volume=Math.min(.105,.06+count*.004);
+notes.forEach((hz,i)=>{
+const t=ctx.currentTime+i*.105;
+const osc=ctx.createOscillator(),gain=ctx.createGain();
+osc.type='triangle';osc.frequency.setValueAtTime(hz,t);
+gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.018);gain.gain.exponentialRampToValueAtTime(.0001,t+.23);
+osc.connect(gain).connect(ctx.destination);osc.start(t);osc.stop(t+.24);
 });
-}
-setTimeout(()=>ctx.close().catch(()=>{}),1800);
+const sparkle=ctx.createOscillator(),sg=ctx.createGain(),start=ctx.currentTime+notes.length*.105;
+sparkle.type='sine';sparkle.frequency.setValueAtTime(1174.66,start);sparkle.frequency.exponentialRampToValueAtTime(1567.98,start+.14);
+sg.gain.setValueAtTime(.0001,start);sg.gain.exponentialRampToValueAtTime(.04,start+.025);sg.gain.exponentialRampToValueAtTime(.0001,start+.2);
+sparkle.connect(sg).connect(ctx.destination);sparkle.start(start);sparkle.stop(start+.21);
+setTimeout(()=>ctx.close().catch(()=>{}),1400);
 }catch(e){}
 }
 function speakAnswerPair(english,korean,context='quiz'){
@@ -430,7 +441,7 @@ const board=app.querySelector('.quiz-scoreboard');if(board)board.outerHTML=quizS
 const s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
 const t=stats();t.attempts=(t.attempts||0)+1;t.correct=(t.correct||0)+(ok?1:0);write(statsKey(level),t);sync();
 choices.forEach((c,j)=>{const b=app.querySelector('[data-answer="'+j+'"]');b.disabled=true;if(c[0]===x[0])b.classList.add('right');else if(j===i)b.classList.add('wrong')});
-if(ok){showQuizConfetti();playApplause(combo>=2);if(combo>=2)showComboPopup(combo)}else{quizBeep()}
+if(ok){showQuizConfetti();playApplause();if(combo>=2){showComboPopup(combo);playComboSound(combo)}}else{quizBeep()}
 const feedback=app.querySelector('#feedback');
 if(ok){
 feedback.innerHTML='<div class="notice">정답! ⭐ <b>'+esc(x[0])+'</b> = '+esc(x[1])+'<p>'+esc(x[3])+'</p></div>';
