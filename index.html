@@ -37,7 +37,7 @@ try{await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',currentUser.uid,
 }
 function levelName(n){return n>=45?'마스터':n>=30?'전문가':n>=15?'숙련자':n>=5?'도전자':'새싹'}
 function statNumbers(){const values=Object.values(progress);return {known:values.filter(x=>x==='known').length,missed:values.filter(x=>x==='missed').length,attempts:metrics.attempts,correct:metrics.correct}}
-function scoreValue(){const n=statNumbers();return n.known*10+metrics.correct*2}
+function scoreValue(){return statNumbers().known}
 function renderStats(){
 const n=statNumbers(),pct=n.attempts?Math.round(n.correct/n.attempts*100):0;
 app.innerHTML='<h2>📊 나의 학습 통계</h2><p class="small">내 계정의 학습 현황입니다.</p><div class="stats-grid">'+
@@ -46,12 +46,12 @@ app.innerHTML='<h2>📊 나의 학습 통계</h2><p class="small">내 계정의 
 }
 function renderRank(){
 const n=statNumbers();
-app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">순위 공개는 선택 사항입니다. Google 계정 이메일은 공개하지 않고 닉네임과 점수만 사용합니다.</p>'+
-'<div class="rank-level">내 점수 <b>'+scoreValue()+'점</b> · 암기 '+n.known+'개 · 정답 '+metrics.correct+'개</div>'+
-'<div class="opt-row"><input id="rankNick" maxlength="18" placeholder="순위표 닉네임" value="'+esc(rankNickname)+'"><button onclick="joinRank()">'+(rankOptIn?'닉네임·점수 갱신':'순위표 참여')+'</button></div>'+
-'<p class="small">참여 버튼을 눌러야 친구에게 점수가 공개됩니다.</p>'+
+app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">순위 공개는 선택 사항입니다. Google 계정 이메일은 공개하지 않고 닉네임과 학습 완료 단어 수만 사용합니다.</p>'+
+'<div class="rank-level">학습 완료 <b>'+n.known+' / '+DATA.length+'개</b> · 복습 필요 '+n.missed+'개</div>'+
+'<div class="opt-row"><input id="rankNick" maxlength="18" placeholder="순위표 닉네임" value="'+esc(rankNickname)+'"><button onclick="joinRank()">'+(rankOptIn?'닉네임·학습 수 갱신':'순위표 참여')+'</button></div>'+
+'<p class="small">참여 버튼을 눌러야 친구에게 학습 완료 수가 공개됩니다. 완료 단어가 많은 순서로 정렬됩니다.</p>'+
 '<div class="opt-row"><button class="secondary" onclick="refreshRanks()">순위 새로고침</button>'+(rankOptIn?'<button class="secondary" onclick="leaveRank()">참여 취소</button>':'')+'</div>'+
-'<p class="small" id="rankMsg">'+esc(rankMessage)+'</p><div id="rankList">'+(rankRows.length?rankRows.map((r,i)=>'<div class="leader"><span><strong>'+(i+1)+'위 · '+esc(r.nickname||'학습자')+'</strong><br><small>암기 '+Number(r.known||0)+'개</small></span><strong>'+Number(r.score||0)+'점</strong></div>').join(''):'<p class="small">아직 불러온 순위가 없습니다.</p>')+'</div>';
+'<p class="small" id="rankMsg">'+esc(rankMessage)+'</p><div id="rankList">'+(rankRows.length?rankRows.map((r,i)=>'<div class="leader"><span><strong>'+(i+1)+'위 · '+esc(r.nickname||'학습자')+'</strong><br><small>암기 '+Number(r.known||0)+'개</small></span><strong>'+Number(r.known||0)+'개 완료</strong></div>').join(''):'<p class="small">아직 불러온 순위가 없습니다.</p>')+'</div>';
 }
 async function publishRank(){
 if(!currentUser||!firebaseDb||!rankOptIn)return;
@@ -73,7 +73,7 @@ catch(e){rankMessage='참여 취소 실패: '+(e.code||'unknown');renderRank()}
 }
 async function refreshRanks(){
 if(!currentUser){rankMessage='로그인하면 친구 순위를 볼 수 있습니다.';rankRows=[];renderRank();return}
-try{const snapshot=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snapshot.docs.map(x=>x.data()).sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,30);rankMessage=rankRows.length?'참여한 사용자 기준 순위입니다.':'아직 참여자가 없습니다.'}
+try{const snapshot=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snapshot.docs.map(x=>x.data()).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankMessage=rankRows.length?'학습 완료 단어 수 기준 순위입니다.':'아직 참여자가 없습니다.'}
 catch(e){rankRows=[];rankMessage='순위표 읽기 권한 설정 필요: '+(e.code||'unknown')}
 renderRank();
 }
