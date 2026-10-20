@@ -32,14 +32,14 @@ const wasOpen=!!el.querySelector('.profile-dropdown:not([hidden])');
 el.innerHTML='<button id="profileTrigger" type="button" class="profile-trigger" aria-expanded="'+wasOpen+'">👦 '+(activeProfile?esc(activeProfile.name):'학습자 선택')+' ▾</button>'+
 '<div class="profile-dropdown" '+(wasOpen?'':'hidden')+'><strong>👧 학습자 변경</strong>'+
 profiles.map(p=>'<button type="button" class="'+(activeProfile&&p.id===activeProfile.id?'':'secondary')+'" data-profile="'+esc(p.id)+'">'+esc(p.name)+(activeProfile&&p.id===activeProfile.id?' ✓':'')+'</button>').join('')+
-'<div class="formrow"><input id="newProfileName" maxlength="12" placeholder="새 아이 이름 또는 별명"><button type="button" id="addProfile">+ 프로필 추가</button></div></div>';
+'<div class="formrow"><button type="button" id="addProfile" class="secondary" aria-label="새 프로필 추가" title="새 프로필 추가">＋</button></div></div>';
 const trigger=el.querySelector('#profileTrigger'),dropdown=el.querySelector('.profile-dropdown');
 trigger.addEventListener('click',()=>{dropdown.hidden=!dropdown.hidden;trigger.setAttribute('aria-expanded',String(!dropdown.hidden))});
 el.querySelectorAll('[data-profile]').forEach(b=>b.addEventListener('click',()=>chooseProfile(b.dataset.profile)));
 el.querySelector('#addProfile').addEventListener('click',addProfile);
 }
 async function addProfile(){
-const name=document.getElementById('newProfileName').value.trim();
+const input=prompt('새 학습자 이름 또는 별명을 입력해 주세요 (12자 이내)');if(input===null)return;const name=input.trim();
 if(!name||name.length>12){alert('이름을 1~12글자로 입력해 주세요.');return}
 const id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 profiles.push({id,name});saveProfiles();await saveProfileListCloud();await chooseProfile(id);
