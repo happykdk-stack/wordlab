@@ -291,7 +291,15 @@ const old=await fb.getDoc(ref);const previous=old.exists()?Number(old.data().cor
 const best=Math.max(previous,correct);
 const oldCombo=old.exists()?Number(old.data().maxCombo||0):0;
 const bestCombo=Math.max(oldCombo,maxCombo);
-await fb.setDoc(ref,{ownerUid:user.uid,grade,name,correct:best,total:deck.length,maxCombo:bestCombo,updatedAt:Date.now()});
+const baseScore={ownerUid:user.uid,grade,name,correct:best,total:deck.length,updatedAt:Date.now()};
+try{
+await fb.setDoc(ref,{...baseScore,maxCombo:bestCombo});
+}catch(saveError){
+if(saveError.code!=='permission-denied')throw saveError;
+await fb.setDoc(ref,baseScore);
+if(msg)msg.textContent='🏆 점수 저장 완료 · 최고 '+best+'개 (COMBO 저장은 Firebase 규칙 업데이트 필요)';
+return;
+}
 if(msg)msg.textContent='🏆 '+name+' 순위 자동 등록 완료 · 최고 '+best+'개 · 최고 '+bestCombo+' COMBO';
 }catch(e){completionSavedKey='';if(msg)msg.textContent='순위 자동 등록 오류: '+(e.code||e.message||'unknown')}
 }
