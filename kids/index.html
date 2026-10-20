@@ -5,7 +5,7 @@ const DATA={"1-2":[["Apple","사과","🍎","I eat an apple."],["Banana","바나
 const PREFIX='wordlabkids_v1_';
 let level='1-2',mode='card',index=0,flipped=false,deck=[],choices=[],answered=false,score=0;
 let auth=null,db=null,fb=null,user=null,cloudReady=false,authVersion=0;
-let rankJoined=false,rankAlias='',rankGrade='1-2',rankRows=[],rankError='',rankTimer=null,quizFinishGrade='1-2',quizFinishScore=0;
+let rankJoined=false,rankAlias='',rankGrade='1-2',rankRows=[],rankError='',rankTimer=null,quizFinishGrade='1-2',quizFinishScore=0,completionSavedKey='';
 let profiles=[],activeProfile=null,profileEpoch=0,profileSyncReady=false;
 const app=document.getElementById('app');
 const loginBtn=document.getElementById('loginBtn');
@@ -88,19 +88,28 @@ if(!user||!fb||!db){rankRows=[];rankError='Google 로그인 후 친구 순위를
 try{const snap=await fb.getDocs(fb.collection(db,'kidsQuizScores'));rankRows=snap.docs.map(d=>d.data()).filter(d=>d.grade===level).sort((a,b)=>(b.correct||0)-(a.correct||0)||(a.updatedAt||0)-(b.updatedAt||0)).slice(0,30);rankError='☁ 순위 데이터 조회 완료 · '+gradeName(level)+' '+rankRows.length+'명'}
 catch(e){rankRows=[];rankError='순위표 권한 설정 필요: '+(e.code||'unknown')}render()
 }
-async function submitQuizScore(){
-const input=app.querySelector('#quizPlayerName');
-const name=String(input?.value||'').trim();
-if(!name||name.length>12){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='이름 또는 별명을 1~12글자로 입력해 주세요.';return}
-if(!user||!fb||!db){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='오른쪽 위 Google 로그인 버튼으로 로그인한 후 등록해 주세요.';return}
-const id=scoreDocId(user.uid,quizFinishGrade,name),ref=fb.doc(db,'kidsQuizScores',id);
-const btn=app.querySelector('[data-action="submit-quiz-score"]');if(btn)btn.disabled=true;const statusEl=app.querySelector('#submitMessage');if(statusEl)statusEl.textContent='☁ 순위 기록 저장 중…';
+async function submitCompletion(){
+if(!activeProfile)return;
+const name=activeProfile.name,grade=level,correct=mode==='quiz'?score:gradeKnown(level);
+const key=(user?user.uid:'local')+'_'+activeProfile.id+'_'+grade+'_'+mode+'_'+correct;
+if(completionSavedKey===key)return;
+completionSavedKey=key;
+const msg=app.querySelector('#submitMessage');
+if(!user||!fb||!db){if(msg)msg.textContent='기기에 학습 기록을 저장했습니다. 순위 자동 등록은 Google 로그인이 필요합니다.';return}
+if(msg)msg.textContent='☁ '+name+' 이름으로 순위 자동 등록 중…';
 try{
+const id=scoreDocId(user.uid,grade,name),ref=fb.doc(db,'kidsQuizScores',id);
 const old=await fb.getDoc(ref);const previous=old.exists()?Number(old.data().correct||0):0;
-const best=Math.max(previous,quizFinishScore);
-await fb.setDoc(ref,{ownerUid:user.uid,grade:quizFinishGrade,name,correct:best,total:DATA[quizFinishGrade].length,updatedAt:Date.now()});
-const msg=app.querySelector('#submitMessage');if(msg)msg.textContent=(best>quizFinishScore?'기존 최고 기록 '+best+'개를 유지했어요!':'🏆 순위 등록 완료! 최고 기록 '+best+'개')+' 친구 순위 메뉴에서 확인해 보세요.';
-}catch(e){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='순위 등록 실패: '+(e.code||e.message||'unknown')+' · Firebase 규칙과 로그인 상태를 확인해 주세요.';if(btn)btn.disabled=false}
+const best=Math.max(previous,correct);
+await fb.setDoc(ref,{ownerUid:user.uid,grade,name,correct:best,total:DATA[grade].length,updatedAt:Date.now()});
+if(msg)msg.textContent='🏆 '+name+' 순위 자동 등록 완료 · 최고 '+best+'개';
+}catch(e){completionSavedKey='';if(msg)msg.textContent='순위 자동 등록 오류: '+(e.code||e.message||'unknown')}
+}
+function resetReview(){
+if(!activeProfile||mode!=='review')return;
+if(!confirm(activeProfile.name+'의 '+gradeName(level)+' 복습 목록을 초기화할까요? 틀린 단어 표시만 지워지며 다른 학습자의 기록은 유지됩니다.'))return;
+const s=state();for(const k of Object.keys(s))if(s[k]==='missed')delete s[k];
+write(localKey(level),s);sync();switchTab('review');
 }
 function sync(){
 if(!activeProfile)return;
@@ -115,7 +124,7 @@ if(!DATA[g])return;
 level=g;document.querySelectorAll('.grades button').forEach(b=>b.classList.toggle('active',b.id==='g'+g));switchTab('card');
 }
 function switchTab(m){
-mode=m;index=0;flipped=false;choices=[];answered=false;score=0;
+mode=m;index=0;flipped=false;choices=[];answered=false;score=0;completionSavedKey='';
 deck=m==='review'?DATA[level].filter(x=>state()[x[0]]==='missed'):m==='quiz'?shuffle(DATA[level]):DATA[level];
 document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===m));
 render();
@@ -131,21 +140,20 @@ app.innerHTML='<h2>🏆 '+gradeName(level)+' 퀴즈 순위</h2><p class="sub">�
 (rankRows.length?rankRows.map((r,i)=>'<div class="rankrow"><span><strong>'+(i+1)+'위 · '+esc(r.name||'영어 탐험가')+'</strong><div class="sub">'+gradeName(r.grade)+'</div></span><strong>'+Number(r.correct||0)+' / '+Number(r.total||DATA[level].length)+'개</strong></div>').join(''):'<p class="sub">이 학년의 순위 기록이 아직 없어요. 첫 기록을 남겨보세요!</p>');return}
 if(mode==='stats'){const s=state(),t=stats(),known=Object.values(s).filter(v=>v==='known').length,missed=Object.values(s).filter(v=>v==='missed').length,pct=t.attempts?Math.round((t.correct||0)/t.attempts*100):0;
 app.innerHTML='<h2>⭐ 나의 영어 성장 기록</h2><div class="stats">'+[['학습 완료',known+'개'],['복습할 단어',missed+'개'],['퀴즈 정답률',pct+'%'],['푼 문제',t.attempts||0]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'</div><div class="notice" style="margin-top:18px">🌟 '+(known>=18?'영어 탐험왕!':known>=10?'멋진 영어 탐험가!':known>=3?'반짝반짝 성장 중!':'오늘 첫 단어부터 시작해요!')+'</div>';return}
-if(!deck.length){app.innerHTML='<h2>🎉 복습할 단어가 없어요!</h2><p>다시 공부할 단어를 선택해 보세요.</p>';return}
+if(mode==='review'&&deck.length){/* review controls shown above cards */}
+if(!deck.length){app.innerHTML='<h2>🎉 복습할 단어가 없어요!</h2><p>다시 공부할 단어를 선택해 보세요.</p>'+(mode==='review'?'<button class="secondary" data-action="reset-review">🔄 복습 목록 초기화</button>':'');return}
 if(index>=deck.length){
-quizFinishGrade=level;
-quizFinishScore=mode==='quiz'?score:gradeKnown(level);
-const description=mode==='quiz'?'퀴즈 정답':'낱말카드 학습 완료';
-app.innerHTML='<h2>🏆 학습 완료!</h2><div class="notice">'+gradeName(level)+' · '+description+' <b>'+quizFinishScore+' / '+DATA[level].length+'개</b></div>'+
-'<h3>🏆 친구 순위에 기록할까요?</h3><p class="sub">이름이나 별명을 입력하세요. 같은 Google 계정으로 형제별 등록이 가능합니다.</p>'+
-'<div class="formrow"><input id="quizPlayerName" maxlength="12" placeholder="이름 또는 별명"><button data-action="submit-quiz-score">순위 등록</button></div>'+
-'<p id="submitMessage" class="sub"></p><div class="actions"><button class="secondary" data-action="skip-quiz-score">건너뛰기</button><button class="secondary" data-action="restart">다시 시작</button></div>';return}
+quizFinishGrade=level;quizFinishScore=mode==='quiz'?score:gradeKnown(level);
+app.innerHTML='<h2>🏆 학습 완료!</h2><div class="notice">'+gradeName(level)+' · '+(mode==='quiz'?'퀴즈 정답':'낱말카드 학습 완료')+' <b>'+quizFinishScore+' / '+DATA[level].length+'개</b></div>'+
+'<p class="sub">현재 학습자 <b>'+esc(activeProfile.name)+'</b> 이름으로 순위를 자동 등록합니다.</p><p id="submitMessage" class="sub"></p>'+
+'<div class="actions"><button class="secondary" data-action="restart">다시 시작</button><button class="secondary" data-action="show-rank">친구 순위 보기</button></div>';
+submitCompletion();return}
 const x=deck[index];
 if(mode==='quiz'){
 if(!choices.length){choices=shuffle([x,...shuffle(DATA[level].filter(y=>y[0]!==x[0])).slice(0,3)]);answered=false}
 app.innerHTML=progressHeader()+'<div class="flash" style="min-height:190px"><div class="emoji">'+x[2]+'</div><div class="meaning">이 그림의 영어 단어는?</div></div><div id="choices">'+choices.map((c,i)=>'<button class="choice" data-answer="'+i+'">'+String.fromCharCode(65+i)+'. '+esc(c[0])+'</button>').join('')+'</div><div id="feedback"></div>';return
 }
-app.innerHTML=progressHeader()+'<div class="flash" data-action="flip">'+(flipped?'<div class="emoji">'+x[2]+'</div><div class="meaning">'+esc(x[1])+'</div><div class="sentence">'+esc(x[3])+'</div><div class="hint">다시 누르면 영어가 나와요</div>':'<div class="emoji">'+x[2]+'</div><div class="word">'+esc(x[0])+'</div><div class="hint">카드를 눌러 뜻을 확인해요</div>')+'</div><div class="actions"><button class="secondary" data-action="speak">🔊 발음</button><button class="danger" data-action="miss">다시 공부</button><button class="success" data-action="known">알아요 ✓</button></div><div class="actions"><button class="secondary" data-action="prev" '+(index===0?'disabled':'')+'>← 이전</button><button class="secondary" data-action="next">'+(index===deck.length-1?'🏆 학습 완료 · 순위 등록':'다음 →')+'</button></div>'+(mode==='card'&&index===deck.length-1?'<div class="notice" style="margin-top:12px">마지막 카드예요! <b>학습 완료 · 순위 등록</b>을 누르면 이름을 입력할 수 있어요.</div>':'');
+app.innerHTML=(mode==='review'?'<div class="actions"><button class="secondary" data-action="reset-review">🔄 복습 목록 초기화</button></div>':'')+progressHeader()+'<div class="flash" data-action="flip">'+(flipped?'<div class="emoji">'+x[2]+'</div><div class="meaning">'+esc(x[1])+'</div><div class="sentence">'+esc(x[3])+'</div><div class="hint">다시 누르면 영어가 나와요</div>':'<div class="emoji">'+x[2]+'</div><div class="word">'+esc(x[0])+'</div><div class="hint">카드를 눌러 뜻을 확인해요</div>')+'</div><div class="actions"><button class="secondary" data-action="speak">🔊 발음</button><button class="danger" data-action="miss">다시 공부</button><button class="success" data-action="known">알아요 ✓</button></div><div class="actions"><button class="secondary" data-action="prev" '+(index===0?'disabled':'')+'>← 이전</button><button class="secondary" data-action="next">'+(index===deck.length-1?'🏆 학습 완료 · 순위 등록':'다음 →')+'</button></div>'+(mode==='card'&&index===deck.length-1?'<div class="notice" style="margin-top:12px">마지막 카드예요! <b>학습 완료 · 순위 등록</b>을 누르면 이름을 입력할 수 있어요.</div>':'');
 }
 function mark(ok){
 const x=deck[index],s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
@@ -164,7 +172,7 @@ app.addEventListener('click',e=>{
 const a=e.target.closest('[data-answer]');if(a){answer(Number(a.dataset.answer));return}
 const b=e.target.closest('[data-action]');if(!b)return;
 switch(b.dataset.action){
-case 'submit-quiz-score':submitQuizScore();break;case 'skip-quiz-score':switchTab('rank');break;
+case 'reset-review':resetReview();break;case 'show-rank':switchTab('rank');break;
 case 'flip':flipped=!flipped;render();break;
 case 'known':mark(true);break;case 'miss':mark(false);break;
 case 'next':index++;flipped=false;render();break;
