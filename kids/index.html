@@ -357,20 +357,30 @@ function speakNatural(text,lang='en-US',rate=.94){
 if(!('speechSynthesis' in window))return;
 try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1;const v=bestVoice(lang);if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}
 }
-function playApplause(){
+function playFanfare(){
 try{
 const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
 const ctx=new Ctx();if(ctx.state==='suspended')ctx.resume().catch(()=>{});
-const len=Math.ceil(ctx.sampleRate*.085),buffer=ctx.createBuffer(1,len,ctx.sampleRate),data=buffer.getChannelData(0);
-for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/len,1.35);
-for(let i=0;i<10;i++){
-const t=ctx.currentTime+.025+i*.051+(Math.random()*.018);
-const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
-src.buffer=buffer;filter.type='bandpass';filter.frequency.value=650+Math.random()*1550;filter.Q.value=.65;
-gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.18,t+.009);gain.gain.exponentialRampToValueAtTime(.0001,t+.079);
-src.connect(filter).connect(gain).connect(ctx.destination);src.start(t);src.stop(t+.083);
-}
-setTimeout(()=>ctx.close().catch(()=>{}),1000);
+const notes=[
+{hz:392,start:0,dur:.16},
+{hz:523.25,start:.18,dur:.16},
+{hz:659.25,start:.36,dur:.17},
+{hz:783.99,start:.56,dur:.38}
+];
+notes.forEach(n=>{
+const t=ctx.currentTime+n.start;
+[1,2,3].forEach((harmonic,j)=>{
+const osc=ctx.createOscillator(),gain=ctx.createGain();
+osc.type=j===0?'sawtooth':'sine';osc.frequency.setValueAtTime(n.hz*harmonic,t);
+const vol=[.065,.021,.009][j];
+gain.gain.setValueAtTime(.0001,t);
+gain.gain.exponentialRampToValueAtTime(vol,t+.025);
+gain.gain.setValueAtTime(vol*.75,t+n.dur*.65);
+gain.gain.exponentialRampToValueAtTime(.0001,t+n.dur);
+osc.connect(gain).connect(ctx.destination);osc.start(t);osc.stop(t+n.dur+.01);
+});
+});
+setTimeout(()=>ctx.close().catch(()=>{}),1400);
 }catch(e){}
 }
 function playComboSound(count){
@@ -441,7 +451,7 @@ const board=app.querySelector('.quiz-scoreboard');if(board)board.outerHTML=quizS
 const s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
 const t=stats();t.attempts=(t.attempts||0)+1;t.correct=(t.correct||0)+(ok?1:0);write(statsKey(level),t);sync();
 choices.forEach((c,j)=>{const b=app.querySelector('[data-answer="'+j+'"]');b.disabled=true;if(c[0]===x[0])b.classList.add('right');else if(j===i)b.classList.add('wrong')});
-if(ok){showQuizConfetti();playApplause();if(combo>=2){showComboPopup(combo);playComboSound(combo)}}else{quizBeep()}
+if(ok){showQuizConfetti();playFanfare();if(combo>=2){showComboPopup(combo);playComboSound(combo)}}else{quizBeep()}
 const feedback=app.querySelector('#feedback');
 if(ok){
 feedback.innerHTML='<div class="notice">정답! ⭐ <b>'+esc(x[0])+'</b> = '+esc(x[1])+'<p>'+esc(x[3])+'</p></div>';
