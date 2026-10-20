@@ -361,8 +361,9 @@ function getAudioContext(){
 const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return null;
 try{if(!sharedAudioContext||sharedAudioContext.state==='closed')sharedAudioContext=new Ctx();if(sharedAudioContext.state==='suspended')sharedAudioContext.resume().catch(()=>{});return sharedAudioContext}catch(e){return null}
 }
-document.addEventListener('pointerdown',()=>{getAudioContext()},{passive:true});
-document.addEventListener('touchstart',()=>{getAudioContext()},{passive:true});
+function unlockQuizAudio(){const ctx=getAudioContext();if(!ctx)return;try{const o=ctx.createOscillator(),g=ctx.createGain();g.gain.value=0;o.connect(g).connect(ctx.destination);o.start();o.stop(ctx.currentTime+.01)}catch(e){}}
+document.addEventListener('pointerdown',unlockQuizAudio,{passive:true});
+document.addEventListener('touchstart',unlockQuizAudio,{passive:true});
 if('speechSynthesis' in window){try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices())}catch(e){}}
 function bestVoice(lang){
 if(!('speechSynthesis' in window))return null;
@@ -481,7 +482,7 @@ const board=app.querySelector('.quiz-scoreboard');if(board)board.outerHTML=quizS
 const s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
 const t=stats();t.attempts=(t.attempts||0)+1;t.correct=(t.correct||0)+(ok?1:0);write(statsKey(level),t);sync();
 choices.forEach((c,j)=>{const b=app.querySelector('[data-answer="'+j+'"]');b.disabled=true;if(c[0]===x[0])b.classList.add('right');else if(j===i)b.classList.add('wrong')});
-if(ok){showQuizConfetti();playFanfare();if(combo>=2){showComboPopup(combo);playComboSound(combo)}if(combo>0&&combo%5===0)playMilestoneClaps(combo)}else{quizBeep()}
+if(ok){showQuizConfetti();const audioCtx=getAudioContext();if(audioCtx&&audioCtx.state==='suspended'){audioCtx.resume().then(()=>playFanfare()).catch(()=>{})}else{playFanfare()}if(combo>=2){showComboPopup(combo);playComboSound(combo)}if(combo>0&&combo%5===0)playMilestoneClaps(combo)}else{quizBeep()}
 const feedback=app.querySelector('#feedback');
 if(ok){
 feedback.innerHTML='<div class="notice">정답! ⭐ <b>'+esc(x[0])+'</b> = '+esc(x[1])+'<p>'+esc(x[3])+'</p></div>';
