@@ -39,6 +39,7 @@ function levelName(n){return n>=45?'마스터':n>=30?'전문가':n>=15?'숙련�
 function statNumbers(){const values=Object.values(progress);return {known:values.filter(x=>x==='known').length,missed:values.filter(x=>x==='missed').length,attempts:metrics.attempts,correct:metrics.correct}}
 function scoreValue(){return statNumbers().known}
 function maskedEmail(email){const p=String(email||'').split('@');if(p.length!==2)return '학습자';return p[0].slice(0,p[0].length>3?2:1)+'***@'+p[1]}
+function safeRankLabel(entry){const label=String(entry.nickname||'');return /^[^@\\s]+\\*{3}@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/.test(label)?label:'기존 사용자 (재로그인 필요)'}
 
 function renderStats(){
 const n=statNumbers(),pct=n.attempts?Math.round(n.correct/n.attempts*100):0;
@@ -48,12 +49,12 @@ app.innerHTML='<h2>📊 나의 학습 통계</h2><p class="small">내 계정의 
 }
 function renderRank(){
 const n=statNumbers();
-app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">이메일 일부를 가려 표시합니다. 참여 후 학습 완료 수는 자동 갱신됩니다.</p>'+
+app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">이메일 일부를 가려 표시합니다. 기존 닉네임은 더 이상 노출하지 않습니다. 참여 후 학습 완료 수는 자동 갱신됩니다.</p>'+
 '<div class="rank-level">학습 완료 <b>'+n.known+' / '+DATA.length+'개</b> · 복습 필요 '+n.missed+'개</div>'+
 '<div class="opt-row"><strong>'+esc(currentUser?maskedEmail(currentUser.email):'로그인 필요')+'</strong>'+(rankOptIn?'<button class="secondary" onclick="leaveRank()">참여 취소</button>':'<button onclick="joinRank()">순위표 참여</button>')+'</div>'+
 '<p class="small">닉네임 입력은 필요 없습니다. 참여는 선택 사항입니다.</p>'+
 '<div class="opt-row"><button class="secondary" onclick="refreshRanks()">지금 새로고침</button></div>'+
-'<p class="small">'+esc(rankMessage)+'</p>'+(rankRows.length?rankRows.map((r,i)=>'<div class="leader"><span><strong>'+(i+1)+'위 · '+esc(r.nickname||'학습자')+'</strong></span><strong>'+Number(r.known||0)+'개 완료</strong></div>').join(''):'<p class="small">아직 참여자가 없습니다.</p>');
+'<p class="small">'+esc(rankMessage)+'</p>'+(rankRows.length?rankRows.map((r,i)=>'<div class="leader"><span><strong>'+(i+1)+'위 · '+esc(safeRankLabel(r))+'</strong></span><strong>'+Number(r.known||0)+'개 완료</strong></div>').join(''):'<p class="small">아직 참여자가 없습니다.</p>');
 }
 async function publishRank(){
 if(!currentUser||!firebaseDb||!rankOptIn||!cloudReady)return;
@@ -75,7 +76,7 @@ catch(e){rankMessage='취소 실패: '+(e.code||'unknown');renderRank()}
 async function refreshRanks(){
 if(mode!=='rank')return;
 if(!currentUser){rankMessage='로그인하면 순위를 볼 수 있습니다.';rankRows=[];renderRank();return}
-try{const snap=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankMessage='학습 완료 수 기준 · 자동 갱신'}
+try{const snap=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankMessage='학습 완료 수 기준 · 자동 갱신 (기존 참가자는 재로그인 시 이메일 표시 갱신)'}
 catch(e){rankRows=[];rankMessage='순위표 오류: '+(e.code||'unknown')}
 renderRank();
 }
