@@ -28,13 +28,14 @@ function profileListKey(){return PREFIX+'profiles_'+(user?user.uid:'local')}
 function saveProfiles(){write(profileListKey(),profiles)}
 function renderProfileBar(){
 const el=document.getElementById('profileBar');if(!el)return;
+el.dataset.keepClosed='false';
 el.innerHTML='<button id="profileTrigger" type="button" class="profile-trigger" aria-haspopup="true" aria-expanded="false"><span>👦 '+(activeProfile?esc(activeProfile.name):'학습자 선택')+'</span><span>⌄</span></button>'+
 '<div class="profile-dropdown" hidden><div class="profile-heading">🌈 누구의 기록으로 공부할까요?</div>'+
 profiles.map(p=>'<button type="button" class="profile-option '+(activeProfile&&p.id===activeProfile.id?'is-current':'')+'" data-profile="'+esc(p.id)+'"><span>👤 '+esc(p.name)+'</span><span>'+(activeProfile&&p.id===activeProfile.id?'✓':'')+'</span></button>').join('')+
 '<div class="profile-footer"><span class="sub">새 학습자 추가</span><button type="button" id="addProfile" class="profile-add" aria-label="새 프로필 추가" title="새 프로필 추가">+</button></div></div>';
 const trigger=el.querySelector('#profileTrigger'),dropdown=el.querySelector('.profile-dropdown');
 trigger.addEventListener('click',()=>{dropdown.hidden=!dropdown.hidden;trigger.setAttribute('aria-expanded',String(!dropdown.hidden))});
-el.querySelectorAll('[data-profile]').forEach(b=>b.addEventListener('click',()=>{dropdown.hidden=true;trigger.setAttribute('aria-expanded','false');chooseProfile(b.dataset.profile)}));
+el.querySelectorAll('[data-profile]').forEach(b=>b.addEventListener('click',()=>{dropdown.hidden=true;trigger.setAttribute('aria-expanded','false');el.dataset.keepClosed='true';chooseProfile(b.dataset.profile)}));
 el.querySelector('#addProfile').addEventListener('click',()=>{dropdown.hidden=true;trigger.setAttribute('aria-expanded','false');addProfile()});
 }
 document.addEventListener('click',e=>{
