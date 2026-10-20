@@ -31,15 +31,15 @@ async function submitQuizScore(){
 const input=app.querySelector('#quizPlayerName');
 const name=String(input?.value||'').trim();
 if(!name||name.length>12){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='이름 또는 별명을 1~12글자로 입력해 주세요.';return}
-if(!user||!cloudReady){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='Google 로그인과 클라우드 동기화 후 등록할 수 있어요.';return}
+if(!user||!fb||!db){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='오른쪽 위 Google 로그인 버튼으로 로그인한 후 등록해 주세요.';return}
 const id=scoreDocId(user.uid,quizFinishGrade,name),ref=fb.doc(db,'kidsQuizScores',id);
-const btn=app.querySelector('[data-action="submit-quiz-score"]');if(btn)btn.disabled=true;
+const btn=app.querySelector('[data-action="submit-quiz-score"]');if(btn)btn.disabled=true;const statusEl=app.querySelector('#submitMessage');if(statusEl)statusEl.textContent='☁ 순위 기록 저장 중…';
 try{
 const old=await fb.getDoc(ref);const previous=old.exists()?Number(old.data().correct||0):0;
 const best=Math.max(previous,quizFinishScore);
 await fb.setDoc(ref,{ownerUid:user.uid,grade:quizFinishGrade,name,correct:best,total:DATA[quizFinishGrade].length,updatedAt:Date.now()});
 const msg=app.querySelector('#submitMessage');if(msg)msg.textContent=best>quizFinishScore?'기존 최고 기록 '+best+'개를 유지했어요!':'🏆 순위 등록 완료! 최고 기록 '+best+'개';
-}catch(e){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='등록 실패: '+(e.code||e.message||'unknown');if(btn)btn.disabled=false}
+}catch(e){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='순위 등록 실패: '+(e.code||e.message||'unknown')+' · Firebase 규칙과 로그인 상태를 확인해 주세요.';if(btn)btn.disabled=false}
 }
 function sync(){
 if(!cloudReady||!user||!fb)return;
