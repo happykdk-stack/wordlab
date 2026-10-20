@@ -474,7 +474,7 @@ const board=app.querySelector('.quiz-scoreboard');if(board)board.outerHTML=quizS
 const s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
 const t=stats();t.attempts=(t.attempts||0)+1;t.correct=(t.correct||0)+(ok?1:0);write(statsKey(level),t);sync();
 choices.forEach((c,j)=>{const b=app.querySelector('[data-answer="'+j+'"]');b.disabled=true;if(c[0]===x[0])b.classList.add('right');else if(j===i)b.classList.add('wrong')});
-if(ok){showQuizConfetti();playFanfare();if(combo>=2){showComboPopup(combo);playComboSound(combo)}if(combo%5===0)playMilestoneClaps(combo);else playRealClaps(false)}else{quizBeep()}
+if(ok){showQuizConfetti();playFanfare();if(combo>=2){showComboPopup(combo);playComboSound(combo)}if(combo>0&&combo%5===0)playMilestoneClaps(combo)}else{quizBeep()}
 const feedback=app.querySelector('#feedback');
 if(ok){
 feedback.innerHTML='<div class="notice">정답! ⭐ <b>'+esc(x[0])+'</b> = '+esc(x[1])+'<p>'+esc(x[3])+'</p></div>';
