@@ -301,7 +301,7 @@ level=g;document.querySelectorAll('.grades button').forEach(b=>b.classList.toggl
 }
 function switchTab(m){
 cancelTransition();mode=m;index=0;flipped=false;choices=[];answered=false;score=0;completionSavedKey='';
-deck=m==='review'?DATA[level].filter(x=>state()[x[0]]==='missed'):m==='quiz'?shuffle(DATA[level]).slice(0,20):DATA[level];
+deck=m==='review'?DATA[level].filter(x=>state()[x[0]]==='missed'):m==='quiz'?shuffle(DATA[level]).slice(0,30):DATA[level];
 document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===m));
 render();
 if(rankTimer){clearInterval(rankTimer);rankTimer=null}if(m==='rank'){rankComments=[];commentError='';refreshKidsRank();rankTimer=setInterval(()=>{if(mode==='rank')refreshKidsRank()},30000)}
@@ -313,9 +313,9 @@ if(!user){app.innerHTML='<div class="login-gate"><div style="font-size:50px">�
 if(!activeProfile){app.innerHTML='<h2>🌈 학습자를 선택해 주세요</h2><p>위에서 아이 이름을 추가하거나 선택하면 낱말카드와 복습이 시작됩니다.</p>';return}
 if(mode==='rank'){
 app.innerHTML='<h2>🏆 '+gradeName(level)+' 퀴즈 순위</h2><p class="sub">메인에서 선택한 학년의 최고 정답 수만 비교해요. 퀴즈를 모두 풀면 현재 학습자 이름으로 최고 정답 수가 자동 등록됩니다.</p>'+
-'<div class="notice">현재 선택: '+gradeName(level)+' · 랜덤 20문제</div>'+
+'<div class="notice">현재 선택: '+gradeName(level)+' · 랜덤 30문제</div>'+
 '<p class="sub">'+esc(rankError)+'</p>'+
-(rankRows.length?rankRows.map((r,i)=>'<div class="rankrow"><span><strong>'+((i>0&&Number(rankRows[i-1].correct||0)===Number(r.correct||0))||rankRows.slice(0,i).some(x=>Number(x.correct||0)===Number(r.correct||0))?'공동 ':'')+(1+new Set(rankRows.slice(0,i).filter(x=>Number(x.correct||0)>Number(r.correct||0)).map(x=>Number(x.correct||0))).size)+'위 · '+esc(r.name||'영어 탐험가')+'</strong><div class="sub">'+gradeName(r.grade)+'</div></span><div style="display:flex;align-items:center;gap:8px"><strong>'+Number(r.correct||0)+' / '+Number(r.total||20)+'개</strong>'+(isKidsAdmin()?'<button class="secondary" style="padding:7px 9px" data-action="delete-rank" data-entry="'+esc(r.id)+'" aria-label="순위 기록 삭제">삭제</button>':'')+'</div></div>').join(''):'<p class="sub">이 학년의 순위 기록이 아직 없어요. 첫 기록을 남겨보세요!</p>')+
+(rankRows.length?rankRows.map((r,i)=>'<div class="rankrow"><span><strong>'+((i>0&&Number(rankRows[i-1].correct||0)===Number(r.correct||0))||rankRows.slice(0,i).some(x=>Number(x.correct||0)===Number(r.correct||0))?'공동 ':'')+(1+new Set(rankRows.slice(0,i).filter(x=>Number(x.correct||0)>Number(r.correct||0)).map(x=>Number(x.correct||0))).size)+'위 · '+esc(r.name||'영어 탐험가')+'</strong><div class="sub">'+gradeName(r.grade)+'</div></span><div style="display:flex;align-items:center;gap:8px"><strong>'+Number(r.correct||0)+' / '+Number(r.total||30)+'개</strong>'+(isKidsAdmin()?'<button class="secondary" style="padding:7px 9px" data-action="delete-rank" data-entry="'+esc(r.id)+'" aria-label="순위 기록 삭제">삭제</button>':'')+'</div></div>').join(''):'<p class="sub">이 학년의 순위 기록이 아직 없어요. 첫 기록을 남겨보세요!</p>')+
 '<section class="rank-comments"><h3>친구 응원 댓글</h3><p class="sub">현재 학년 친구들에게 따뜻한 응원 한마디를 남겨요. 개인정보는 쓰지 마세요.</p><div class="rank-comment-compose"><input id="rankCommentInput" type="text" maxlength="100" placeholder="친구에게 응원 한마디 (100자 이내)" aria-label="응원 댓글"><button data-action="post-comment">등록</button></div><p class="sub">'+esc(commentError)+'</p>'+
 (rankComments.length?rankComments.map(c=>'<div class="rank-comment"><div><strong>'+esc(c.name||'친구')+'</strong><p>'+esc(c.text||'')+'</p></div>'+((isKidsAdmin()||c.ownerUid===user.uid)?'<button class="secondary" data-action="delete-comment" data-comment-id="'+esc(c.id)+'">삭제</button>':'')+'</div>').join(''):'<p class="sub">첫 번째 응원 댓글을 남겨보세요!</p>')+'</section>';return}
 if(mode==='stats'){const s=state(),t=stats(),known=Object.values(s).filter(v=>v==='known').length,missed=Object.values(s).filter(v=>v==='missed').length,pct=t.attempts?Math.round((t.correct||0)/t.attempts*100):0;
