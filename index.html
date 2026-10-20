@@ -145,43 +145,31 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(progress))}catch(e){
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function tab(m){stopReviewVoice();reviewAutoPlay=false;const previous=m==='card'&&mode==='card'&&deck[index]?deck[index][0]:null;mode=m;index=0;flipped=false;answered=false;score=0;done=0;deck=m==='review'?shuffle(DATA.filter(x=>progress[x[0].toLowerCase()]==='missed')):m==='quiz'?shuffle(DATA):shuffle(DATA);if(m==='card'&&previous&&deck.length>1&&deck[0][0]===previous){const j=1+Math.floor(Math.random()*(deck.length-1));[deck[0],deck[j]]=[deck[j],deck[0]];}document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.id==='tab-'+m));render();if(rankRefreshTimer){clearInterval(rankRefreshTimer);rankRefreshTimer=null}if(m==='rank'){refreshRanks();rankRefreshTimer=setInterval(()=>{if(mode==='rank'&&currentUser)refreshRanks()},30000)}}
-function render(){if(mode==='stats')return renderStats();if(mode==='rank')return renderRank();if(mode==='quiz')return renderQuiz();if(!deck.length){app.innerHTML='<h2 class="center">복습할 단어가 없습니다 🎉</h2><p class="center small">낱말카드에서 다시 복습할 단어를 표시해 주세요.</p>';return}const x=deck[index];if(!x){app.innerHTML='<h2 class="center">학습 완료!</h2><p class="center">오늘도 수고하셨습니다.</p><button onclick="tab(\'card\')">처음부터 다시</button>';return}app.innerHTML='<div class="meta"><span>'+(mode==='review'?'틀린 단어 복습':'낱말카드')+'</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><div class="fill" style="width:'+((index+1)/deck.length*100)+'%"></div></div><div class="card" onclick="flipStudyCard()">'+(flipped?'<div class="meaning">'+esc(x[1])+'</div><div class="origin">'+esc(x[2])+'</div><div class="example">'+esc(x[3])+'</div><div class="ko">'+esc(x[4])+'</div>':'<div class="word">'+esc(x[0])+'</div><div class="hint">카드를 눌러 뜻 · 어원 · 예문 확인</div>')+'</div><div class="controls"><button class="secondary" onclick="prev()" '+(index===0?'disabled':'')+'>← 이전</button><button class="secondary" onclick="speak()">🔊 발음</button><button class="bad" onclick="mark(false)">\'+(mode===\'review\'?\'남기기\':\'다시 복습\')+\'</button><button class="good" onclick="mark(true)">\'+(mode===\'review\'?\'없애기\':\'알아요 ✓\')+\'</button></div>'+(mode==='review'?'<button class="review-autoplay" onclick="toggleReviewAutoPlay()" aria-pressed="'+reviewAutoPlay+'">'+(reviewAutoPlay?'⏸ 자동 재생 끄기':'▶ 자동 재생 켜기')+'</button>':'')}
+function render(){if(mode==='stats')return renderStats();if(mode==='rank')return renderRank();if(mode==='quiz')return renderQuiz();if(!deck.length){app.innerHTML='<h2 class="center">복습할 단어가 없습니다 🎉</h2><p class="center small">낱말카드에서 다시 복습할 단어를 표시해 주세요.</p>';return}const x=deck[index];if(!x){app.innerHTML='<h2 class="center">학습 완료!</h2><p class="center">오늘도 수고하셨습니다.</p><button onclick="tab(\'card\')">처음부터 다시</button>';return}app.innerHTML='<div class="meta"><span>'+(mode==='review'?'틀린 단어 복습':'낱말카드')+'</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><div class="fill" style="width:'+((index+1)/deck.length*100)+'%"></div></div><div class="card" onclick="flipStudyCard()">'+(flipped?'<div class="meaning">'+esc(x[1])+'</div><div class="origin">'+esc(x[2])+'</div><div class="example">'+esc(x[3])+'</div><div class="ko">'+esc(x[4])+'</div>':'<div class="word">'+esc(x[0])+'</div><div class="hint">카드를 눌러 뜻 · 어원 · 예문 확인</div>')+'</div><div class="controls"><button class="secondary" onclick="prev()" '+(index===0?'disabled':'')+'>← 이전</button><button class="secondary" onclick="speak()">🔊 발음</button><button class="bad" onclick="mark(false)">'+(mode==='review'?'남기기':'다시 복습')+'</button><button class="good" onclick="mark(true)">'+(mode==='review'?'없애기':'알아요 ✓')+'</button></div>'+(mode==='review'?'<button class="review-autoplay" onclick="toggleReviewAutoPlay()" aria-pressed="'+reviewAutoPlay+'">'+(reviewAutoPlay?'⏸ 자동 재생 끄기':'▶ 자동 재생 켜기')+'</button>':'')}
 function stopReviewVoice(){
 reviewVoiceToken++;
 if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
 if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
 }
 function speakReviewPair(){
-if(!('speechSynthesis' in window)||!deck[index])return;
+if(!deck[index]||mode!=='review')return;
 stopReviewVoice();
-const word=deck[index],token=reviewVoiceToken,auto=reviewAutoPlay&&mode==='review';
+const word=deck[index],token=reviewVoiceToken,auto=reviewAutoPlay;
 const valid=()=>token===reviewVoiceToken&&mode==='review'&&deck[index]===word;
-function nextCard(){
-if(!valid()||!auto)return;
-reviewAutoTimer=setTimeout(()=>{
-reviewAutoTimer=null;
-if(!valid()||!reviewAutoPlay)return;
-index++;flipped=false;render();
-if(deck[index])speakReviewPair();
-else{reviewAutoPlay=false;render()}
-},550);
+let phaseTimer=null;
+function clearPhase(){if(phaseTimer!==null){clearTimeout(phaseTimer);phaseTimer=null}}
+function advance(){if(!valid()||!auto)return;clearPhase();reviewAutoTimer=setTimeout(()=>{reviewAutoTimer=null;if(!valid()||!reviewAutoPlay)return;index++;flipped=false;render();if(deck[index])speakReviewPair();else reviewAutoPlay=false},650)}
+function korean(){
+if(!valid())return;clearPhase();
+let finished=false;const finish=()=>{if(finished)return;finished=true;clearPhase();advance()};
+phaseTimer=setTimeout(finish,Math.max(1700,word[1].length*230+800));
+try{const u=new SpeechSynthesisUtterance(word[1]);u.lang='ko-KR';u.rate=.95;u.onend=finish;u.onerror=finish;speechSynthesis.speak(u)}catch(e){finish()}
 }
-try{
-const en=new SpeechSynthesisUtterance(word[0]);en.lang='en-US';en.rate=.9;
-const ko=new SpeechSynthesisUtterance(word[1]);ko.lang='ko-KR';ko.rate=.95;
-let koreanStarted=false,finished=false;
-const finish=()=>{if(finished||!valid())return;finished=true;if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);reviewAutoTimer=null;nextCard()};
-const startKorean=()=>{
-if(koreanStarted||!valid())return;koreanStarted=true;
-if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);
-reviewAutoTimer=setTimeout(()=>{if(valid())finish()},Math.max(1500,word[1].length*190+700));
-ko.onend=finish;ko.onerror=finish;
-try{speechSynthesis.speak(ko)}catch(e){finish()}
-};
-en.onend=startKorean;en.onerror=startKorean;
-reviewAutoTimer=setTimeout(startKorean,Math.max(1800,word[0].length*160+700));
-speechSynthesis.speak(en);
-}catch(e){if(auto)nextCard()}
+if(!('speechSynthesis' in window)){if(auto)reviewAutoTimer=setTimeout(advance,1800);return}
+let englishFinished=false;
+const finishEnglish=()=>{if(englishFinished||!valid())return;englishFinished=true;korean()};
+phaseTimer=setTimeout(finishEnglish,Math.max(1900,word[0].length*150+650));
+try{const u=new SpeechSynthesisUtterance(word[0]);u.lang='en-US';u.rate=.9;u.onend=finishEnglish;u.onerror=finishEnglish;speechSynthesis.speak(u)}catch(e){finishEnglish()}
 }
 function flipStudyCard(){flipped=!flipped;render();if(mode==='review'&&!reviewAutoPlay)speakReviewPair()}
 function toggleReviewAutoPlay(){
