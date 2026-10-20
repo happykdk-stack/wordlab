@@ -21,7 +21,7 @@ return '클라우드 오류: '+code;
 }
 const pendingKey='wordlab_pending_v1';
 let metrics={attempts:0,correct:0,cardChecks:0};
-let rankOptIn=false,rankNickname='',rankRows=[],rankMessage='';
+let rankOptIn=false,rankNickname='',rankRows=[],rankMessage='',rankRefreshTimer=null;
 function metricsKey(){return 'wordlab_metrics_'+(currentUser?currentUser.uid:'guest')}
 function readMetrics(){try{return JSON.parse(localStorage.getItem(metricsKey())||'{}')}catch(e){return {}}}
 function loadMetrics(){metrics={attempts:0,correct:0,cardChecks:0,...readMetrics()}}
@@ -33,11 +33,13 @@ if(currentUser&&cloudReady)saveCloudMetrics();
 }
 async function saveCloudMetrics(){
 if(!currentUser||!cloudReady)return;
-try{await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',currentUser.uid,'wordlab','progress'),{metrics},{merge:true});if(rankOptIn)await publishRank()}catch(e){syncMessage(errorLabel(e),true)}
+try{await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',currentUser.uid,'wordlab','progress'),{metrics},{merge:true});}catch(e){syncMessage(errorLabel(e),true)}
 }
 function levelName(n){return n>=45?'마스터':n>=30?'전문가':n>=15?'숙련자':n>=5?'도전자':'새싹'}
 function statNumbers(){const values=Object.values(progress);return {known:values.filter(x=>x==='known').length,missed:values.filter(x=>x==='missed').length,attempts:metrics.attempts,correct:metrics.correct}}
 function scoreValue(){return statNumbers().known}
+function maskedEmail(email){const p=String(email||'').split('@');if(p.length!==2)return '학습자';return p[0].slice(0,p[0].length>3?2:1)+'***@'+p[1]}
+
 function renderStats(){
 const n=statNumbers(),pct=n.attempts?Math.round(n.correct/n.attempts*100):0;
 app.innerHTML='<h2>📊 나의 학습 통계</h2><p class="small">내 계정의 학습 현황입니다.</p><div class="stats-grid">'+
@@ -46,35 +48,35 @@ app.innerHTML='<h2>📊 나의 학습 통계</h2><p class="small">내 계정의 
 }
 function renderRank(){
 const n=statNumbers();
-app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">순위 공개는 선택 사항입니다. Google 계정 이메일은 공개하지 않고 닉네임과 학습 완료 단어 수만 사용합니다.</p>'+
+app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">이메일 일부를 가려 표시합니다. 참여 후 학습 완료 수는 자동 갱신됩니다.</p>'+
 '<div class="rank-level">학습 완료 <b>'+n.known+' / '+DATA.length+'개</b> · 복습 필요 '+n.missed+'개</div>'+
-'<div class="opt-row"><input id="rankNick" maxlength="18" placeholder="순위표 닉네임" value="'+esc(rankNickname)+'"><button onclick="joinRank()">'+(rankOptIn?'닉네임·학습 수 갱신':'순위표 참여')+'</button></div>'+
-'<p class="small">참여 버튼을 눌러야 친구에게 학습 완료 수가 공개됩니다. 완료 단어가 많은 순서로 정렬됩니다.</p>'+
-'<div class="opt-row"><button class="secondary" onclick="refreshRanks()">순위 새로고침</button>'+(rankOptIn?'<button class="secondary" onclick="leaveRank()">참여 취소</button>':'')+'</div>'+
-'<p class="small" id="rankMsg">'+esc(rankMessage)+'</p><div id="rankList">'+(rankRows.length?rankRows.map((r,i)=>'<div class="leader"><span><strong>'+(i+1)+'위 · '+esc(r.nickname||'학습자')+'</strong><br><small>암기 '+Number(r.known||0)+'개</small></span><strong>'+Number(r.known||0)+'개 완료</strong></div>').join(''):'<p class="small">아직 불러온 순위가 없습니다.</p>')+'</div>';
+'<div class="opt-row"><strong>'+esc(currentUser?maskedEmail(currentUser.email):'로그인 필요')+'</strong>'+(rankOptIn?'<button class="secondary" onclick="leaveRank()">참여 취소</button>':'<button onclick="joinRank()">순위표 참여</button>')+'</div>'+
+'<p class="small">닉네임 입력은 필요 없습니다. 참여는 선택 사항입니다.</p>'+
+'<div class="opt-row"><button class="secondary" onclick="refreshRanks()">지금 새로고침</button></div>'+
+'<p class="small">'+esc(rankMessage)+'</p>'+(rankRows.length?rankRows.map((r,i)=>'<div class="leader"><span><strong>'+(i+1)+'위 · '+esc(r.nickname||'학습자')+'</strong></span><strong>'+Number(r.known||0)+'개 완료</strong></div>').join(''):'<p class="small">아직 참여자가 없습니다.</p>');
 }
 async function publishRank(){
-if(!currentUser||!firebaseDb||!rankOptIn)return;
+if(!currentUser||!firebaseDb||!rankOptIn||!cloudReady)return;
 const n=statNumbers();
-await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'leaderboard',currentUser.uid),{nickname:rankNickname,score:scoreValue(),known:n.known,updatedAt:Date.now()});
+await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'leaderboard',currentUser.uid),{nickname:maskedEmail(currentUser.email),score:n.known,known:n.known,updatedAt:Date.now()});
 }
 async function joinRank(){
 if(!currentUser){rankMessage='Google 로그인 후 참여할 수 있습니다.';renderRank();return}
-const v=document.getElementById('rankNick').value.trim();
-if(v.length<2){rankMessage='닉네임을 2글자 이상 입력해 주세요.';renderRank();return}
-rankNickname=v;rankOptIn=true;
-try{await publishRank();localStorage.setItem('wordlab_rank_'+currentUser.uid,JSON.stringify({nickname:v,optIn:true}));rankMessage='순위표에 참여했습니다.';await refreshRanks()}
-catch(e){rankOptIn=false;rankMessage='순위표 권한 설정 필요: '+(e.code||'unknown');renderRank()}
+if(!cloudReady){rankMessage='클라우드 연결 후 다시 시도해 주세요.';renderRank();return}
+rankOptIn=true;
+try{await publishRank();localStorage.setItem('wordlab_rank_'+currentUser.uid,JSON.stringify({optIn:true}));rankMessage='참여 완료! 이후 자동으로 갱신됩니다.';await refreshRanks()}
+catch(e){rankOptIn=false;rankMessage='순위표 저장 오류: '+(e.code||'unknown');renderRank()}
 }
 async function leaveRank(){
 if(!currentUser)return;
-try{await firebaseApi.deleteDoc(firebaseApi.doc(firebaseDb,'leaderboard',currentUser.uid));rankOptIn=false;localStorage.removeItem('wordlab_rank_'+currentUser.uid);rankMessage='순위표 참여를 취소했습니다.';await refreshRanks()}
-catch(e){rankMessage='참여 취소 실패: '+(e.code||'unknown');renderRank()}
+try{await firebaseApi.deleteDoc(firebaseApi.doc(firebaseDb,'leaderboard',currentUser.uid));rankOptIn=false;localStorage.removeItem('wordlab_rank_'+currentUser.uid);rankMessage='참여가 취소되었습니다.';await refreshRanks()}
+catch(e){rankMessage='취소 실패: '+(e.code||'unknown');renderRank()}
 }
 async function refreshRanks(){
-if(!currentUser){rankMessage='로그인하면 친구 순위를 볼 수 있습니다.';rankRows=[];renderRank();return}
-try{const snapshot=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snapshot.docs.map(x=>x.data()).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankMessage=rankRows.length?'학습 완료 단어 수 기준 순위입니다.':'아직 참여자가 없습니다.'}
-catch(e){rankRows=[];rankMessage='순위표 읽기 권한 설정 필요: '+(e.code||'unknown')}
+if(mode!=='rank')return;
+if(!currentUser){rankMessage='로그인하면 순위를 볼 수 있습니다.';rankRows=[];renderRank();return}
+try{const snap=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankMessage='학습 완료 수 기준 · 자동 갱신'}
+catch(e){rankRows=[];rankMessage='순위표 오류: '+(e.code||'unknown')}
 renderRank();
 }
 loadMetrics();
@@ -86,7 +88,7 @@ async function pushPending(){
 if(!currentUser||!firebaseDb||!firebaseApi)return;
 const pending=readPending();if(!Object.keys(pending).length)return;
 const ref=firebaseApi.doc(firebaseDb,'users',currentUser.uid,'wordlab','progress');
-await firebaseApi.setDoc(ref,{words:pending},{merge:true});pendingClear();
+await firebaseApi.setDoc(ref,{words:pending},{merge:true});pendingClear();if(rankOptIn)await publishRank();
 }
 function recordProgress(word,value,isQuiz=false){
 metricsUpdate(value==='known',isQuiz);
@@ -111,7 +113,9 @@ progress={...local,...remote,...pending};save();
 const upload={...missing,...pending};
 if(Object.keys(upload).length){await firebaseApi.setDoc(ref,{words:upload},{merge:true});pendingClear()}
 if(epoch!==authEpoch)return;
-cloudReady=true;syncMessage('☁ 동기화 완료');if(mode==='stats')renderStats();
+cloudReady=true;syncMessage('☁ 동기화 완료');
+try{const rankDoc=await firebaseApi.getDoc(firebaseApi.doc(firebaseDb,'leaderboard',user.uid));if(epoch!==authEpoch)return;rankOptIn=rankDoc.exists();if(rankOptIn)await publishRank()}catch(e){console.warn('Rank check:',e)}
+if(mode==='stats')renderStats();
 if(mode==='review')tab('review');
 }catch(e){cloudReady=false;syncMessage(errorLabel(e),true);console.error('WordLab cloud sync',e)}
 }
@@ -124,7 +128,7 @@ api.onAuthStateChanged(firebaseAuth,user=>{
 authEpoch++;currentUser=user;cloudReady=false;
 const detail=document.getElementById('dbDiagnostics');if(detail){detail.hidden=true;detail.textContent=''}
 if(!user){authBtn.textContent='Google 로그인';syncMessage('PC에 저장 중');loadMetrics();rankOptIn=false;rankRows=[];if(mode==='stats'||mode==='rank')render();return}
-loadMetrics();try{const pref=JSON.parse(localStorage.getItem('wordlab_rank_'+user.uid)||'{}');rankOptIn=!!pref.optIn;rankNickname=pref.nickname||''}catch(e){}
+loadMetrics();try{const pref=JSON.parse(localStorage.getItem('wordlab_rank_'+user.uid)||'{}');rankOptIn=!!pref.optIn;rankNickname=maskedEmail(user.email)}catch(e){}
 authBtn.textContent='로그아웃';syncFromCloud();
 });
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentUser)syncFromCloud()});
@@ -136,7 +140,7 @@ const app=document.getElementById('app');document.getElementById('total').textCo
 function save(){try{localStorage.setItem(KEY,JSON.stringify(progress))}catch(e){}}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function tab(m){mode=m;index=0;flipped=false;answered=false;score=0;done=0;deck=m==='review'?shuffle(DATA.filter(x=>progress[x[0].toLowerCase()]==='missed')):m==='quiz'?shuffle(DATA):DATA;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.id==='tab-'+m));render();if(m==='rank')refreshRanks()}
+function tab(m){mode=m;index=0;flipped=false;answered=false;score=0;done=0;deck=m==='review'?shuffle(DATA.filter(x=>progress[x[0].toLowerCase()]==='missed')):m==='quiz'?shuffle(DATA):DATA;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.id==='tab-'+m));render();if(rankRefreshTimer){clearInterval(rankRefreshTimer);rankRefreshTimer=null}if(m==='rank'){refreshRanks();rankRefreshTimer=setInterval(()=>{if(mode==='rank'&&currentUser)refreshRanks()},30000)}}
 function render(){if(mode==='stats')return renderStats();if(mode==='rank')return renderRank();if(mode==='quiz')return renderQuiz();if(!deck.length){app.innerHTML='<h2 class="center">복습할 단어가 없습니다 🎉</h2><p class="center small">낱말카드에서 다시 복습할 단어를 표시해 주세요.</p>';return}const x=deck[index];if(!x){app.innerHTML='<h2 class="center">학습 완료!</h2><p class="center">오늘도 수고하셨습니다.</p><button onclick="tab(\'card\')">처음부터 다시</button>';return}app.innerHTML='<div class="meta"><span>'+(mode==='review'?'틀린 단어 복습':'낱말카드')+'</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><div class="fill" style="width:'+((index+1)/deck.length*100)+'%"></div></div><div class="card" onclick="flipped=!flipped;render()">'+(flipped?'<div class="meaning">'+esc(x[1])+'</div><div class="origin">'+esc(x[2])+'</div><div class="example">'+esc(x[3])+'</div><div class="ko">'+esc(x[4])+'</div>':'<div class="word">'+esc(x[0])+'</div><div class="hint">카드를 눌러 뜻 · 어원 · 예문 확인</div>')+'</div><div class="controls"><button class="secondary" onclick="prev()" '+(index===0?'disabled':'')+'>← 이전</button><button class="secondary" onclick="speak()">🔊 발음</button><button class="bad" onclick="mark(false)">다시 복습</button><button class="good" onclick="mark(true)">알아요 ✓</button></div>'}
 function prev(){index=Math.max(0,index-1);flipped=false;render()}
 function mark(ok){recordProgress(deck[index][0],ok?'known':'missed',false);index++;flipped=false;render()}
