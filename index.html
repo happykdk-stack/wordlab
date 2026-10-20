@@ -159,9 +159,8 @@ const valid=()=>mode==='review'&&reviewVoiceToken===token&&deck[index]===word;
 let koreanStarted=false;
 const goNext=()=>{
 if(!valid()||!reviewAutoPlay)return;
-index++;flipped=false;render();
-if(deck[index])speakReviewPair();
-else{reviewAutoPlay=false;render()}
+index=(index+1)%deck.length;flipped=false;render();
+if(reviewAutoPlay&&deck[index])speakReviewPair()
 };
 if(reviewAutoPlay){
 const delay=Math.min(9000,Math.max(3900,word[0].length*160+word[1].length*210+1800));
