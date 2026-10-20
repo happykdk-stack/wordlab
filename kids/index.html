@@ -32,6 +32,34 @@ header>div:last-child>div:first-child{gap:4px!important;flex-wrap:nowrap!importa
 .card-answer-actions button{min-height:62px;padding:12px 5px;font-size:19px;border-radius:15px}
 }
 @media(max-width:360px){header h1{font-size:17px}.profile-menu{max-width:112px}.tabs button{font-size:9px}.grades button{font-size:10px}.flash{height:clamp(135px,24dvh,185px)}}
+/* Compact phone layout v2 */
+@media(max-width:600px){
+.wrap{padding:3px 7px 16px}
+header{gap:3px;align-items:center}
+header>div:first-child{min-width:0;flex:1}
+header h1{font-size:clamp(15px,4.1vw,19px);letter-spacing:-.7px;white-space:nowrap}
+header>div:last-child{flex:0 0 auto;max-width:58%;gap:0!important}
+header>div:last-child>div:first-child{display:flex!important;flex-wrap:nowrap!important;gap:3px!important}
+#loginBtn{font-size:10px;padding:6px 6px;min-height:30px;border-radius:9px;flex-shrink:0}
+.profile-menu{width:96px;min-width:0;max-width:96px}
+.profile-trigger{width:96px;max-width:96px;min-height:30px;padding:5px 6px;font-size:11px;gap:2px}
+.profile-trigger span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-trigger span:last-child{flex-shrink:0}
+#cloudStatus{display:none}
+.grades,.tabs{margin:3px 0;gap:3px}
+.grades button{padding:5px 1px;min-height:28px;font-size:10px;border-radius:8px}
+.tabs button{padding:5px 1px;min-height:30px;font-size:9px;line-height:1.1;border-radius:8px}
+.panel{padding:7px}
+.meta{margin-bottom:3px}
+.bar{margin-bottom:4px}
+.flash{height:clamp(125px,23dvh,185px);padding:7px}
+.emoji{font-size:clamp(42px,8dvh,60px)}
+.actions{margin:4px 0}
+.actions button{padding:6px 8px}
+.card-answer-actions{margin:6px 0}
+.card-answer-actions button{min-height:60px;font-size:18px}
+}
+@media(max-width:360px){header h1{font-size:15px}.profile-menu,.profile-trigger{width:84px;max-width:84px}#loginBtn{font-size:9px;padding:6px 4px}.tabs button{font-size:8px}}
 </style></head><body><div class="wrap"><header><div><h1>🌈 WordLab Kids</h1><div class="sub">그림으로 배우는 신나는 영어!</div></div><div style="display:flex;flex-direction:column;gap:3px;align-items:end"><div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap"><button id="loginBtn" class="secondary" type="button">Google 로그인</button><div id="profileBar" class="profile-menu"></div></div><span id="cloudStatus" class="sub">이 기기에 저장 중</span></div></header><div class="grades"><button id="g1-2" onclick="setGrade('1-2')">🌱 1~2학년</button><button id="g3-4" onclick="setGrade('3-4')">🌼 3~4학년</button><button id="g5-6" onclick="setGrade('5-6')">🚀 5~6학년</button></div><div class="tabs"><button id="tcard" data-tab="card">🃏 낱말카드</button><button id="tquiz" data-tab="quiz">🎯 퀴즈</button><button id="treview" data-tab="review">🔁 다시 복습</button><button id="tstats" data-tab="stats">⭐ 내 통계</button><button id="trank" data-tab="rank">🏆 친구 순위</button></div><main id="app" class="panel"></main><div class="footer">로그인 시 학습 기록을 동기화할 수 있습니다. 친구 순위 참여는 선택 사항입니다.</div></div><script>
 const DATA={"1-2":[["Apple","사과","🍎","I eat an apple."],["Banana","바나나","🍌","I like bananas."],["Cat","고양이","🐱","The cat is cute."],["Dog","강아지","🐶","The dog runs."],["Bird","새","🐦","A bird can fly."],["Fish","물고기","🐟","I see a fish."],["Sun","태양","☀️","The sun is bright."],["Moon","달","🌙","Look at the moon."],["Star","별","⭐","I see a star."],["Book","책","📚","This is my book."],["Pencil","연필","✏️","I have a pencil."],["School","학교","🏫","I go to school."],["House","집","🏠","This is my house."],["Car","자동차","🚗","The car is red."],["Bus","버스","🚌","I take the bus."],["Flower","꽃","🌸","The flower is pink."],["Tree","나무","🌳","The tree is tall."],["Milk","우유","🥛","I drink milk."],["Bread","빵","🍞","I eat bread."],["Ball","공","⚽","Kick the ball."]],"3-4":[["Weather","날씨","🌤️","The weather is nice."],["Rainbow","무지개","🌈","I see a rainbow."],["Mountain","산","⛰️","We climb the mountain."],["River","강","🏞️","The river is long."],["Library","도서관","📖","I read at the library."],["Hospital","병원","🏥","The hospital is near."],["Bicycle","자전거","🚲","I ride my bicycle."],["Breakfast","아침 식사","🥣","I eat breakfast early."],["Vegetable","채소","🥕","Vegetables are healthy."],["Adventure","모험","🧭","We go on an adventure."],["Friendship","우정","🤝","Friendship is important."],["Excited","신이 난","🎉","I am excited today."],["Careful","조심하는","⚠️","Be careful on the stairs."],["Quiet","조용한","🤫","Please be quiet."],["Different","다른","🧩","We have different ideas."],["Together","함께","👫","Let's work together."],["Practice","연습하다","🎯","I practice English."],["Explore","탐험하다","🔭","We explore the forest."],["Describe","묘사하다","🖼️","Describe your favorite animal."],["Compare","비교하다","⚖️","Compare the two pictures."]],"5-6":[["Environment","환경","🌍","We should protect the environment."],["Pollution","오염","🏭","Pollution harms animals."],["Recycle","재활용하다","♻️","We recycle paper."],["Energy","에너지","⚡","Solar panels produce energy."],["Discover","발견하다","🔎","Scientists discover new things."],["Experiment","실험","🧪","We did a science experiment."],["Evidence","증거","🕵️","Look for evidence."],["Solution","해결책","💡","We found a solution."],["Challenge","도전","🧗","This challenge is difficult."],["Opportunity","기회","🚪","This is a great opportunity."],["Responsibility","책임","🎒","Taking care of pets is a responsibility."],["Cooperate","협력하다","🤝","We cooperate on the project."],["Communicate","소통하다","💬","We communicate clearly."],["Creative","창의적인","🎨","She has a creative idea."],["Confident","자신감 있는","🦁","I feel confident today."],["Curious","호기심 많은","🔍","Curious students ask questions."],["Improve","향상시키다","📈","I want to improve my English."],["Organize","정리하다","🗂️","Let's organize our notes."],["Predict","예측하다","🔮","Can you predict the weather?"],["Achievement","성취","🏆","Finishing the book is an achievement."]]};
 const PREFIX='wordlabkids_v1_';
