@@ -9,7 +9,7 @@ function status(s,err=false){syncStatus.textContent=s;syncStatus.classList.toggl
 function authClick(){if(!fbAuth||!fbFns)return;if(fbUser){fbFns.signOut(fbAuth).catch(e=>status('로그아웃 실패: '+e.code,true))}else{fbFns.signInWithPopup(fbAuth,new fbFns.GoogleAuthProvider()).catch(e=>{status('로그인 실패: '+e.code,true);if(e.code==='auth/unauthorized-domain')alert('Firebase Authentication의 승인된 도메인에 happykdk-stack.github.io를 추가해 주세요.');})}}
 window.authClick=authClick;
 window.initWordLabFirebase=async function(config,modules){
-try{fbFns=modules;const app=modules.initializeApp(config);fbAuth=modules.getAuth(app);fbDb=modules.getFirestore(app);
+try{fbFns=modules;const app=modules.initializeApp(config);fbAuth=modules.getAuth(app);fbDb=modules.initializeFirestore(app,{experimentalForceLongPolling:true,useFetchStreams:false});
 authBtn.disabled=false;authBtn.textContent='Google 로그인';
 modules.onAuthStateChanged(fbAuth,async user=>{
 if(unsubscribeCloud){unsubscribeCloud();unsubscribeCloud=null}
@@ -31,7 +31,7 @@ if(!s.exists())return;
 const words=s.data().words||{};progress={...progress,...words};localStorage.setItem(KEY,JSON.stringify(progress));
 if(mode==='review')tab('review');status('☁ 동기화 완료');
 },e=>status('동기화 오류: '+e.code,true));
-}catch(e){status('클라우드 연결 오류: '+e.code,true)}
+}catch(e){status('클라우드 오류: '+(e.code||'unknown'),true);if(e.code==='unavailable')alert('Firestore 연결에 실패했습니다. 다른 네트워크(예: 휴대폰 모바일 데이터)에서 재시도해 주세요. 회사망 또는 브라우저 확장 프로그램이 연결을 차단할 수 있습니다.');else if(e.code==='permission-denied')alert('Firestore 보안 규칙이 읽기/쓰기를 허용하지 않습니다. Rules 설정을 확인해야 합니다.');console.error('WordLab Firestore:',e)}
 finally{loadingCloud=false}
 });
 }catch(e){status('Firebase 초기화 실패',true)}
@@ -56,7 +56,7 @@ tab('card');
 </script><script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import {getFirestore,doc,getDoc,setDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import {initializeFirestore,doc,getDoc,setDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 const firebaseConfig={apiKey:"AIzaSyAASI3Hbju_-h6Y2eOoCSLzY_FlmFsQ-rY",authDomain:"wordla-a0099.firebaseapp.com",projectId:"wordla-a0099",storageBucket:"wordla-a0099.firebasestorage.app",messagingSenderId:"141561526977",appId:"1:141561526977:web:d4d52fc4f92c21a1233240"};
-window.initWordLabFirebase(firebaseConfig,{initializeApp,getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged,getFirestore,doc,getDoc,setDoc,onSnapshot});
+window.initWordLabFirebase(firebaseConfig,{initializeApp,getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged,initializeFirestore,doc,getDoc,setDoc,onSnapshot});
 </script></body></html>
