@@ -4,55 +4,67 @@
 const DATA=[["Compensate","손해·불편을 보상하다","라틴어 compensare: 함께 무게를 달다","We will compensate you for the inconvenience.","불편에 대해 보상하겠습니다."],["Reimburse","이미 지출한 비용을 상환하다","프랑스어 bourse: 돈주머니","We will reimburse the customer for shipping.","고객에게 배송비를 상환하겠습니다."],["Quantify","수치화하다","라틴어 quantus: 얼마나 많은","Can you quantify the potential impact?","잠재적인 영향을 수치화할 수 있나요?"],["Bottleneck","병목 지점","bottle + neck: 병의 좁은 목","The approval step is a bottleneck.","승인 단계가 병목 지점입니다."],["Remediate","문제·결함을 시정하다","라틴어 remedium: 치료법","We need to remediate the defect.","결함을 시정해야 합니다."],["Allocate","자원을 배정하다","라틴어 locare: 배치하다","We need to allocate more resources.","자원을 더 배정해야 합니다."],["Redact","민감한 정보를 가리다","라틴어 redigere: 정리하다","Please redact personal information.","개인정보를 가려 주세요."],["Assess","평가하다","라틴어 assidere: 곁에 앉다","We need to assess the impact.","영향을 평가해야 합니다."],["Anticipate","예상하고 대비하다","라틴어 ante + capere: 앞서 잡다","We anticipate more inquiries.","문의가 늘어날 것으로 예상합니다."],["Corroborate","추가 증거로 뒷받침하다","라틴어 corroborare: 강하게 만들다","The inspection report corroborates the claim.","검사 보고서가 주장을 뒷받침합니다."],["Substantiate","증거로 입증하다","라틴어 substantia: 실체","We need evidence to substantiate the claim.","주장을 입증할 증거가 필요합니다."],["Defer","연기하다","라틴어 differre: 뒤로 옮기다","We may defer the system update.","시스템 업데이트를 연기할 수 있습니다."],["Liaise","연락하고 협의하다","프랑스어 liaison: 연결","I will liaise with the IT team.","IT팀과 연락하여 협의하겠습니다."],["Discrepancy","불일치","라틴어 discrepare: 서로 다르게 울리다","We found a discrepancy in the records.","기록에서 불일치를 발견했습니다."],["Reconcile","기록을 대조하여 일치시키다","라틴어 reconciliare: 다시 화합시키다","We need to reconcile the refund records.","환불 기록을 대조하여 일치시켜야 합니다."],["Mitigate","위험이나 영향을 완화하다","라틴어 mitis: 부드러운","We need to mitigate the risk.","위험을 완화해야 합니다."],["Expedite","처리를 신속하게 진행하다","라틴어 expedire: 장애물을 풀다","Could you expedite the refund?","환불을 신속히 진행해 주시겠습니까?"],["Workaround","임시 우회 해결책","work + around: 우회하여 처리하다","Is there a temporary workaround?","임시 우회 해결책이 있나요?"],["Backlog","밀린 미처리 업무","back + log: 뒤쪽의 큰 통나무","We need to clear the backlog.","밀린 업무를 처리해야 합니다."],["Prioritize","우선순위를 정하다","라틴어 prior: 앞선","We should prioritize safety cases.","안전 관련 케이스를 우선 처리해야 합니다."],["Clarify","명확히 설명하다","라틴어 clarus: 밝고 명확한","Could you clarify the policy?","정책을 명확히 설명해 주시겠습니까?"],["Handover","업무 인수인계","hand + over: 손에서 다른 사람에게 넘기다","Please complete the handover before your leave.","휴가 전에 업무 인계를 완료해 주세요."],["Accountability","결과에 대한 책임·설명 책임","accountable + -ity: 책임지는 상태","We need clear accountability for refund approvals.","환불 승인 책임 소재를 명확히 해야 합니다."],["Ownership","업무를 주도적으로 책임지는 태도","own + -ship: 자신의 것으로 맡는 상태","Who will take ownership of this issue?","누가 이 문제를 책임지고 처리할 예정인가요?"],["Deliverable","제출해야 하는 산출물","deliver + -able: 전달할 수 있는 것","The weekly CS report is our key deliverable.","주간 CS 보고서가 주요 산출물입니다."],["Milestone","프로젝트의 주요 단계","mile + stone: 거리 표시 돌","We reached the first milestone of the rollout.","도입 프로젝트의 첫 주요 단계를 달성했습니다."],["Dependency","선행 조건·의존 관계","라틴어 dependere: 매달리다","The launch has a dependency on IT approval.","출시는 IT 승인이라는 선행 조건에 달려 있습니다."],["Feasibility","실행 가능성","feasible + -ity: 실행 가능한 상태","We need to assess the feasibility of this change.","이 변경의 실행 가능성을 평가해야 합니다."],["Trade-off","상충 조건 간 절충","trade + off: 교환하며 일부를 내주다","There is a trade-off between speed and accuracy.","속도와 정확성 사이에는 절충이 필요합니다."],["Scope","업무·프로젝트 범위","그리스어 skopos: 목표·관찰 대상","Is this request within the project scope?","이 요청이 프로젝트 범위에 포함되나요?"],["Actionable","바로 실행할 수 있는","action + -able: 행동으로 옮길 수 있는","Please provide actionable feedback to the team.","팀에 실행 가능한 피드백을 제공해 주세요."],["Stakeholder","이해관계자","stake(이해관계·지분) + holder(보유자)","We should inform all key stakeholders.","주요 이해관계자 모두에게 알려야 합니다."],["Leverage","자원·강점을 활용하다","lever(지렛대)에서 유래한 leverage","We can leverage the existing CS data.","기존 CS 데이터를 활용할 수 있습니다."],["Rollout","새 서비스·기능의 단계적 출시","roll + out: 밖으로 펼치다","The rollout will begin next Monday.","새 기능 도입은 다음 주 월요일 시작됩니다."],["Constraint","제약 조건","라틴어 constringere: 함께 단단히 묶다","Budget constraints may delay the project.","예산 제약으로 프로젝트가 지연될 수 있습니다."],["Implication","영향·함의","라틴어 implicare: 안으로 접어 넣다·얽히게 하다","What are the implications for customer support?","고객 지원에 어떤 영향이 있나요?"],["Cadence","업무·회의의 정기적인 주기","라틴어 cadere: 떨어지다에서 발전한 리듬","Let's establish a weekly reporting cadence.","주간 보고 주기를 정합시다."],["Bandwidth","업무를 처리할 여력","band + width: 주파수 대역의 폭에서 확장","Our team has limited bandwidth this week.","이번 주에는 팀의 업무 여력이 부족합니다."],["Buy-in","제안에 대한 동의·지지","buy + in: 참여를 위해 지분을 사다에서 확장","We need leadership buy-in before proceeding.","진행하기 전에 리더십의 지지가 필요합니다."],["Touchpoint","고객·팀과의 접점","touch + point: 접촉하는 지점","We should improve every customer touchpoint.","모든 고객 접점을 개선해야 합니다."],["Follow-through","계획을 끝까지 실행하는 것","follow + through: 끝까지 따라가다","Strong follow-through is essential after the meeting.","회의 후 끝까지 실행하는 것이 중요합니다."]];
 const KEY='wordlab_progress_v2';
 
-let firebaseAuth=null,firebaseDb=null,firebaseApi=null,currentUser=null,cloudReady=false,cloudUnsub=null,authEpoch=0;
+let firebaseAuth=null,firebaseDb=null,firebaseApi=null,currentUser=null,cloudReady=false,authEpoch=0;
 const authBtn=document.getElementById('authBtn'),syncStatus=document.getElementById('syncStatus');
 function syncMessage(s,isError=false){syncStatus.textContent=s;syncStatus.classList.toggle('err',isError)}
 function authClick(){
 if(!firebaseAuth||!firebaseApi)return;
 if(currentUser){firebaseApi.signOut(firebaseAuth).catch(e=>syncMessage('로그아웃 오류: '+e.code,true));return}
-firebaseApi.signInWithPopup(firebaseAuth,new firebaseApi.GoogleAuthProvider()).catch(e=>syncMessage('로그인 오류: '+e.code,true));
+firebaseApi.signInWithPopup(firebaseAuth,new firebaseApi.GoogleAuthProvider()).catch(e=>syncMessage('로그인 오류: '+(e.code||e.message),true));
+}
+function errorLabel(e){
+const code=String(e.code||e.message||'unknown').replace('firestore/','');
+if(code.includes('permission-denied'))return '권한 거부: Firestore 규칙 확인 필요';
+if(code.includes('not-found'))return '데이터베이스 ID 확인 필요';
+if(code.includes('unavailable'))return '서버 연결 실패: 네트워크 확인 필요';
+return '클라우드 오류: '+code;
+}
+const pendingKey='wordlab_pending_v1';
+function readPending(){try{return JSON.parse(localStorage.getItem(pendingKey)||'{}')}catch(e){return {}}}
+function pendingSave(k,v){const p=readPending();p[k]=v;try{localStorage.setItem(pendingKey,JSON.stringify(p))}catch(e){}}
+function pendingClear(){try{localStorage.removeItem(pendingKey)}catch(e){}}
+async function pushPending(){
+if(!currentUser||!firebaseDb||!firebaseApi)return;
+const pending=readPending();if(!Object.keys(pending).length)return;
+const ref=firebaseApi.doc(firebaseDb,'users',currentUser.uid,'wordlab','progress');
+await firebaseApi.setDoc(ref,{words:pending},{merge:true});pendingClear();
 }
 function recordProgress(word,value){
-const k=word.toLowerCase();progress[k]=value;save();
+const k=word.toLowerCase();progress[k]=value;save();pendingSave(k,value);
 if(!currentUser||!cloudReady)return;
-const ref=firebaseApi.doc(firebaseDb,'users',currentUser.uid,'wordlab','progress');
 syncMessage('☁ 저장 중…');
-firebaseApi.setDoc(ref,{words:{[k]:value}},{merge:true}).then(()=>syncMessage('☁ 동기화 완료')).catch(e=>syncMessage('클라우드 저장 오류: '+e.code,true));
+pushPending().then(()=>syncMessage('☁ 동기화 완료')).catch(e=>syncMessage(errorLabel(e),true));
 }
-window.connectFirebase=async function(cfg,api){
+async function syncFromCloud(){
+if(!currentUser||!firebaseDb)return;
+const user=currentUser,epoch=authEpoch,ref=firebaseApi.doc(firebaseDb,'users',user.uid,'wordlab','progress');
 try{
-firebaseApi=api;const app=api.initializeApp(cfg);firebaseAuth=api.getAuth(app);
-firebaseDb=api.initializeFirestore(app,{experimentalForceLongPolling:true,useFetchStreams:false},'WORDLD');
-authBtn.disabled=false;authBtn.textContent='Google 로그인';
-api.onAuthStateChanged(firebaseAuth,async user=>{
-const epoch=++authEpoch;
-if(cloudUnsub){cloudUnsub();cloudUnsub=null}
-currentUser=user;cloudReady=false;
-if(!user){authBtn.textContent='Google 로그인';syncMessage('PC에 저장 중');return}
-authBtn.textContent='로그아웃';syncMessage('☁ 연결 중…');
-const ref=api.doc(firebaseDb,'users',user.uid,'wordlab','progress');
-try{
-const snapshot=await api.getDoc(ref);
+syncMessage('☁ 연결 중…');
+const snapshot=await firebaseApi.getDoc(ref);
 if(epoch!==authEpoch)return;
 const remote=snapshot.exists()?(snapshot.data().words||{}):{};
-const local={...progress};
-const missing={};
-for(const [k,v] of Object.entries(local))if(!(k in remote))missing[k]=v;
-progress={...local,...remote};save();
-if(Object.keys(missing).length)await api.setDoc(ref,{words:missing},{merge:true});
+const local={...progress},pending=readPending();
+const missing={};for(const [k,v] of Object.entries(local))if(!(k in remote))missing[k]=v;
+progress={...local,...remote,...pending};save();
+const upload={...missing,...pending};
+if(Object.keys(upload).length){await firebaseApi.setDoc(ref,{words:upload},{merge:true});pendingClear()}
 if(epoch!==authEpoch)return;
 cloudReady=true;syncMessage('☁ 동기화 완료');
 if(mode==='review')tab('review');
-cloudUnsub=api.onSnapshot(ref,s=>{
-if(epoch!==authEpoch||!s.exists())return;
-const remoteWords=s.data().words||{};
-progress={...progress,...remoteWords};save();
-if(mode==='review')tab('review');
-syncMessage('☁ 동기화 완료');
-},e=>syncMessage('동기화 오류: '+e.code,true));
-}catch(e){if(epoch!==authEpoch)return;syncMessage('클라우드 연결 오류: '+(e.code||'unknown'),true);console.error('WordLab cloud:',e)}
+}catch(e){cloudReady=false;syncMessage(errorLabel(e),true);console.error('WordLab cloud sync',e)}
+}
+window.connectFirebase=function(cfg,api){
+try{
+firebaseApi=api;const app=api.initializeApp(cfg);firebaseAuth=api.getAuth(app);
+firebaseDb=api.getFirestore(app,'WORDLD');
+authBtn.disabled=false;authBtn.textContent='Google 로그인';
+api.onAuthStateChanged(firebaseAuth,user=>{
+authEpoch++;currentUser=user;cloudReady=false;
+if(!user){authBtn.textContent='Google 로그인';syncMessage('PC에 저장 중');return}
+authBtn.textContent='로그아웃';syncFromCloud();
 });
-}catch(e){syncMessage('Firebase 초기화 오류: '+(e.code||'unknown'),true);console.error(e)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentUser)syncFromCloud()});
+}catch(e){syncMessage('Firebase 초기화 오류: '+(e.code||e.message),true);console.error(e)}
 };
 let progress={};try{progress=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
 let mode='card',index=0,flipped=false,deck=[],answered=false,score=0,done=0;
@@ -72,7 +84,7 @@ tab('card');
 </script><script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import {initializeFirestore,doc,getDoc,setDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import {getFirestore,doc,getDoc,setDoc} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-lite.js';
 const config={apiKey:"AIzaSyAASI3Hbju_-h6Y2eOoCSLzY_FlmFsQ-rY",authDomain:"wordla-a0099.firebaseapp.com",projectId:"wordla-a0099",storageBucket:"wordla-a0099.firebasestorage.app",messagingSenderId:"141561526977",appId:"1:141561526977:web:d4d52fc4f92c21a1233240"};
-window.connectFirebase(config,{initializeApp,getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged,initializeFirestore,doc,getDoc,setDoc,onSnapshot});
+window.connectFirebase(config,{initializeApp,getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged,getFirestore,doc,getDoc,setDoc});
 </script></body></html>
