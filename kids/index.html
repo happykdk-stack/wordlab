@@ -7,6 +7,8 @@ let level='1-2',mode='card',index=0,flipped=false,deck=[],choices=[],answered=fa
 let auth=null,db=null,fb=null,user=null,cloudReady=false,authVersion=0;
 let rankJoined=false,rankAlias='',rankGrade='1-2',rankRows=[],rankError='',rankTimer=null,quizFinishGrade='1-2',quizFinishScore=0,completionSavedKey='';
 let profiles=[],activeProfile=null,profileEpoch=0,profileSyncReady=false;
+const ADMIN_EMAIL='happykdk@gmail.com';
+const isKidsAdmin=()=>!!user&&user.email===ADMIN_EMAIL&&user.emailVerified===true;
 const app=document.getElementById('app');
 const loginBtn=document.getElementById('loginBtn');
 const cloudStatus=document.getElementById('cloudStatus');
@@ -90,8 +92,15 @@ function scoreDocId(uid,g,name){return uid+'_'+g+'_'+encodeURIComponent(name.tri
 async function refreshKidsRank(){
 if(mode!=='rank')return;
 if(!user||!fb||!db){rankRows=[];rankError='Google 로그인 후 친구 순위를 확인할 수 있어요.';render();return}
-try{const snap=await fb.getDocs(fb.collection(db,'kidsQuizScores'));rankRows=snap.docs.map(d=>d.data()).filter(d=>d.grade===level).sort((a,b)=>(b.correct||0)-(a.correct||0)||(a.updatedAt||0)-(b.updatedAt||0)).slice(0,30);rankError='☁ 순위 데이터 조회 완료 · '+gradeName(level)+' '+rankRows.length+'명'}
+try{const snap=await fb.getDocs(fb.collection(db,'kidsQuizScores'));rankRows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>d.grade===level).sort((a,b)=>(b.correct||0)-(a.correct||0)||(a.updatedAt||0)-(b.updatedAt||0)).slice(0,30);rankError='☁ 순위 데이터 조회 완료 · '+gradeName(level)+' '+rankRows.length+'명'}
 catch(e){rankRows=[];rankError='순위표 권한 설정 필요: '+(e.code||'unknown')}render()
+}
+async function adminDeleteScore(id){
+if(!isKidsAdmin()||!fb||!db){rankError='관리자 계정으로 로그인해야 삭제할 수 있어요.';render();return}
+const entry=rankRows.find(r=>r.id===id);if(!entry)return;
+if(!confirm('['+gradeName(entry.grade)+'] '+entry.name+'의 친구 순위 기록을 삭제할까요? 학습 기록과 복습은 삭제되지 않습니다.'))return;
+try{await fb.deleteDoc(fb.doc(db,'kidsQuizScores',id));rankError='순위 기록을 삭제했습니다.';await refreshKidsRank()}
+catch(e){rankError='삭제 실패: '+(e.code||e.message||'unknown')+' · Firebase 규칙의 관리자 삭제 권한을 확인하세요.';render()}
 }
 async function submitCompletion(){
 if(!activeProfile)return;
@@ -142,7 +151,7 @@ if(mode==='rank'){
 app.innerHTML='<h2>🏆 '+gradeName(level)+' 퀴즈 순위</h2><p class="sub">메인에서 선택한 학년의 최고 정답 수만 비교해요. 퀴즈를 모두 푼 뒤 이름을 등록할 수 있습니다.</p>'+
 '<div class="notice">현재 선택: '+gradeName(level)+' · 총 '+DATA[level].length+'문제</div>'+
 '<p class="sub">'+esc(rankError)+'</p>'+
-(rankRows.length?rankRows.map((r,i)=>'<div class="rankrow"><span><strong>'+((i>0&&Number(rankRows[i-1].correct||0)===Number(r.correct||0))||rankRows.slice(0,i).some(x=>Number(x.correct||0)===Number(r.correct||0))?'공동 ':'')+(1+new Set(rankRows.slice(0,i).filter(x=>Number(x.correct||0)>Number(r.correct||0)).map(x=>Number(x.correct||0))).size)+'위 · '+esc(r.name||'영어 탐험가')+'</strong><div class="sub">'+gradeName(r.grade)+'</div></span><strong>'+Number(r.correct||0)+' / '+Number(r.total||DATA[level].length)+'개</strong></div>').join(''):'<p class="sub">이 학년의 순위 기록이 아직 없어요. 첫 기록을 남겨보세요!</p>');return}
+(rankRows.length?rankRows.map((r,i)=>'<div class="rankrow"><span><strong>'+((i>0&&Number(rankRows[i-1].correct||0)===Number(r.correct||0))||rankRows.slice(0,i).some(x=>Number(x.correct||0)===Number(r.correct||0))?'공동 ':'')+(1+new Set(rankRows.slice(0,i).filter(x=>Number(x.correct||0)>Number(r.correct||0)).map(x=>Number(x.correct||0))).size)+'위 · '+esc(r.name||'영어 탐험가')+'</strong><div class="sub">'+gradeName(r.grade)+'</div></span><div style="display:flex;align-items:center;gap:8px"><strong>'+Number(r.correct||0)+' / '+Number(r.total||DATA[level].length)+'개</strong>'+(isKidsAdmin()?'<button class="secondary" style="padding:7px 9px" data-action="delete-rank" data-entry="'+esc(r.id)+'" aria-label="순위 기록 삭제">🗑 삭제</button>':'')+'</div></div>').join(''):'<p class="sub">이 학년의 순위 기록이 아직 없어요. 첫 기록을 남겨보세요!</p>');return}
 if(mode==='stats'){const s=state(),t=stats(),known=Object.values(s).filter(v=>v==='known').length,missed=Object.values(s).filter(v=>v==='missed').length,pct=t.attempts?Math.round((t.correct||0)/t.attempts*100):0;
 app.innerHTML='<h2>⭐ 나의 영어 성장 기록</h2><div class="stats">'+[['학습 완료',known+'개'],['복습할 단어',missed+'개'],['퀴즈 정답률',pct+'%'],['푼 문제',t.attempts||0]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'</div><div class="notice" style="margin-top:18px">🌟 '+(known>=18?'영어 탐험왕!':known>=10?'멋진 영어 탐험가!':known>=3?'반짝반짝 성장 중!':'오늘 첫 단어부터 시작해요!')+'</div>';return}
 if(mode==='review'&&deck.length){/* review controls shown above cards */}
@@ -177,6 +186,7 @@ app.addEventListener('click',e=>{
 const a=e.target.closest('[data-answer]');if(a){answer(Number(a.dataset.answer));return}
 const b=e.target.closest('[data-action]');if(!b)return;
 switch(b.dataset.action){
+case 'delete-rank':adminDeleteScore(b.dataset.entry);break;
 case 'reset-review':resetReview();break;case 'show-rank':switchTab('rank');break;
 case 'flip':flipped=!flipped;render();break;
 case 'known':mark(true);break;case 'miss':mark(false);break;
