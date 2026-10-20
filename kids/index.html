@@ -411,22 +411,22 @@ sparkle.connect(sg).connect(ctx.destination);sparkle.start(start);sparkle.stop(s
 
 }catch(e){}
 }
-function playMilestoneClaps(count){
+// Real CC0 recorded handclaps from ESC-50 (source: Freesound 25293).
+const REAL_CLAP_URL='https://raw.githubusercontent.com/karolpiczak/ESC-50/master/audio/2-25293-A-22.wav';
+let clapSample=null,clapStopTimer=null;
+function playRealClaps(isMilestone=false){
 try{
-const ctx=getAudioContext();if(!ctx)return;
-const size=Math.ceil(ctx.sampleRate*.09),buffer=ctx.createBuffer(1,size,ctx.sampleRate),data=buffer.getChannelData(0);
-for(let i=0;i<size;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/size,1.5);
-const total=count>=15?12:8;
-for(let i=0;i<total;i++){
-const t=ctx.currentTime+.17+i*.072;
-const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
-source.buffer=buffer;filter.type='bandpass';filter.frequency.value=950+(i%4)*310;filter.Q.value=.8;
-gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.17,t+.008);gain.gain.exponentialRampToValueAtTime(.0001,t+.085);
-source.connect(filter).connect(gain).connect(ctx.destination);source.start(t);source.stop(t+.09);
-}
-
+if(clapStopTimer){clearTimeout(clapStopTimer);clapStopTimer=null}
+if(clapSample){clapSample.pause();clapSample=null}
+const audio=new Audio(REAL_CLAP_URL);
+audio.preload='auto';audio.volume=isMilestone?.9:.85;clapSample=audio;
+const duration=isMilestone?1.6:.85;
+audio.play().then(()=>{
+clapStopTimer=setTimeout(()=>{if(clapSample===audio){audio.pause();clapSample=null}clapStopTimer=null},duration*1000);
+}).catch(()=>{if(clapSample===audio)clapSample=null});
 }catch(e){}
 }
+function playMilestoneClaps(count){playRealClaps(true)}
 function speakAnswerPair(english,korean,context='quiz'){
 if(!('speechSynthesis' in window))return;
 try{
@@ -474,7 +474,7 @@ const board=app.querySelector('.quiz-scoreboard');if(board)board.outerHTML=quizS
 const s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
 const t=stats();t.attempts=(t.attempts||0)+1;t.correct=(t.correct||0)+(ok?1:0);write(statsKey(level),t);sync();
 choices.forEach((c,j)=>{const b=app.querySelector('[data-answer="'+j+'"]');b.disabled=true;if(c[0]===x[0])b.classList.add('right');else if(j===i)b.classList.add('wrong')});
-if(ok){showQuizConfetti();playFanfare();if(combo>=2){showComboPopup(combo);playComboSound(combo);if(combo%5===0)playMilestoneClaps(combo)}}else{quizBeep()}
+if(ok){showQuizConfetti();playFanfare();if(combo>=2){showComboPopup(combo);playComboSound(combo)}if(combo%5===0)playMilestoneClaps(combo);else playRealClaps(false)}else{quizBeep()}
 const feedback=app.querySelector('#feedback');
 if(ok){
 feedback.innerHTML='<div class="notice">정답! ⭐ <b>'+esc(x[0])+'</b> = '+esc(x[1])+'<p>'+esc(x[3])+'</p></div>';
