@@ -24,7 +24,7 @@ function scoreDocId(uid,g,name){return uid+'_'+g+'_'+encodeURIComponent(name.tri
 async function refreshKidsRank(){
 if(mode!=='rank')return;
 if(!user||!fb||!db){rankRows=[];rankError='Google 로그인 후 친구 순위를 확인할 수 있어요.';render();return}
-try{const snap=await fb.getDocs(fb.collection(db,'kidsQuizScores'));rankRows=snap.docs.map(d=>d.data()).filter(d=>d.grade===level).sort((a,b)=>(b.correct||0)-(a.correct||0)||(a.updatedAt||0)-(b.updatedAt||0)).slice(0,30);rankError=''}
+try{const snap=await fb.getDocs(fb.collection(db,'kidsQuizScores'));rankRows=snap.docs.map(d=>d.data()).filter(d=>d.grade===level).sort((a,b)=>(b.correct||0)-(a.correct||0)||(a.updatedAt||0)-(b.updatedAt||0)).slice(0,30);rankError='☁ 순위 데이터 조회 완료 · '+gradeName(level)+' '+rankRows.length+'명'}
 catch(e){rankRows=[];rankError='순위표 권한 설정 필요: '+(e.code||'unknown')}render()
 }
 async function submitQuizScore(){
@@ -119,8 +119,8 @@ window.startKidsFirebase=(config,api)=>{
 try{
 fb=api;const instance=api.initializeApp(config);auth=api.getAuth(instance);db=api.getFirestore(instance);
 api.onAuthStateChanged(auth,async u=>{
-const version=++authVersion;user=u;cloudReady=false;loginBtn.textContent=u?'로그아웃':'Google 로그인';
-if(!u){rankJoined=false;rankRows=[];rankAlias='';status('이 기기에 저장 중');if(mode==='rank')render();return}
+const version=++authVersion;user=u;cloudReady=false;loginBtn.textContent=u?'로그아웃':'Google 로그인';if(u)status('Google 로그인 완료 · 클라우드 확인 중…');
+if(!u){rankJoined=false;rankRows=[];rankAlias='';status('로그인하지 않음 · 이 기기에 저장 중');if(mode==='rank')render();return}
 const rankPref=read('wordlabkids_rank_'+u.uid);rankJoined=!!rankPref.joined;rankAlias=safeAlias(rankPref.alias);rankGrade=rankPref.grade||level;
 status('☁ 연결 중…');
 try{
@@ -137,7 +137,7 @@ cloudReady=true;status('☁ 동기화 완료');
 
 render();if(mode==='rank')refreshKidsRank();
 await api.setDoc(ref,{grades:Object.fromEntries(Object.keys(DATA).map(g=>[g,read(localKey(g))])),statistics:Object.fromEntries(Object.keys(DATA).map(g=>[g,read(statsKey(g))]))},{merge:true});
-}catch(e){status('클라우드 오류: '+(e.code||e.message))}
+}catch(e){status('학습 기록 동기화 오류: '+(e.code||e.message))}
 });
 }catch(e){status('Firebase 초기화 오류: '+e.message)}
 };
