@@ -5,7 +5,7 @@ const DATA={"1-2":[["Apple","사과","🍎","I eat an apple."],["Banana","바나
 const PREFIX='wordlabkids_v1_';
 let level='1-2',mode='card',index=0,flipped=false,deck=[],choices=[],answered=false,score=0;
 let auth=null,db=null,fb=null,user=null,cloudReady=false,authVersion=0;
-let rankJoined=false,rankAlias='',rankRows=[],rankError='',rankTimer=null;
+let rankJoined=false,rankAlias='',rankGrade='1-2',rankRows=[],rankError='',rankTimer=null,rankFilter='all';
 const app=document.getElementById('app');
 const loginBtn=document.getElementById('loginBtn');
 const cloudStatus=document.getElementById('cloudStatus');
@@ -21,9 +21,11 @@ function status(t){cloudStatus.textContent=t}
 function maskMail(email){const p=String(email||'').split('@');if(p.length!==2)return '계정';const n=p[0];const d=p[1].split('.');return n.slice(0,Math.min(2,n.length))+'***@'+d[0].slice(0,1)+'***.'+(d.slice(1).join('.')||'com')}
 function completed(){return Object.keys(DATA).reduce((n,g)=>n+Object.values(read(localKey(g))).filter(v=>v==='known').length,0)}
 function safeAlias(s){return String(s||'').trim().slice(0,12)}
-async function publishKidsRank(){if(!rankJoined||!user||!cloudReady)return;await fb.setDoc(fb.doc(db,'kidsLeaderboard',user.uid),{alias:rankAlias||'영어 탐험가',maskedEmail:maskMail(user.email),known:completed(),updatedAt:Date.now()})}
-async function refreshKidsRank(){if(mode!=='rank')return;if(!user||!cloudReady){rankRows=[];rankError='Google 로그인 및 클라우드 연결 후 사용할 수 있어요.';render();return}try{const snap=await fb.getDocs(fb.collection(db,'kidsLeaderboard'));rankRows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankError=''}catch(e){rankRows=[];rankError='순위표 권한 설정 필요: '+(e.code||'unknown')}render()}
-async function joinKidsRank(){if(!user||!cloudReady){rankError='로그인과 동기화를 먼저 확인해 주세요.';render();return}const input=app.querySelector('#kidAlias');rankAlias=safeAlias(input?.value)||'영어 탐험가';rankJoined=true;try{await publishKidsRank();write('wordlabkids_rank_'+user.uid,{joined:true,alias:rankAlias});await refreshKidsRank()}catch(e){rankJoined=false;rankError='순위 등록 실패: '+(e.code||'unknown');render()}}
+function gradeKnown(g){return Object.values(read(localKey(g))).filter(v=>v==='known').length}
+function gradeName(g){return g==='1-2'?'1~2학년':g==='3-4'?'3~4학년':g==='5-6'?'5~6학년':'학년 미등록'}
+async function publishKidsRank(){if(!rankJoined||!user||!cloudReady)return;await fb.setDoc(fb.doc(db,'kidsLeaderboard',user.uid),{alias:rankAlias||'영어 탐험가',maskedEmail:maskMail(user.email),known:gradeKnown(rankGrade),grade:rankGrade,updatedAt:Date.now()})}
+async function refreshKidsRank(){if(mode!=='rank')return;if(!user||!cloudReady){rankRows=[];rankError='Google 로그인 및 클라우드 연결 후 사용할 수 있어요.';render();return}try{const snap=await fb.getDocs(fb.collection(db,'kidsLeaderboard'));rankRows=snap.docs.map(d=>d.data()).filter(d=>rankFilter==='all'||d.grade===rankFilter).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankError=''}catch(e){rankRows=[];rankError='순위표 권한 설정 필요: '+(e.code||'unknown')}render()}
+async function joinKidsRank(){if(!user||!cloudReady){rankError='로그인과 동기화를 먼저 확인해 주세요.';render();return}const input=app.querySelector('#kidAlias');rankAlias=safeAlias(input?.value)||(rankJoined?rankAlias:'영어 탐험가');rankGrade=app.querySelector('#kidGrade')?.value||rankGrade;rankJoined=true;try{await publishKidsRank();write('wordlabkids_rank_'+user.uid,{joined:true,alias:rankAlias,grade:rankGrade});await refreshKidsRank()}catch(e){rankJoined=false;rankError='순위 등록 실패: '+(e.code||'unknown');render()}}
 async function leaveKidsRank(){if(!user)return;try{await fb.deleteDoc(fb.doc(db,'kidsLeaderboard',user.uid));rankJoined=false;localStorage.removeItem('wordlabkids_rank_'+user.uid);await refreshKidsRank()}catch(e){rankError='참여 취소 실패: '+(e.code||'unknown');render()}}
 function sync(){
 if(!cloudReady||!user||!fb)return;
@@ -45,9 +47,13 @@ if(rankTimer){clearInterval(rankTimer);rankTimer=null}if(m==='rank'){refreshKids
 function progressHeader(){return '<div class="meta"><span>'+esc(level)+'학년</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><span style="width:'+Math.round((index+1)/deck.length*100)+'%"></span></div>'}
 function render(){
 if(mode==='rank'){
-app.innerHTML='<h2>🏆 친구 순위</h2><p class="sub">보호자가 정한 별명과 일부 가린 Google 이메일을 함께 표시합니다. 학습 완료 단어가 많은 순서예요.</p><div class="notice">내 학습 완료: <b>'+completed()+' / 60개</b> · 계정: '+esc(user?maskMail(user.email):'로그인 필요')+'</div>'+
-(rankJoined?'<p>표시 이름: <b>'+esc(rankAlias||'영어 탐험가')+'</b></p><div class="formrow"><input id="kidAlias" maxlength="12" placeholder="새 별명 (선택)"><button data-action="join-rank">이름 변경</button><button class="secondary" data-action="leave-rank">참여 취소</button></div>':'<p class="sub">친구에게 순위를 공개하려면 보호자 동의 후 참여해 주세요.</p><div class="formrow"><input id="kidAlias" maxlength="12" placeholder="별명 (예: 영어탐험가)"><button data-action="join-rank">순위 참여</button></div>')+
-'<p class="sub">'+esc(rankError)+'</p>'+(rankRows.length?rankRows.map((r,i)=>'<div class="rankrow"><span><strong>'+(i+1)+'위 · '+esc(r.alias||'영어 탐험가')+'</strong><div class="sub">'+esc(r.maskedEmail||'비공개')+'</div></span><strong>'+Number(r.known||0)+'개 완료</strong></div>').join(''):'<p class="sub">아직 표시할 순위가 없어요.</p>');return}
+const gradeOptions=Object.keys(DATA).map(g=>'<option value="'+g+'" '+(rankGrade===g?'selected':'')+'>'+gradeName(g)+'</option>').join('');
+const filterOptions='<button class="secondary" data-action="filter-rank" data-grade="all">전체</button>'+Object.keys(DATA).map(g=>'<button class="secondary" data-action="filter-rank" data-grade="'+g+'">'+gradeName(g)+'</button>').join('');
+app.innerHTML='<h2>🏆 친구 순위</h2><p class="sub">학년별 학습 완료 단어 수를 비교해요. 보호자가 정한 별명과 일부 가린 이메일만 표시합니다.</p><div class="notice">내 등록 학년: <b>'+gradeName(rankGrade)+'</b> · 해당 학년 학습 완료: '+gradeKnown(rankGrade)+' / '+DATA[rankGrade].length+'개</div>'+
+'<div class="formrow"><input id="kidAlias" maxlength="12" placeholder="별명" value="'+esc(rankAlias)+'"><select id="kidGrade" style="border:1px solid #ded8f2;border-radius:12px;padding:10px">'+gradeOptions+'</select><button data-action="join-rank">'+(rankJoined?'등록 정보 변경':'순위 참여')+'</button></div>'+
+(rankJoined?'<div class="formrow"><button class="secondary" data-action="leave-rank">순위 참여 취소</button></div>':'<p class="sub">보호자가 동의한 경우에만 참여해 주세요.</p>')+
+'<div class="formrow">'+filterOptions+'</div><p class="sub">'+esc(rankError)+'</p>'+
+(rankRows.length?rankRows.map((r,i)=>'<div class="rankrow"><span><strong>'+(i+1)+'위 · '+esc(r.alias||'영어 탐험가')+'</strong><div class="sub">'+esc(r.maskedEmail||'비공개')+' · '+gradeName(r.grade)+'</div></span><strong>'+Number(r.known||0)+' / 20개</strong></div>').join(''):'<p class="sub">표시할 순위가 없어요.</p>');return}
 if(mode==='stats'){const s=state(),t=stats(),known=Object.values(s).filter(v=>v==='known').length,missed=Object.values(s).filter(v=>v==='missed').length,pct=t.attempts?Math.round((t.correct||0)/t.attempts*100):0;
 app.innerHTML='<h2>⭐ 나의 영어 성장 기록</h2><div class="stats">'+[['학습 완료',known+'개'],['복습할 단어',missed+'개'],['퀴즈 정답률',pct+'%'],['푼 문제',t.attempts||0]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'</div><div class="notice" style="margin-top:18px">🌟 '+(known>=18?'영어 탐험왕!':known>=10?'멋진 영어 탐험가!':known>=3?'반짝반짝 성장 중!':'오늘 첫 단어부터 시작해요!')+'</div>';return}
 if(!deck.length){app.innerHTML='<h2>🎉 복습할 단어가 없어요!</h2><p>다시 공부할 단어를 선택해 보세요.</p>';return}
@@ -76,6 +82,7 @@ app.addEventListener('click',e=>{
 const a=e.target.closest('[data-answer]');if(a){answer(Number(a.dataset.answer));return}
 const b=e.target.closest('[data-action]');if(!b)return;
 switch(b.dataset.action){
+case 'filter-rank':rankFilter=b.dataset.grade||'all';refreshKidsRank();break;
 case 'join-rank':joinKidsRank();break;case 'leave-rank':leaveKidsRank();break;
 case 'flip':flipped=!flipped;render();break;
 case 'known':mark(true);break;case 'miss':mark(false);break;
@@ -97,7 +104,7 @@ fb=api;const instance=api.initializeApp(config);auth=api.getAuth(instance);db=ap
 api.onAuthStateChanged(auth,async u=>{
 const version=++authVersion;user=u;cloudReady=false;loginBtn.textContent=u?'로그아웃':'Google 로그인';
 if(!u){rankJoined=false;rankRows=[];rankAlias='';status('이 기기에 저장 중');if(mode==='rank')render();return}
-const rankPref=read('wordlabkids_rank_'+u.uid);rankJoined=!!rankPref.joined;rankAlias=safeAlias(rankPref.alias);
+const rankPref=read('wordlabkids_rank_'+u.uid);rankJoined=!!rankPref.joined;rankAlias=safeAlias(rankPref.alias);rankGrade=rankPref.grade||level;
 status('☁ 연결 중…');
 try{
 const ref=api.doc(db,'users',u.uid,'wordlab','kids');
@@ -110,7 +117,7 @@ const localStats=read(statsKey(g)),rs=remote.statistics?.[g]||{};
 write(statsKey(g),{attempts:Math.max(localStats.attempts||0,rs.attempts||0),correct:Math.max(localStats.correct||0,rs.correct||0),cardChecks:Math.max(localStats.cardChecks||0,rs.cardChecks||0)});
 }
 cloudReady=true;status('☁ 동기화 완료');
-try{const entry=await api.getDoc(api.doc(db,'kidsLeaderboard',u.uid));if(version!==authVersion)return;if(entry.exists()){rankJoined=true;rankAlias=safeAlias(entry.data().alias);write('wordlabkids_rank_'+u.uid,{joined:true,alias:rankAlias});await publishKidsRank()}}catch(e){console.warn('Kids rank status',e)}
+try{const entry=await api.getDoc(api.doc(db,'kidsLeaderboard',u.uid));if(version!==authVersion)return;if(entry.exists()){rankJoined=true;rankAlias=safeAlias(entry.data().alias);rankGrade=entry.data().grade||rankGrade;write('wordlabkids_rank_'+u.uid,{joined:true,alias:rankAlias,grade:rankGrade});await publishKidsRank()}}catch(e){console.warn('Kids rank status',e)}
 render();if(mode==='rank')refreshKidsRank();
 await api.setDoc(ref,{grades:Object.fromEntries(Object.keys(DATA).map(g=>[g,read(localKey(g))])),statistics:Object.fromEntries(Object.keys(DATA).map(g=>[g,read(statsKey(g))]))},{merge:true});
 }catch(e){status('클라우드 오류: '+(e.code||e.message))}
