@@ -349,6 +349,14 @@ app.innerHTML=progressHeader()+'<div class="flash quiz-prompt"><div class="quiz-
 }
 app.innerHTML=(mode==='review'?'<div class="actions"><button class="secondary" data-action="reset-review">복습 목록 초기화</button></div>':'')+progressHeader()+'<div class="flash" data-action="flip">'+(flipped?'<div class="emoji">'+x[2]+'</div><div class="meaning">'+esc(x[1])+'</div><div class="sentence">'+esc(x[3])+'</div><div class="hint">다시 누르면 영어가 나와요</div>':'<div class="emoji">'+x[2]+'</div><div class="word">'+esc(x[0])+'</div><div class="hint">카드를 눌러 뜻을 확인해요</div>')+'</div><div class="actions speak-actions"><button class="speak-button" data-action="speak">발음 듣기</button></div><div class="card-answer-actions"><button class="danger" data-action="miss">몰라요</button><button class="success" data-action="known">알아요 ✓</button></div><div class="actions"><button class="secondary" data-action="prev" '+(index===0?'disabled':'')+'>← 이전</button>'+(index===deck.length-1?'':'<button class="secondary" data-action="next">다음 →</button>')+'</div>'+(mode==='card'&&index===deck.length-1?'<div class="notice" style="margin-top:12px">마지막 카드입니다! <b>알아요 ✓</b> 또는 <b>다시 공부</b>를 누르면 자동으로 학습 완료 및 순위 저장이 진행됩니다.</div>':'');
 }
+let sharedAudioContext=null;
+function getAudioContext(){
+const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return null;
+try{if(!sharedAudioContext||sharedAudioContext.state==='closed')sharedAudioContext=new Ctx();if(sharedAudioContext.state==='suspended')sharedAudioContext.resume().catch(()=>{});return sharedAudioContext}catch(e){return null}
+}
+document.addEventListener('pointerdown',()=>{getAudioContext()},{passive:true});
+document.addEventListener('touchstart',()=>{getAudioContext()},{passive:true});
+if('speechSynthesis' in window){try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices())}catch(e){}}
 function bestVoice(lang){
 if(!('speechSynthesis' in window))return null;
 const voices=speechSynthesis.getVoices(),prefix=lang.slice(0,2).toLowerCase();
@@ -357,12 +365,11 @@ return matches.find(v=>/Google US English|Microsoft (Aria|Jenny|Guy|Samantha|Sun
 }
 function speakNatural(text,lang='en-US',rate=.94){
 if(!('speechSynthesis' in window))return;
-try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1;const v=bestVoice(lang);if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}
+try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1;u.volume=1;const v=bestVoice(lang);if(v)u.voice=v;u.onerror=()=>{if(!u.voice)return;try{const fallback=new SpeechSynthesisUtterance(text);fallback.lang=lang;fallback.rate=rate;fallback.volume=1;speechSynthesis.speak(fallback)}catch(e){}};speechSynthesis.speak(u)}catch(e){}
 }
 function playFanfare(){
 try{
-const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
-const ctx=new Ctx();if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+const ctx=getAudioContext();if(!ctx)return;
 const notes=[
 {hz:392,start:0,dur:.16},
 {hz:523.25,start:.18,dur:.16},
@@ -382,13 +389,12 @@ gain.gain.exponentialRampToValueAtTime(.0001,t+n.dur);
 osc.connect(gain).connect(ctx.destination);osc.start(t);osc.stop(t+n.dur+.01);
 });
 });
-setTimeout(()=>ctx.close().catch(()=>{}),1400);
+
 }catch(e){}
 }
 function playComboSound(count){
 try{
-const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
-const ctx=new Ctx();if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+const ctx=getAudioContext();if(!ctx)return;
 const notes=count>=10?[523.25,659.25,783.99,1046.5,1318.51]:count>=5?[523.25,659.25,783.99,1046.5]:[659.25,783.99,1046.5];
 const volume=Math.min(.105,.06+count*.004);
 notes.forEach((hz,i)=>{
@@ -402,13 +408,12 @@ const sparkle=ctx.createOscillator(),sg=ctx.createGain(),start=ctx.currentTime+n
 sparkle.type='sine';sparkle.frequency.setValueAtTime(1174.66,start);sparkle.frequency.exponentialRampToValueAtTime(1567.98,start+.14);
 sg.gain.setValueAtTime(.0001,start);sg.gain.exponentialRampToValueAtTime(.04,start+.025);sg.gain.exponentialRampToValueAtTime(.0001,start+.2);
 sparkle.connect(sg).connect(ctx.destination);sparkle.start(start);sparkle.stop(start+.21);
-setTimeout(()=>ctx.close().catch(()=>{}),1400);
+
 }catch(e){}
 }
 function playMilestoneClaps(count){
 try{
-const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
-const ctx=new Ctx();if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+const ctx=getAudioContext();if(!ctx)return;
 const size=Math.ceil(ctx.sampleRate*.09),buffer=ctx.createBuffer(1,size,ctx.sampleRate),data=buffer.getChannelData(0);
 for(let i=0;i<size;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/size,1.5);
 const total=count>=15?12:8;
@@ -419,7 +424,7 @@ source.buffer=buffer;filter.type='bandpass';filter.frequency.value=950+(i%4)*310
 gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.17,t+.008);gain.gain.exponentialRampToValueAtTime(.0001,t+.085);
 source.connect(filter).connect(gain).connect(ctx.destination);source.start(t);source.stop(t+.09);
 }
-setTimeout(()=>ctx.close().catch(()=>{}),1700);
+
 }catch(e){}
 }
 function speakAnswerPair(english,korean,context='quiz'){
@@ -433,8 +438,7 @@ speechSynthesis.speak(en);
 }catch(e){}
 }
 function quizBeep(){
-try{const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return;
-const ctx=new AudioCtx();const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.setValueAtTime(420,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(260,ctx.currentTime+.24);gain.gain.setValueAtTime(.0001,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.12,ctx.currentTime+.025);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.3);osc.connect(gain).connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.31);osc.onended=()=>ctx.close().catch(()=>{})}catch(e){}
+try{const ctx=getAudioContext();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.setValueAtTime(420,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(260,ctx.currentTime+.24);gain.gain.setValueAtTime(.0001,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.12,ctx.currentTime+.025);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.3);osc.connect(gain).connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.31);osc.onended=null}catch(e){}
 }
 function mark(ok){
 if(transitionLocked||index>=deck.length)return;
