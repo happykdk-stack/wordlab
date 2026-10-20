@@ -152,24 +152,33 @@ if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
 if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
 }
 function speakReviewPair(){
-if(!deck[index]||mode!=='review')return;
+if(mode!=='review'||!deck[index])return;
 stopReviewVoice();
-const word=deck[index],token=reviewVoiceToken,auto=reviewAutoPlay;
-const valid=()=>token===reviewVoiceToken&&mode==='review'&&deck[index]===word;
-let phaseTimer=null;
-function clearPhase(){if(phaseTimer!==null){clearTimeout(phaseTimer);phaseTimer=null}}
-function advance(){if(!valid()||!auto)return;clearPhase();reviewAutoTimer=setTimeout(()=>{reviewAutoTimer=null;if(!valid()||!reviewAutoPlay)return;index++;flipped=false;render();if(deck[index])speakReviewPair();else reviewAutoPlay=false},650)}
-function korean(){
-if(!valid())return;clearPhase();
-let finished=false;const finish=()=>{if(finished)return;finished=true;clearPhase();advance()};
-phaseTimer=setTimeout(finish,Math.max(1700,word[1].length*230+800));
-try{const u=new SpeechSynthesisUtterance(word[1]);u.lang='ko-KR';u.rate=.95;u.onend=finish;u.onerror=finish;speechSynthesis.speak(u)}catch(e){finish()}
+const word=deck[index],token=reviewVoiceToken;
+const valid=()=>mode==='review'&&reviewVoiceToken===token&&deck[index]===word;
+let koreanStarted=false;
+const goNext=()=>{
+if(!valid()||!reviewAutoPlay)return;
+index++;flipped=false;render();
+if(deck[index])speakReviewPair();
+else{reviewAutoPlay=false;render()}
+};
+if(reviewAutoPlay){
+const delay=Math.min(9000,Math.max(3900,word[0].length*160+word[1].length*210+1800));
+reviewAutoTimer=setTimeout(()=>{reviewAutoTimer=null;goNext()},delay);
 }
-if(!('speechSynthesis' in window)){if(auto)reviewAutoTimer=setTimeout(advance,1800);return}
-let englishFinished=false;
-const finishEnglish=()=>{if(englishFinished||!valid())return;englishFinished=true;korean()};
-phaseTimer=setTimeout(finishEnglish,Math.max(1900,word[0].length*150+650));
-try{const u=new SpeechSynthesisUtterance(word[0]);u.lang='en-US';u.rate=.9;u.onend=finishEnglish;u.onerror=finishEnglish;speechSynthesis.speak(u)}catch(e){finishEnglish()}
+if(!('speechSynthesis' in window))return;
+const speakKorean=()=>{
+if(koreanStarted||!valid())return;
+koreanStarted=true;
+try{const ko=new SpeechSynthesisUtterance(word[1]);ko.lang='ko-KR';ko.rate=.94;speechSynthesis.speak(ko)}catch(e){}
+};
+try{
+const en=new SpeechSynthesisUtterance(word[0]);en.lang='en-US';en.rate=.9;
+en.onend=speakKorean;en.onerror=speakKorean;
+speechSynthesis.speak(en);
+setTimeout(speakKorean,Math.min(3000,Math.max(1100,word[0].length*140+450)));
+}catch(e){speakKorean()}
 }
 function flipStudyCard(){flipped=!flipped;render();if(mode==='review'&&!reviewAutoPlay)speakReviewPair()}
 function toggleReviewAutoPlay(){
