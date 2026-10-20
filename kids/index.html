@@ -380,14 +380,14 @@ function mark(ok){
 if(transitionLocked||index>=deck.length)return;
 const x=deck[index],s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
 const t=stats();t.cardChecks=(t.cardChecks||0)+1;write(statsKey(level),t);sync();
-if(!ok){
+{
 transitionLocked=true;
 const flash=app.querySelector('.flash');
 if(flash){flash.classList.add('flash-meaning-reveal');flash.innerHTML='<div class="meaning-popup" role="status"><div class="meaning-popup-emoji">'+x[2]+'</div><div class="meaning-popup-word">'+esc(x[0])+'</div><div class="meaning-popup-meaning">'+esc(x[1])+'</div><div class="meaning-popup-sentence">'+esc(x[3])+'</div></div>'}
 speakNatural(x[1],'ko-KR',.94);
 app.querySelectorAll('[data-action="known"],[data-action="miss"],[data-action="next"],[data-action="prev"]').forEach(b=>b.disabled=true);
 transitionTimer=setTimeout(()=>{transitionTimer=null;transitionLocked=false;index++;flipped=false;render()},1700);
-}else{index++;flipped=false;render()}
+}
 }
 function showQuizConfetti(){
 const stage=app.querySelector('.quiz-prompt');if(!stage)return;
