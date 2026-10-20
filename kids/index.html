@@ -1,16 +1,20 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WordLab Kids | 그림 영어 놀이터</title><style>
 :root{font-family:system-ui,'Malgun Gothic',sans-serif;color:#24324e;background:#f7f6ff}*{box-sizing:border-box}body{margin:0}.wrap{max-width:730px;margin:auto;padding:20px 14px 60px}header{display:flex;align-items:center;justify-content:space-between;gap:10px}h1{margin:0;font-size:29px;color:#5b49b8}h2{font-size:21px}.sub{color:#7b7b99;font-size:13px}.chip{background:#e9e3ff;color:#5545b0;border-radius:40px;padding:8px 12px;font-weight:700;font-size:12px}.grades,.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.grades button,.tabs button{flex:1;min-width:95px}button{border:0;background:#7865dc;color:white;border-radius:14px;padding:12px 13px;font-weight:700;font-size:14px;cursor:pointer}button:disabled{opacity:.4}.grades button,.tabs button{background:#eae6fc;color:#6051a4}.grades button.active,.tabs button.active{background:#7865dc;color:white}.panel{background:white;border:1px solid #eeeafa;border-radius:23px;padding:21px;box-shadow:0 10px 30px #4433980b}.meta{display:flex;justify-content:space-between;color:#777894;font-size:13px;margin-bottom:12px}.bar{height:9px;border-radius:30px;background:#eeeafb;overflow:hidden;margin-bottom:15px}.bar span{display:block;height:100%;background:#63c7ac}.flash{min-height:300px;background:linear-gradient(135deg,#f9f3ff,#eaf7ff);border:2px solid #e7e0fb;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;cursor:pointer;gap:11px}.emoji{font-size:92px;line-height:1.25}.word{font-size:36px;font-weight:850;color:#4c43a0}.meaning{font-size:26px;font-weight:750}.hint{font-size:13px;color:#8585a4}.sentence{font-size:16px}.actions button{flex:1}.secondary{background:#eae6fc;color:#5546a4}.success{background:#25a880}.danger{background:#e97989}.choice{display:block;width:100%;background:#f1effb;color:#342f62;text-align:left;margin:9px 0}.choice.right{background:#d6f5e8}.choice.wrong{background:#ffe1e5}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{background:#f2effe;border-radius:16px;padding:16px}.stat b{display:block;font-size:29px;margin-top:6px}.stat small{color:#777894}.notice{background:#f2effe;border-radius:14px;padding:13px;color:#5c5585;font-size:13px;line-height:1.6}.rankrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 2px;border-bottom:1px solid #eeeafa}.rankrow:last-child{border-bottom:0}.rankrow strong{font-size:14px}.formrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.formrow input{min-width:120px;flex:1;border:1px solid #ded8f2;border-radius:12px;padding:12px;font:inherit}.formrow button{flex:0 0 auto}.footer{text-align:center;color:#8b8ba4;font-size:12px;margin-top:18px}@media(max-width:480px){h1{font-size:25px}.panel{padding:14px}.flash{min-height:265px}.emoji{font-size:75px}.word{font-size:30px}}
-</style></head><body><div class="wrap"><header><div><h1>🌈 WordLab Kids</h1><div class="sub">그림으로 배우는 신나는 영어!</div></div><div style="display:flex;flex-direction:column;gap:6px;align-items:end"><div class="chip" id="count">60 WORDS</div><button id="loginBtn" class="secondary" type="button">Google 로그인</button><span id="cloudStatus" class="sub">이 기기에 저장 중</span></div></header><div class="grades"><button id="g1-2" onclick="setGrade('1-2')">🌱 1~2학년</button><button id="g3-4" onclick="grade('3-4')">🌼 3~4학년</button><button id="g5-6" onclick="grade('5-6')">🚀 5~6학년</button></div><div class="tabs"><button id="tcard" data-tab="card">🃏 낱말카드</button><button id="tquiz" data-tab="quiz">🎯 퀴즈</button><button id="treview" data-tab="review">🔁 다시 복습</button><button id="tstats" data-tab="stats">⭐ 내 통계</button><button id="trank" data-tab="rank">🏆 친구 순위</button></div><main id="app" class="panel"></main><div class="footer">로그인 시 학습 기록을 동기화할 수 있습니다. 친구 순위 참여는 선택 사항입니다.</div></div><script>
+</style></head><body><div class="wrap"><header><div><h1>🌈 WordLab Kids</h1><div class="sub">그림으로 배우는 신나는 영어!</div></div><div style="display:flex;flex-direction:column;gap:6px;align-items:end"><div class="chip" id="count">60 WORDS</div><button id="loginBtn" class="secondary" type="button">Google 로그인</button><span id="cloudStatus" class="sub">이 기기에 저장 중</span></div></header><div id="profileBar" class="notice" style="margin-top:15px"></div><div class="grades"><button id="g1-2" onclick="setGrade('1-2')">🌱 1~2학년</button><button id="g3-4" onclick="grade('3-4')">🌼 3~4학년</button><button id="g5-6" onclick="grade('5-6')">🚀 5~6학년</button></div><div class="tabs"><button id="tcard" data-tab="card">🃏 낱말카드</button><button id="tquiz" data-tab="quiz">🎯 퀴즈</button><button id="treview" data-tab="review">🔁 다시 복습</button><button id="tstats" data-tab="stats">⭐ 내 통계</button><button id="trank" data-tab="rank">🏆 친구 순위</button></div><main id="app" class="panel"></main><div class="footer">로그인 시 학습 기록을 동기화할 수 있습니다. 친구 순위 참여는 선택 사항입니다.</div></div><script>
 const DATA={"1-2":[["Apple","사과","🍎","I eat an apple."],["Banana","바나나","🍌","I like bananas."],["Cat","고양이","🐱","The cat is cute."],["Dog","강아지","🐶","The dog runs."],["Bird","새","🐦","A bird can fly."],["Fish","물고기","🐟","I see a fish."],["Sun","태양","☀️","The sun is bright."],["Moon","달","🌙","Look at the moon."],["Star","별","⭐","I see a star."],["Book","책","📚","This is my book."],["Pencil","연필","✏️","I have a pencil."],["School","학교","🏫","I go to school."],["House","집","🏠","This is my house."],["Car","자동차","🚗","The car is red."],["Bus","버스","🚌","I take the bus."],["Flower","꽃","🌸","The flower is pink."],["Tree","나무","🌳","The tree is tall."],["Milk","우유","🥛","I drink milk."],["Bread","빵","🍞","I eat bread."],["Ball","공","⚽","Kick the ball."]],"3-4":[["Weather","날씨","🌤️","The weather is nice."],["Rainbow","무지개","🌈","I see a rainbow."],["Mountain","산","⛰️","We climb the mountain."],["River","강","🏞️","The river is long."],["Library","도서관","📖","I read at the library."],["Hospital","병원","🏥","The hospital is near."],["Bicycle","자전거","🚲","I ride my bicycle."],["Breakfast","아침 식사","🥣","I eat breakfast early."],["Vegetable","채소","🥕","Vegetables are healthy."],["Adventure","모험","🧭","We go on an adventure."],["Friendship","우정","🤝","Friendship is important."],["Excited","신이 난","🎉","I am excited today."],["Careful","조심하는","⚠️","Be careful on the stairs."],["Quiet","조용한","🤫","Please be quiet."],["Different","다른","🧩","We have different ideas."],["Together","함께","👫","Let's work together."],["Practice","연습하다","🎯","I practice English."],["Explore","탐험하다","🔭","We explore the forest."],["Describe","묘사하다","🖼️","Describe your favorite animal."],["Compare","비교하다","⚖️","Compare the two pictures."]],"5-6":[["Environment","환경","🌍","We should protect the environment."],["Pollution","오염","🏭","Pollution harms animals."],["Recycle","재활용하다","♻️","We recycle paper."],["Energy","에너지","⚡","Solar panels produce energy."],["Discover","발견하다","🔎","Scientists discover new things."],["Experiment","실험","🧪","We did a science experiment."],["Evidence","증거","🕵️","Look for evidence."],["Solution","해결책","💡","We found a solution."],["Challenge","도전","🧗","This challenge is difficult."],["Opportunity","기회","🚪","This is a great opportunity."],["Responsibility","책임","🎒","Taking care of pets is a responsibility."],["Cooperate","협력하다","🤝","We cooperate on the project."],["Communicate","소통하다","💬","We communicate clearly."],["Creative","창의적인","🎨","She has a creative idea."],["Confident","자신감 있는","🦁","I feel confident today."],["Curious","호기심 많은","🔍","Curious students ask questions."],["Improve","향상시키다","📈","I want to improve my English."],["Organize","정리하다","🗂️","Let's organize our notes."],["Predict","예측하다","🔮","Can you predict the weather?"],["Achievement","성취","🏆","Finishing the book is an achievement."]]};
 const PREFIX='wordlabkids_v1_';
 let level='1-2',mode='card',index=0,flipped=false,deck=[],choices=[],answered=false,score=0;
 let auth=null,db=null,fb=null,user=null,cloudReady=false,authVersion=0;
 let rankJoined=false,rankAlias='',rankGrade='1-2',rankRows=[],rankError='',rankTimer=null,quizFinishGrade='1-2',quizFinishScore=0;
+let profiles=[],activeProfile=null,profileEpoch=0,profileSyncReady=false;
 const app=document.getElementById('app');
 const loginBtn=document.getElementById('loginBtn');
 const cloudStatus=document.getElementById('cloudStatus');
-const localKey=g=>PREFIX+g;
-const statsKey=g=>PREFIX+'stats_'+g;
+const legacyKey=g=>PREFIX+g;
+const legacyStatsKey=g=>PREFIX+'stats_'+g;
+const profilePrefix=()=>PREFIX+'profile_'+(user?user.uid:'local')+'_'+(activeProfile?activeProfile.id:'none')+'_';
+const localKey=g=>profilePrefix()+g;
+const statsKey=g=>profilePrefix()+'stats_'+g;
 function read(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return {}}}
 function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function state(){return read(localKey(level))}
@@ -20,6 +24,59 @@ function shuffle(a){const out=[...a];for(let i=out.length-1;i>0;i--){const j=Mat
 function status(t){cloudStatus.textContent=t}
 function gradeName(g){return g==='1-2'?'1~2학년':g==='3-4'?'3~4학년':g==='5-6'?'5~6학년':'학년 미등록'}
 function gradeKnown(g){return Object.values(read(localKey(g))).filter(v=>v==='known').length}
+function profileListKey(){return PREFIX+'profiles_'+(user?user.uid:'local')}
+function saveProfiles(){write(profileListKey(),profiles)}
+function renderProfileBar(){
+const el=document.getElementById('profileBar');
+el.innerHTML='<strong>👧 누가 공부할까요?</strong><div class="formrow">'+profiles.map(p=>'<button class="'+(activeProfile&&p.id===activeProfile.id?'':'secondary')+'" data-profile="'+esc(p.id)+'">'+esc(p.name)+'</button>').join('')+'</div>'+
+'<div class="formrow"><input id="newProfileName" maxlength="12" placeholder="아이 이름 또는 별명"><button id="addProfile">+ 프로필 추가</button></div>'+
+'<p class="sub">'+(activeProfile?'현재 학습자: '+esc(activeProfile.name)+' · 오답과 통계는 이 아이의 기록만 표시됩니다.':'아이 프로필을 선택하거나 추가해 주세요.')+'</p>';
+el.querySelectorAll('[data-profile]').forEach(b=>b.addEventListener('click',()=>chooseProfile(b.dataset.profile)));
+el.querySelector('#addProfile').addEventListener('click',addProfile);
+}
+async function addProfile(){
+const name=document.getElementById('newProfileName').value.trim();
+if(!name||name.length>12){alert('이름을 1~12글자로 입력해 주세요.');return}
+const id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+profiles.push({id,name});saveProfiles();await saveProfileListCloud();await chooseProfile(id);
+}
+async function saveProfileListCloud(){
+if(!user||!fb||!db)return;
+try{await fb.setDoc(fb.doc(db,'users',user.uid,'wordlab','kidsProfiles'),{profiles},{merge:true})}catch(e){status('프로필 목록 저장 오류: '+(e.code||e.message))}
+}
+async function chooseProfile(id){
+const p=profiles.find(x=>x.id===id);if(!p)return;
+const version=++profileEpoch;activeProfile=p;profileSyncReady=false;
+try{localStorage.setItem(PREFIX+'active_'+(user?user.uid:'local'),id)}catch(e){}
+renderProfileBar();switchTab('card');
+if(!user||!fb||!db){profileSyncReady=true;return}
+status('☁ '+p.name+' 기록 불러오는 중…');
+try{
+const snap=await fb.getDoc(fb.doc(db,'users',user.uid,'wordlab','kidsProfile_'+id));
+if(version!==profileEpoch)return;
+const remote=snap.exists()?snap.data():{};
+for(const g of Object.keys(DATA)){
+const local=read(localKey(g));const remoteWords=remote.grades?.[g]||{};
+write(localKey(g),{...remoteWords,...local});
+const t=read(statsKey(g)),rt=remote.statistics?.[g]||{};
+write(statsKey(g),{attempts:Math.max(t.attempts||0,rt.attempts||0),correct:Math.max(t.correct||0,rt.correct||0),cardChecks:Math.max(t.cardChecks||0,rt.cardChecks||0)});
+}
+profileSyncReady=true;status('☁ '+p.name+' 기록 준비 완료');switchTab('card');
+}catch(e){profileSyncReady=true;status('기기 저장 모드 · '+(e.code||e.message));switchTab('card')}
+}
+async function loadProfiles(){
+const version=++profileEpoch;const local=read(profileListKey());profiles=Array.isArray(local)?local:[];
+if(user&&fb&&db){
+try{const snap=await fb.getDoc(fb.doc(db,'users',user.uid,'wordlab','kidsProfiles'));if(version!==profileEpoch)return;
+const remote=snap.exists()?snap.data().profiles||[]:[];
+profiles=[...remote,...profiles.filter(p=>!remote.some(r=>r.id===p.id))];saveProfiles();
+}catch(e){status('프로필 목록 동기화 오류: '+(e.code||e.message))}
+}
+const preferred=localStorage.getItem(PREFIX+'active_'+(user?user.uid:'local'));
+renderProfileBar();
+if(profiles.length)await chooseProfile(profiles.some(p=>p.id===preferred)?preferred:profiles[0].id);
+else{activeProfile=null;profileSyncReady=false;switchTab('card')}
+}
 function scoreDocId(uid,g,name){return uid+'_'+g+'_'+encodeURIComponent(name.trim().toLowerCase())}
 async function refreshKidsRank(){
 if(mode!=='rank')return;
@@ -42,10 +99,12 @@ const msg=app.querySelector('#submitMessage');if(msg)msg.textContent=(best>quizF
 }catch(e){const msg=app.querySelector('#submitMessage');if(msg)msg.textContent='순위 등록 실패: '+(e.code||e.message||'unknown')+' · Firebase 규칙과 로그인 상태를 확인해 주세요.';if(btn)btn.disabled=false}
 }
 function sync(){
-if(!cloudReady||!user||!fb)return;
-const doc=fb.doc(db,'users',user.uid,'wordlab','kids');
-status('☁ 저장 중…');
-fb.setDoc(doc,{grades:{[level]:state()},statistics:{[level]:stats()}},{merge:true}).then(()=>status('☁ 동기화 완료')).catch(e=>status('저장 오류: '+e.code));
+if(!activeProfile)return;
+if(!user||!fb||!db||!profileSyncReady)return;
+const uid=user.uid,id=activeProfile.id,g=level,words=state(),statistics=stats();
+const ref=fb.doc(db,'users',uid,'wordlab','kidsProfile_'+id);
+status('☁ '+activeProfile.name+' 저장 중…');
+fb.setDoc(ref,{grades:{[g]:words},statistics:{[g]:statistics}},{merge:true}).then(()=>status('☁ 학습 기록 저장 완료')).catch(e=>status('기기 저장됨 · 클라우드 오류: '+(e.code||e.message)));
 }
 function setGrade(g){
 if(!DATA[g])return;
@@ -60,6 +119,7 @@ if(rankTimer){clearInterval(rankTimer);rankTimer=null}if(m==='rank'){refreshKids
 }
 function progressHeader(){return '<div class="meta"><span>'+esc(level)+'학년</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><span style="width:'+Math.round((index+1)/deck.length*100)+'%"></span></div>'}
 function render(){
+if(!activeProfile){app.innerHTML='<h2>🌈 학습자를 선택해 주세요</h2><p>위에서 아이 이름을 추가하거나 선택하면 낱말카드와 복습이 시작됩니다.</p>';return}
 if(mode==='rank'){
 app.innerHTML='<h2>🏆 '+gradeName(level)+' 퀴즈 순위</h2><p class="sub">메인에서 선택한 학년의 최고 정답 수만 비교해요. 퀴즈를 모두 푼 뒤 이름을 등록할 수 있습니다.</p>'+
 '<div class="notice">현재 선택: '+gradeName(level)+' · 총 '+DATA[level].length+'문제</div>'+
@@ -119,29 +179,15 @@ window.startKidsFirebase=(config,api)=>{
 try{
 fb=api;const instance=api.initializeApp(config);auth=api.getAuth(instance);db=api.getFirestore(instance);
 api.onAuthStateChanged(auth,async u=>{
-const version=++authVersion;user=u;cloudReady=false;loginBtn.textContent=u?'로그아웃':'Google 로그인';if(u)status('Google 로그인 완료 · 클라우드 확인 중…');
-if(!u){rankJoined=false;rankRows=[];rankAlias='';status('로그인하지 않음 · 이 기기에 저장 중');if(mode==='rank')render();return}
-const rankPref=read('wordlabkids_rank_'+u.uid);rankJoined=!!rankPref.joined;rankAlias=safeAlias(rankPref.alias);rankGrade=rankPref.grade||level;
-status('☁ 연결 중…');
-try{
-const ref=api.doc(db,'users',u.uid,'wordlab','kids');
-const snap=await api.getDoc(ref);if(version!==authVersion)return;
-const remote=snap.exists()?snap.data():{};
-for(const g of Object.keys(DATA)){
-const merged={...read(localKey(g)),...(remote.grades?.[g]||{})};
-write(localKey(g),merged);
-const localStats=read(statsKey(g)),rs=remote.statistics?.[g]||{};
-write(statsKey(g),{attempts:Math.max(localStats.attempts||0,rs.attempts||0),correct:Math.max(localStats.correct||0,rs.correct||0),cardChecks:Math.max(localStats.cardChecks||0,rs.cardChecks||0)});
-}
-cloudReady=true;status('☁ 동기화 완료');
+++authVersion;user=u;cloudReady=!!u;activeProfile=null;profileSyncReady=false;
+loginBtn.textContent=u?'로그아웃':'Google 로그인';
+status(u?'Google 로그인 완료 · 자녀 프로필 불러오는 중…':'이 기기에 저장 중');
+await loadProfiles();
 
-render();if(mode==='rank')refreshKidsRank();
-await api.setDoc(ref,{grades:Object.fromEntries(Object.keys(DATA).map(g=>[g,read(localKey(g))])),statistics:Object.fromEntries(Object.keys(DATA).map(g=>[g,read(statsKey(g))]))},{merge:true});
-}catch(e){status('학습 기록 동기화 오류: '+(e.code||e.message))}
 });
 }catch(e){status('Firebase 초기화 오류: '+e.message)}
 };
-setGrade('1-2');
+setGrade('1-2');loadProfiles();
 </script><script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
