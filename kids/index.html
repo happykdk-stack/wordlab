@@ -357,20 +357,39 @@ function speakNatural(text,lang='en-US',rate=.94){
 if(!('speechSynthesis' in window))return;
 try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1;const v=bestVoice(lang);if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}
 }
-function playSuccessChime(){
+function playApplause(isCombo=false){
 try{
-const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return;
-const ctx=new AudioCtx();
-const notes=[{hz:523.25,start:0,dur:.13},{hz:659.25,start:.105,dur:.14},{hz:783.99,start:.21,dur:.22}];
-notes.forEach(n=>{
-const osc=ctx.createOscillator(),gain=ctx.createGain();
-osc.type='sine';osc.frequency.setValueAtTime(n.hz,ctx.currentTime+n.start);
-gain.gain.setValueAtTime(.0001,ctx.currentTime+n.start);
-gain.gain.exponentialRampToValueAtTime(.095,ctx.currentTime+n.start+.018);
-gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+n.start+n.dur);
-osc.connect(gain).connect(ctx.destination);osc.start(ctx.currentTime+n.start);osc.stop(ctx.currentTime+n.start+n.dur+.01);
+const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+const ctx=new Ctx();if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+const length=isCombo?.95:.55;
+const buffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.065),ctx.sampleRate);
+const data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,1.8);
+const count=isCombo?17:9;
+for(let i=0;i<count;i++){
+const t=ctx.currentTime+.035+i*(length/count)+(Math.random()*.022);
+const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+src.buffer=buffer;filter.type='bandpass';filter.frequency.value=1050+Math.random()*1700;filter.Q.value=.7;
+gain.gain.value=isCombo?.18:.13;
+src.connect(filter).connect(gain).connect(ctx.destination);src.start(t);src.stop(t+.064);
+}
+if(isCombo){
+[523.25,659.25,783.99,1046.5].forEach((hz,i)=>{
+const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*.105;
+o.type='triangle';o.frequency.value=hz;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.055,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.19);
+o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+.2);
 });
-setTimeout(()=>ctx.close().catch(()=>{}),900);
+}
+setTimeout(()=>ctx.close().catch(()=>{}),1800);
+}catch(e){}
+}
+function speakAnswerPair(english,korean){
+if(!('speechSynthesis' in window))return;
+try{
+speechSynthesis.cancel();
+const en=new SpeechSynthesisUtterance(english);en.lang='en-US';en.rate=.91;const ev=bestVoice('en-US');if(ev)en.voice=ev;
+const ko=new SpeechSynthesisUtterance(korean);ko.lang='ko-KR';ko.rate=.94;const kv=bestVoice('ko-KR');if(kv)ko.voice=kv;
+en.onend=()=>{if(mode==='quiz'&&answered)speechSynthesis.speak(ko)};
+speechSynthesis.speak(en);
 }catch(e){}
 }
 function quizBeep(){
@@ -411,16 +430,16 @@ const board=app.querySelector('.quiz-scoreboard');if(board)board.outerHTML=quizS
 const s=state();s[x[0]]=ok?'known':'missed';write(localKey(level),s);
 const t=stats();t.attempts=(t.attempts||0)+1;t.correct=(t.correct||0)+(ok?1:0);write(statsKey(level),t);sync();
 choices.forEach((c,j)=>{const b=app.querySelector('[data-answer="'+j+'"]');b.disabled=true;if(c[0]===x[0])b.classList.add('right');else if(j===i)b.classList.add('wrong')});
-if(ok){showQuizConfetti();playSuccessChime();if(combo>=2)showComboPopup(combo)}else{quizBeep()}
+if(ok){showQuizConfetti();playApplause(combo>=2);if(combo>=2)showComboPopup(combo)}else{quizBeep()}
 const feedback=app.querySelector('#feedback');
 if(ok){
 feedback.innerHTML='<div class="notice">정답! ⭐ <b>'+esc(x[0])+'</b> = '+esc(x[1])+'<p>'+esc(x[3])+'</p></div>';
 }else{
-feedback.innerHTML='<div class="quiz-correction-overlay" role="dialog" aria-label="틀린 문제 정답 확인"><div class="quiz-correction quiz-correction-modal"><div class="quiz-wrong-title">땡! ❌</div><div class="quiz-correction-label">정답을 다시 공부해요</div><div class="quiz-correction-word">'+esc(x[0])+'</div><div class="quiz-correction-meaning">'+esc(x[1])+'</div><div class="quiz-correction-example">'+esc(x[3])+'</div><div class="quiz-correction-tip">🔊 단어 발음 듣기</div></div></div>';
+feedback.innerHTML='<div class="quiz-correction-overlay" role="dialog" aria-label="틀린 문제 정답 확인"><div class="quiz-correction quiz-correction-modal"><div class="quiz-wrong-title">땡! ❌</div><div class="quiz-correction-label">정답을 다시 공부해요</div><div class="quiz-correction-word">'+esc(x[0])+'</div><div class="quiz-correction-meaning">'+esc(x[1])+'</div><div class="quiz-correction-example">'+esc(x[3])+'</div><div class="quiz-correction-tip">🔊 영어 단어와 한글 뜻을 차례로 읽어요</div></div></div>';
 const prompt=app.querySelector('.quiz-prompt');if(prompt)prompt.classList.add('quiz-show-correction');
-setTimeout(()=>{if(mode==='quiz'&&answered&&deck[index]&&deck[index][0]===x[0])speakNatural(x[0],'en-US',.94)},350);
+speakAnswerPair(x[0],x[1]);
 }
-transitionTimer=setTimeout(()=>{transitionTimer=null;index++;choices=[];answered=false;render()},ok?1700:3000);
+transitionTimer=setTimeout(()=>{transitionTimer=null;index++;choices=[];answered=false;render()},ok?1700:4000);
 }
 document.querySelectorAll('.grades button').forEach(b=>b.addEventListener('click',()=>setGrade(b.id.slice(1))));
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
