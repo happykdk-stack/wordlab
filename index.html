@@ -56,34 +56,13 @@ if(mode==='review')tab('review');
 window.connectFirebase=function(cfg,api){
 try{
 firebaseApi=api;const app=api.initializeApp(cfg);firebaseAuth=api.getAuth(app);
+firebaseDb=api.getFirestore(app);
 authBtn.disabled=false;authBtn.textContent='Google 로그인';
-api.onAuthStateChanged(firebaseAuth,async user=>{
-const epoch=++authEpoch;currentUser=user;cloudReady=false;
+api.onAuthStateChanged(firebaseAuth,user=>{
+authEpoch++;currentUser=user;cloudReady=false;
+const detail=document.getElementById('dbDiagnostics');if(detail){detail.hidden=true;detail.textContent=''}
 if(!user){authBtn.textContent='Google 로그인';syncMessage('PC에 저장 중');return}
-authBtn.textContent='로그아웃';
-syncMessage('☁ 데이터베이스 연결 확인 중…');
-const candidates=['(default)','wordld','wordla'];
-let problems=[];
-for(const name of candidates){
-if(epoch!==authEpoch)return;
-try{
-const db=api.getFirestore(app,name);
-const ref=api.doc(db,'users',user.uid,'wordlab','progress');
-await api.getDoc(ref);
-if(epoch!==authEpoch)return;
-firebaseDb=db;
-syncMessage('☁ '+name+' 연결 확인');
-await syncFromCloud();
-return;
-}catch(e){
-problems.push(name+': '+(e.code||e.message||'unknown'));
-console.warn('WordLab database check',name,e);
-}
-}
-if(epoch!==authEpoch)return;
-syncMessage('데이터베이스 연결 실패 · 확인 필요',true);
-const detail=document.getElementById('dbDiagnostics');
-if(detail){detail.hidden=false;detail.textContent='연결 시도 결과: '+problems.join(' | ')}
+authBtn.textContent='로그아웃';syncFromCloud();
 });
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentUser)syncFromCloud()});
 }catch(e){syncMessage('Firebase 초기화 오류: '+(e.code||e.message),true);console.error(e)}
