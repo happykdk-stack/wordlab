@@ -324,7 +324,7 @@ level=g;document.querySelectorAll('.grades button').forEach(b=>b.classList.toggl
 }
 function switchTab(m){
 cancelTransition();mode=m;index=0;flipped=false;choices=[];answered=false;score=0;combo=0;maxCombo=0;completionSavedKey='';
-deck=m==='review'?DATA[level].filter(x=>state()[x[0]]==='missed'):m==='quiz'?shuffle(DATA[level]).slice(0,30):DATA[level];
+deck=m==='review'?DATA[level].filter(x=>state()[x[0]]==='missed'):m==='quiz'?shuffle(DATA[level]).slice(0,30):m==='card'?shuffle(DATA[level]):DATA[level];
 document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===m));
 render();
 if(rankTimer){clearInterval(rankTimer);rankTimer=null}if(m==='rank'){rankComments=[];commentError='';refreshKidsRank();rankTimer=setInterval(()=>{if(mode==='rank')refreshKidsRank()},30000)}
