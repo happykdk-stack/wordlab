@@ -170,6 +170,7 @@ if(!('speechSynthesis' in window))return;
 const speakKorean=()=>{
 if(koreanStarted||!valid())return;
 koreanStarted=true;
+flipped=true;render();
 try{const ko=new SpeechSynthesisUtterance(word[1]);ko.lang='ko-KR';ko.rate=.94;speechSynthesis.speak(ko)}catch(e){}
 };
 try{
