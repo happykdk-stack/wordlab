@@ -39,7 +39,7 @@ function levelName(n){return n>=45?'마스터':n>=30?'전문가':n>=15?'숙련�
 function statNumbers(){const values=Object.values(progress);return {known:values.filter(x=>x==='known').length,missed:values.filter(x=>x==='missed').length,attempts:metrics.attempts,correct:metrics.correct}}
 function scoreValue(){return statNumbers().known}
 function maskedEmail(email){const p=String(email||'').split('@');if(p.length!==2)return '학습자';return p[0].slice(0,p[0].length>3?2:1)+'***@'+p[1]}
-function safeRankLabel(entry){const label=String(entry.nickname||'');return /^[^@\\s]+\\*{3}@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/.test(label)?label:'기존 사용자 (재로그인 필요)'}
+function safeRankLabel(entry){const label=String(entry.nickname||'');return label.includes('***@')&&label.indexOf('@')>0?label:'기존 사용자 (재로그인 필요)'}
 
 function renderStats(){
 const n=statNumbers(),pct=n.attempts?Math.round(n.correct/n.attempts*100):0;
