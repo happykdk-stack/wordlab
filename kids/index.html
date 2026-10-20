@@ -362,7 +362,7 @@ const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return null;
 try{if(!sharedAudioContext||sharedAudioContext.state==='closed')sharedAudioContext=new Ctx();if(sharedAudioContext.state==='suspended')sharedAudioContext.resume().catch(()=>{});return sharedAudioContext}catch(e){return null}
 }
 function unlockQuizAudio(){const ctx=getAudioContext();if(!ctx)return;try{const o=ctx.createOscillator(),g=ctx.createGain();g.gain.value=0;o.connect(g).connect(ctx.destination);o.start();o.stop(ctx.currentTime+.01)}catch(e){}}
-document.addEventListener('pointerdown',unlockQuizAudio,{passive:true});
+document.addEventListener('pointerdown',()=>{unlockQuizAudio();if(!iosFanfareAudio){iosFanfareAudio=new Audio('./success-fanfare.wav');iosFanfareAudio.preload='auto';iosFanfareAudio.load()}},{passive:true});
 document.addEventListener('touchstart',unlockQuizAudio,{passive:true});
 if('speechSynthesis' in window){try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices())}catch(e){}}
 function bestVoice(lang){
@@ -386,7 +386,7 @@ return URL.createObjectURL(new Blob([bytes],{type:'audio/wav'}))
 }
 function playMobileFanfare(){
 try{
-if(!iosFanfareAudio){iosFanfareAudio=new Audio(makeFanfareWav());iosFanfareAudio.preload='auto';iosFanfareAudio.volume=1}
+if(!iosFanfareAudio){iosFanfareAudio=new Audio('./success-fanfare.wav');iosFanfareAudio.preload='auto';iosFanfareAudio.volume=1;iosFanfareAudio.load()}
 iosFanfareAudio.pause();iosFanfareAudio.currentTime=0;
 const p=iosFanfareAudio.play();if(p&&p.catch)p.catch(()=>{playFanfare()});
 }catch(e){playFanfare()}
