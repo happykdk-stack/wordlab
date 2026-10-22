@@ -46,7 +46,7 @@ async function review(w,m,scene,img){
   {type:'input_image',image_url:'data:image/webp;base64,'+img.toString('base64')}
  ]}]});
  let text=(v.output||[]).flatMap(x=>x.content||[]).map(x=>x.text||'').join('')||v.output_text||'';
- const o=JSON.parse(text.trim());return {pass:o.pass===true,reason:String(o.reason||'').slice(0,180)};
+ const extracted=text.match(/\{[\s\S]*\}/);if(!extracted)throw Error('Visual QA returned no JSON');const o=JSON.parse(extracted[0]);return {pass:o.pass===true,reason:String(o.reason||'').slice(0,180)};
 }
 async function describeScene(w,m){
  const v=await api('responses',{model:qaModel,input:[{role:'user',content:[{
@@ -88,7 +88,12 @@ async function main(){
  }
  console.log('Total '+words.length+'; pending '+todo.length+'; limit '+max);
  if(dry){todo.forEach(v=>console.log(v.w+' | '+scenes[v.w]));return}
- if(!process.env.OPENAI_API_KEY){console.log('No OPENAI_API_KEY secret. Skipping image generation safely.');return}
+ if(!process.env.OPENAI_API_KEY){
+  const message='OPENAI_API_KEY is not configured: zero illustrations generated. Add this repository Actions secret and rerun the workflow.';
+  console.log('::warning::'+message);
+  if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'### WordLab 이미지 생성 보류\n'+message+'\n');
+  return;
+ }
  fs.mkdirSync(dir,{recursive:true});
  const known=new Set(Object.values(manifest.images).map(e=>e.sha256).filter(Boolean));let count=0,failed=0;
  for(const item of todo.slice(0,max)){
