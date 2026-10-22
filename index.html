@@ -138,6 +138,29 @@
 /* Layered storybook illustrations, scaled up without moving vocabulary labels. */
 .study-card-shell .study-polished .memory-illustration svg{width:157px!important;height:92px!important;max-width:100%!important;filter:drop-shadow(0 4px 6px #9584c522)!important}
 @media(max-width:520px){.study-card-shell .study-polished .memory-illustration svg{width:121px!important;height:74px!important}}
+/* Storybook picture panel visibility: make scenes legible on actual phone cards. */
+.study-card-shell .study-polished .memory-illustration,
+.study-card-shell .study-polished:has(.study-examples) .memory-illustration{
+ width:202px!important;height:122px!important;min-height:122px!important;max-height:122px!important;
+ overflow:visible!important;
+}
+.study-card-shell .study-polished .memory-illustration svg{
+ width:202px!important;height:119px!important;
+ max-width:none!important;max-height:100%!important;
+ filter:drop-shadow(0 5px 8px #8575b31d)!important;
+}
+@media(max-width:520px){
+ .study-card-shell .study-polished .study-feature-row .memory-drawing.memory-illustration,
+ .study-card-shell .study-polished:has(.study-examples) .study-feature-row .memory-drawing.memory-illustration{
+  top:21px!important;width:min(186px,calc(100% - 118px))!important;
+  height:104px!important;min-height:104px!important;max-height:104px!important;
+ }
+ .study-card-shell .study-polished .memory-illustration svg{
+  width:100%!important;height:auto!important;max-height:104px!important;
+ }
+ .study-card-shell .study-polished .study-main-word,
+ .study-card-shell .study-polished .study-main-meaning{top:43%!important}
+}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
