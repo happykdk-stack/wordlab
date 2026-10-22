@@ -1,0 +1,46 @@
+name: Generate storybook illustrations
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Maximum new images to generate (1-80)"
+        required: false
+        default: "71"
+  schedule:
+    - cron: "30 23 * * *"
+  push:
+    paths:
+      - "index.html"
+      - "assets/illustrations/scene-descriptions.json"
+permissions:
+  contents: write
+concurrency:
+  group: wordlab-storybook-illustrations
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check words and build new illustrations
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BATCH_LIMIT: ${{ github.event.inputs.limit || '10' }}
+        run: node scripts/generate-storybook.cjs --limit="$BATCH_LIMIT"
+      - name: Commit approved images and manifest
+        run: |
+          git config user.name "wordlab-illustration-bot"
+          git config user.email "wordlab-illustration-bot@users.noreply.github.com"
+          git add index.html assets/illustrations/generated-manifest.json assets/illustrations/words || true
+          if ! git diff --cached --quiet; then
+            git commit -m "art: add approved storybook vocabulary illustrations"
+            git push
+          else
+            echo "No approved new illustrations to commit."
+          fi
