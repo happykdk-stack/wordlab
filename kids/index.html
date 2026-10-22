@@ -143,6 +143,10 @@ header>div:last-child>div:first-child{display:flex!important;flex-wrap:nowrap!im
 .vocab-history{margin-top:18px;padding:14px;border:1px solid #e5dcf6;border-radius:15px;background:#faf8ff}.vocab-history h3{font-size:16px;margin:0 0 8px}.vocab-history-item{display:flex;gap:12px;align-items:baseline;border-top:1px solid #eae4f3;padding:9px 0;font-size:13px}.vocab-history-item b{flex-shrink:0;color:#7555b2}.vocab-history-item span{line-height:1.45}@media(max-width:600px){.vocab-history{padding:11px}.vocab-history-item{gap:7px;font-size:12px}}
 .review-auto-button{width:100%;min-height:54px;border-radius:15px;background:linear-gradient(120deg,#a99af5,#8579dc);color:white;font-weight:800;font-size:16px;touch-action:manipulation}
 .review-auto-button[aria-pressed="true"]{background:linear-gradient(120deg,#7bc9aa,#4ca48d)}
+
+/* Review player: prominent start/stop button, no separate pronunciation control. */
+.review-auto-button{width:100%;min-height:56px!important;font-size:16px!important}
+.review-auto-button[aria-pressed="true"]{background:linear-gradient(120deg,#ee998e,#db738b)!important}
 </style></head><body><div class="wrap"><header><div><h1>🌈 WordLab Kids</h1><div class="sub">그림으로 배우는 신나는 영어!</div></div><div style="display:flex;flex-direction:column;gap:3px;align-items:end"><div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap"><button id="loginBtn" class="secondary" type="button">Google 로그인</button><div id="profileBar" class="profile-menu"></div></div><span id="cloudStatus" class="sub">이 기기에 저장 중</span></div></header><div class="grades"><button id="g1-2" onclick="setGrade('1-2')">1~2학년</button><button id="g3-4" onclick="setGrade('3-4')">3~4학년</button><button id="g5-6" onclick="setGrade('5-6')">5~6학년</button></div><div class="tabs"><button id="tcard" data-tab="card">낱말카드</button><button id="treview" data-tab="review">다시 복습</button><button id="tstats" data-tab="stats">내 통계</button><button id="tquiz" data-tab="quiz">랜덤퀴즈</button><button id="trank" data-tab="rank">퀴즈 순위</button></div><main id="app" class="panel"></main><div class="footer">로그인 시 학습 기록을 동기화할 수 있습니다. 친구 순위 참여는 선택 사항입니다.</div></div><script>
 const DATA={"1-2":[["Apple","사과","🍎","I eat an apple."],["Banana","바나나","🍌","I like bananas."],["Cat","고양이","🐱","The cat is cute."],["Dog","강아지","🐶","The dog runs."],["Bird","새","🐦","A bird can fly."],["Fish","물고기","🐟","I see a fish."],["Sun","태양","☀️","The sun is bright."],["Moon","달","🌙","Look at the moon."],["Star","별","⭐","I see a star."],["Book","책","📚","This is my book."],["Pencil","연필","✏️","I have a pencil."],["School","학교","🏫","I go to school."],["House","집","🏠","This is my house."],["Car","자동차","🚗","The car is red."],["Bus","버스","🚌","I take the bus."],["Flower","꽃","🌸","The flower is pink."],["Tree","나무","🌳","The tree is tall."],["Milk","우유","🥛","I drink milk."],["Bread","빵","🍞","I eat bread."],["Ball","공","⚽","Kick the ball."],["Water","물","💧","I drink water."],["Chair","의자","🪑","Sit on the chair."],["Shoes","신발","👟","My shoes are blue."],["Clock","시계","🕒","Look at the clock."],["Orange","오렌지","🍊","I eat an orange."],["Rabbit","토끼","🐰","The rabbit can jump."],["Elephant","코끼리","🐘","The elephant is big."],["Window","창문","🪟","Open the window."],["Rain","비","🌧️","The rain is falling."],["Happy","행복한","😊","I am happy today."],["Family","가족","👨‍👩‍👧‍👦","I love my family."],["Baby","아기","👶","The baby is sleeping."],["Duck","오리","🦆","The duck swims."],["Bear","곰","🐻","The bear is big."],["Train","기차","🚆","The train is fast."],["Door","문","🚪","Close the door."],["Egg","달걀","🥚","I eat an egg."],["Cloud","구름","☁️","A cloud is in the sky."],["Smile","미소","😄","I smile at my friend."],["Garden","정원","🌷","We play in the garden."],["Frog","개구리","🐸","The frog can jump."],["Lion","사자","🦁","The lion is strong."],["Hat","모자","🧢","My hat is blue."],["Cake","케이크","🎂","I like cake."],["Hand","손","✋","Wash your hands."],["Foot","발","🦶","My foot is small."],["Bed","침대","🛏️","I sleep in my bed."],["Boat","배","⛵","The boat is on the lake."],["Snow","눈","❄️","Snow is white."],["Bee","벌","🐝","A bee can fly."],["Leaf","나뭇잎","🍃","The leaf is green."],["Shoe","신발","👟","My shoe is blue."],["Shell","조개껍데기","🐚","I found a shell."],["Nest","둥지","🪺","The bird has a nest."],["Hill","언덕","⛰️","We walk up the hill."],["Soap","비누","🧼","Wash with soap."],["Drum","북","🥁","I play the drum."],["Bell","종","🔔","The bell rings."],["Lamp","램프","💡","Turn on the lamp."],["Kite","연","🪁","My kite flies high."]],"3-4":[["Weather","날씨","🌤️","The weather is nice."],["Rainbow","무지개","🌈","I see a rainbow."],["Mountain","산","⛰️","We climb the mountain."],["River","강","🏞️","The river is long."],["Library","도서관","📖","I read at the library."],["Hospital","병원","🏥","The hospital is near."],["Bicycle","자전거","🚲","I ride my bicycle."],["Breakfast","아침 식사","🥣","I eat breakfast early."],["Vegetable","채소","🥕","Vegetables are healthy."],["Adventure","모험","🧭","We go on an adventure."],["Friendship","우정","🤝","Friendship is important."],["Excited","신이 난","🎉","I am excited today."],["Careful","조심하는","⚠️","Be careful on the stairs."],["Quiet","조용한","🤫","Please be quiet."],["Different","다른","🧩","We have different ideas."],["Together","함께","👫","Let's work together."],["Practice","연습하다","🎯","I practice English."],["Explore","탐험하다","🔭","We explore the forest."],["Describe","묘사하다","🖼️","Describe your favorite animal."],["Compare","비교하다","⚖️","Compare the two pictures."],["Journey","여행","🧳","Our journey starts today."],["Healthy","건강한","🥗","Eating fruit keeps us healthy."],["Celebrate","축하하다","🎊","We celebrate her birthday."],["Museum","박물관","🏛️","We visit the museum."],["Planet","행성","🪐","Earth is a planet."],["Protect","보호하다","🛡️","We protect animals."],["Imagine","상상하다","💭","Imagine a new world."],["Invent","발명하다","💡","People invent useful tools."],["Direction","방향","🧭","Which direction is north?"],["Tradition","전통","🎎","We learn about tradition."],["Observe","관찰하다","👀","We observe the birds."],["Borrow","빌리다","📚","I borrow a book."],["Return","돌려주다","↩️","Please return the book."],["Collect","모으다","🧺","I collect colorful leaves."],["Delicious","맛있는","🍰","This cake is delicious."],["Brave","용감한","🦁","The brave child helped."],["Neighbor","이웃","🏘️","Our neighbor is friendly."],["Promise","약속하다","🤙","I promise to help."],["Prepare","준비하다","🎒","We prepare for the trip."],["Examine","살펴보다","🔍","We examine the small rock."],["Island","섬","🏝️","We visited a small island."],["Volcano","화산","🌋","The volcano is very tall."],["Desert","사막","🏜️","The desert is hot and dry."],["Shadow","그림자","👤","My shadow is long."],["Compass","나침반","🧭","A compass shows directions."],["Rescue","구조하다","🚑","The firefighters rescue the cat."],["Harvest","수확하다","🌾","Farmers harvest rice in autumn."],["Balance","균형","⚖️","Keep your balance on the bike."],["Puzzle","퍼즐","🧩","I finished the puzzle."],["Whisper","속삭이다","🤫","Please whisper in the library."],["Curious","호기심이 많은","🧐","The curious child asks questions."],["Discover","발견하다","🔎","We discover a hidden path."],["Measure","측정하다","📏","Measure the desk."],["Recycle","재활용하다","♻️","We recycle paper."],["Ancient","고대의","🏛️","We study ancient history."],["Predict","예측하다","🔮","Predict tomorrow's weather."],["Gather","모으다","🧺","Gather the fallen leaves."],["Design","설계하다","✏️","We design a new playground."],["Organize","정리하다","🗂️","Organize your school supplies."],["Habitat","서식지","🌳","A forest is a bear's habitat."]],"5-6":[["Environment","환경","🌍","We should protect the environment."],["Pollution","오염","🏭","Pollution harms animals."],["Recycle","재활용하다","♻️","We recycle paper."],["Energy","에너지","⚡","Solar panels produce energy."],["Discover","발견하다","🔎","Scientists discover new things."],["Experiment","실험","🧪","We did a science experiment."],["Evidence","증거","🕵️","Look for evidence."],["Solution","해결책","💡","We found a solution."],["Challenge","도전","🧗","This challenge is difficult."],["Opportunity","기회","🚪","This is a great opportunity."],["Responsibility","책임","🎒","Taking care of pets is a responsibility."],["Cooperate","협력하다","🤝","We cooperate on the project."],["Communicate","소통하다","💬","We communicate clearly."],["Creative","창의적인","🎨","She has a creative idea."],["Confident","자신감 있는","🦁","I feel confident today."],["Curious","호기심 많은","🔍","Curious students ask questions."],["Improve","향상시키다","📈","I want to improve my English."],["Organize","정리하다","🗂️","Let's organize our notes."],["Predict","예측하다","🔮","Can you predict the weather?"],["Achievement","성취","🏆","Finishing the book is an achievement."],["Investigate","조사하다","🔬","We investigate the mystery."],["Sustainable","지속 가능한","🌱","We need sustainable solutions."],["Perspective","관점","👀","Try to see another perspective."],["Analyze","분석하다","📊","We analyze the results."],["Consequence","결과","🔗","Every choice has a consequence."],["Innovation","혁신","💡","Innovation changes our lives."],["Adapt","적응하다","🦎","Animals adapt to their environment."],["Preserve","보존하다","🏞️","We preserve natural habitats."],["Evaluate","평가하다","📝","We evaluate the project."],["Significant","중요한","⭐","This is a significant discovery."],["Determine","결정하다","🧭","We determine the best route."],["Interpret","해석하다","📖","Interpret the meaning of the story."],["Contribute","기여하다","🤝","Everyone can contribute ideas."],["Essential","필수적인","🧩","Water is essential for life."],["Diverse","다양한","🌎","Our class has diverse interests."],["Hypothesis","가설","🧪","We test our hypothesis."],["Resource","자원","💧","Clean water is a valuable resource."],["Influence","영향을 주다","🌊","Friends can influence our choices."],["Maintain","유지하다","🛠️","We maintain the school garden."],["Independent","독립적인","🕊️","She is an independent learner."],["Ecosystem","생태계","🌳","A forest is a complex ecosystem."],["Resilience","회복력","💪","Resilience helps us face challenges."],["Biodiversity","생물 다양성","🦋","Biodiversity keeps nature healthy."],["Empathy","공감","❤️","Empathy helps us understand others."],["Democracy","민주주의","🗳️","Voting is important in a democracy."],["Renewable","재생 가능한","☀️","Solar power is renewable energy."],["Atmosphere","대기","🌎","Earth's atmosphere protects life."],["Collaborate","협력하다","🤝","We collaborate on a science project."],["Prototype","시제품","🛠️","We built a prototype of our invention."],["Astronomy","천문학","🔭","Astronomy helps us study stars."],["Conservation","보존·보호","🏞️","Water conservation is important."],["Diversity","다양성","🌈","Our school values diversity."],["Adaptation","적응","🦎","Adaptation helps animals survive."],["Civilization","문명","🏛️","Ancient civilizations built cities."],["Phenomenon","현상","🌌","A rainbow is a natural phenomenon."],["Interpretation","해석","📖","Her interpretation of the poem is thoughtful."],["Geography","지리학","🗺️","Geography helps us understand places."],["Photosynthesis","광합성","🌱","Plants use sunlight for photosynthesis."],["Evolution","진화","🧬","Evolution occurs over many generations."],["Migration","이동·이주","🦋","Bird migration happens every year."]]};
 const PREFIX='wordlabkids_v1_';
@@ -156,40 +160,69 @@ let rankComments=[],commentError='',commentBusy=false;
 
 let reviewAutoPlaying=false,reviewAutoToken=0,reviewAutoTimer=null;
 function stopReviewAutoPlay(){
- reviewAutoPlaying=false;reviewAutoToken++;
- if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
- if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
- const b=document.querySelector('[data-action="review-autoplay"]');
- if(b){b.textContent='▶ 자동 재생';b.setAttribute('aria-pressed','false')}
+  reviewAutoPlaying=false;
+  reviewAutoToken++;
+  if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
+  if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
+  const b=document.querySelector('[data-action="review-autoplay"]');
+  if(b){b.textContent='▶ 영어·한글 자동 재생';b.setAttribute('aria-pressed','false')}
 }
 function playReviewSequence(){
- if(!reviewAutoPlaying||mode!=='review'||transitionLocked||!deck[index]){stopReviewAutoPlay();return}
- const current=deck[index],currentIndex=index,token=reviewAutoToken;
- const valid=()=>reviewAutoPlaying&&token===reviewAutoToken&&mode==='review'&&index===currentIndex&&deck[index]===current;
- const later=(fn,time)=>{if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);reviewAutoTimer=setTimeout(()=>{reviewAutoTimer=null;if(valid())fn()},time)};
- const next=()=>{if(!valid())return;if(index===deck.length-1){stopReviewAutoPlay();return}index++;flipped=false;render();later(playReviewSequence,450)};
- if(!('speechSynthesis' in window)){stopReviewAutoPlay();return}
- try{
- speechSynthesis.cancel();
- const en=new SpeechSynthesisUtterance(current[0]);en.lang='en-US';en.rate=.85;const ev=bestVoice('en-US');if(ev)en.voice=ev;
- const ko=new SpeechSynthesisUtterance(current[1]);ko.lang='ko-KR';ko.rate=.9;const kv=bestVoice('ko-KR');if(kv)ko.voice=kv;
- let phase=0;
- const toKorean=()=>{if(!valid()||phase!==0)return;phase=1;flipped=true;render();later(next,Math.max(2200,current[1].length*200+850));try{speechSynthesis.speak(ko)}catch(e){next()}};
- en.onend=toKorean;en.onerror=toKorean;
- ko.onend=()=>{if(!valid()||phase!==1)return;phase=2;later(next,650)};
- ko.onerror=()=>{if(valid())later(next,650)};
- later(toKorean,Math.max(2700,current[0].length*240+950));
- speechSynthesis.speak(en);
- }catch(e){stopReviewAutoPlay()}
+  if(!reviewAutoPlaying||mode!=='review'||transitionLocked||!deck.length||!deck[index]){stopReviewAutoPlay();return}
+  if(!('speechSynthesis' in window)){stopReviewAutoPlay();return}
+  const current=deck[index],currentIndex=index,token=reviewAutoToken;
+  const valid=()=>reviewAutoPlaying&&token===reviewAutoToken&&mode==='review'&&index===currentIndex&&deck[index]===current;
+  const later=(fn,delay)=>{
+    if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);
+    reviewAutoTimer=setTimeout(()=>{reviewAutoTimer=null;if(valid())fn()},delay);
+  };
+  let phase='english';
+  const next=()=>{
+    if(!valid()||phase!=='next')return;
+    // Cycle through all remaining missed words until the child presses stop.
+    index=(index+1)%deck.length;
+    flipped=false;
+    render();
+    later(playReviewSequence,400);
+  };
+  const afterKorean=()=>{
+    if(!valid()||phase!=='korean')return;
+    phase='next';
+    later(next,650);
+  };
+  const toKorean=()=>{
+    if(!valid()||phase!=='english')return;
+    phase='korean';
+    // Move the card to the meaning side before reading Korean.
+    flipped=true;render();
+    try{speechSynthesis.cancel()}catch(e){}
+    const ko=new SpeechSynthesisUtterance(current[1]);
+    ko.lang='ko-KR';ko.rate=.87;ko.pitch=1;
+    const voice=bestVoice('ko-KR');if(voice)ko.voice=voice;
+    ko.onend=afterKorean;
+    ko.onerror=afterKorean;
+    later(()=>{try{speechSynthesis.cancel()}catch(e){}afterKorean()},Math.max(3200,current[1].length*350+1800));
+    try{speechSynthesis.speak(ko)}catch(e){afterKorean()}
+  };
+  try{
+    const en=new SpeechSynthesisUtterance(current[0]);
+    en.lang='en-US';en.rate=.82;en.pitch=1;
+    const voice=bestVoice('en-US');if(voice)en.voice=voice;
+    en.onend=()=>later(toKorean,250);
+    en.onerror=()=>later(toKorean,250);
+    later(()=>{try{speechSynthesis.cancel()}catch(e){}toKorean()},Math.max(3500,current[0].length*300+1800));
+    speechSynthesis.speak(en);
+  }catch(e){stopReviewAutoPlay()}
 }
 function toggleReviewAutoPlay(){
- if(mode!=='review'||!deck.length)return;
- if(reviewAutoPlaying){stopReviewAutoPlay();return}
- if(!('speechSynthesis' in window)){alert('이 브라우저는 음성 재생을 지원하지 않아요.');return}
- stopReviewAutoPlay();reviewAutoPlaying=true;
- const b=document.querySelector('[data-action="review-autoplay"]');
- if(b){b.textContent='⏸ 자동 재생 멈추기';b.setAttribute('aria-pressed','true')}
- playReviewSequence();
+  if(mode!=='review'||!deck.length)return;
+  if(reviewAutoPlaying){stopReviewAutoPlay();return}
+  if(!('speechSynthesis' in window)){alert('이 브라우저는 음성 재생을 지원하지 않아요.');return}
+  stopReviewAutoPlay();
+  reviewAutoPlaying=true;
+  const b=document.querySelector('[data-action="review-autoplay"]');
+  if(b){b.textContent='■ 자동 재생 정지';b.setAttribute('aria-pressed','true')}
+  playReviewSequence();
 }
 function cancelTransition(){stopReviewAutoPlay();if(transitionTimer!==null){clearTimeout(transitionTimer);transitionTimer=null}transitionLocked=false}
 const ADMIN_EMAIL='happykdk@gmail.com';
@@ -408,7 +441,7 @@ const question=quizDirection==='en-ko'?'영어 단어의 뜻을 고르세요':'�
 const prompt=quizDirection==='en-ko'?x[0]:x[1];
 app.innerHTML=progressHeader()+'<div class="flash quiz-prompt"><div class="quiz-scoreboard" aria-live="polite"><span class="quiz-score-correct">맞힘 <b>'+score+'</b></span><span class="quiz-score-wrong">틀림 <b>'+(index+(answered?1:0)-score)+'</b></span><span class="quiz-score-remaining">남음 <b>'+(deck.length-index-(answered?1:0))+'</b></span></div><div class="hint">'+question+'</div><div class="word">'+esc(prompt)+'</div><button class="quiz-speak" data-action="speak" type="button">🔊 발음 듣기</button></div><div id="choices">'+choices.map((c,i)=>'<button class="choice" data-answer="'+i+'">'+String.fromCharCode(65+i)+'. '+esc(quizDirection==='en-ko'?c[1]:c[0])+'</button>').join('')+'</div><div id="feedback"></div>';return
 }
-app.innerHTML=(mode==='review'?'<div class="actions"><button class="secondary" data-action="reset-review">복습 목록 초기화</button></div>':'')+progressHeader()+'<div class="flash" data-action="flip">'+(flipped?'<div class="emoji">'+x[2]+'</div><div class="meaning">'+esc(x[1])+'</div><div class="sentence">'+esc(x[3])+'</div><div class="hint">다시 누르면 영어가 나와요</div>':'<div class="emoji">'+x[2]+'</div><div class="word">'+esc(x[0])+'</div><div class="hint">카드를 눌러 뜻을 확인해요</div>')+'</div>'+(mode==='review'?'<div class="actions"><button class="review-auto-button" data-action="review-autoplay" type="button" aria-pressed="'+reviewAutoPlaying+'">'+(reviewAutoPlaying?'⏸ 자동 재생 멈추기':'▶ 자동 재생')+'</button></div>':'<div class="actions speak-actions"><button class="speak-button" data-action="speak">발음 듣기</button></div>')+'<div class="card-answer-actions"><button class="danger" data-action="miss">몰라요</button><button class="success" data-action="known">알아요 ✓</button></div><div class="actions"><button class="secondary" data-action="prev" '+(index===0?'disabled':'')+'>← 이전</button>'+(index===deck.length-1?'':'<button class="secondary" data-action="next">다음 →</button>')+'</div>'+(mode==='card'&&index===deck.length-1?'<div class="notice" style="margin-top:12px">마지막 카드입니다! <b>알아요 ✓</b> 또는 <b>다시 공부</b>를 누르면 자동으로 학습 완료 및 순위 저장이 진행됩니다.</div>':'');
+app.innerHTML=(mode==='review'?'<div class="actions"><button class="secondary" data-action="reset-review">복습 목록 초기화</button></div>':'')+progressHeader()+'<div class="flash" data-action="flip">'+(flipped?'<div class="emoji">'+x[2]+'</div><div class="meaning">'+esc(x[1])+'</div><div class="sentence">'+esc(x[3])+'</div><div class="hint">다시 누르면 영어와 발음을 들을 수 있어요</div>':'<div class="emoji">'+x[2]+'</div><div class="word">'+esc(x[0])+'</div><div class="hint">카드를 누르면 발음과 뜻을 확인해요</div>')+'</div>'+(mode==='review'?'<div class="actions"><button class="review-auto-button" data-action="review-autoplay" type="button" aria-pressed="'+reviewAutoPlaying+'">'+(reviewAutoPlaying?'■ 자동 재생 정지':'▶ 영어·한글 자동 재생')+'</button></div>':'<div class="actions speak-actions"><button class="speak-button" data-action="speak">발음 듣기</button></div>')+'<div class="card-answer-actions"><button class="danger" data-action="miss">몰라요</button><button class="success" data-action="known">알아요 ✓</button></div><div class="actions"><button class="secondary" data-action="prev" '+(index===0?'disabled':'')+'>← 이전</button>'+(index===deck.length-1?'':'<button class="secondary" data-action="next">다음 →</button>')+'</div>'+(mode==='card'&&index===deck.length-1?'<div class="notice" style="margin-top:12px">마지막 카드입니다! <b>알아요 ✓</b> 또는 <b>다시 공부</b>를 누르면 자동으로 학습 완료 및 순위 저장이 진행됩니다.</div>':'');
 }
 let sharedAudioContext=null;
 function getAudioContext(){
