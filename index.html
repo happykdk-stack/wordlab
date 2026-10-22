@@ -163,6 +163,31 @@
 }
 .card-tab-tip .card-tip-close:hover,.card-tab-tip .card-tip-close:focus-visible{background:rgba(255,255,255,.17)!important}
 @media(max-width:480px){.card-tab-wrap .card-tab-tip{max-width:calc(100vw - 20px)!important;font-size:12px!important;line-height:1.45!important}}
+/* Portaled tooltips remain visible outside clipped navigation containers. */
+body > .card-tab-tip{
+ position:fixed!important;top:0;left:0;right:auto!important;bottom:auto!important;
+ display:block!important;width:max-content!important;
+ max-width:min(290px,calc(100vw - 16px))!important;
+ max-height:min(210px,calc(100dvh - 16px))!important;
+ padding:12px 43px 12px 14px!important;
+ box-sizing:border-box!important;overflow-wrap:anywhere!important;overflow-y:auto!important;
+ background:#30244e;color:#fff;border-radius:13px;
+ box-shadow:0 9px 27px #1c163740;z-index:9999!important;
+ font-size:13px;line-height:1.5;white-space:normal!important;
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+ transform:none!important;transition:opacity .15s ease,visibility .15s ease!important;
+}
+body > .card-tab-tip.tip-open{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+body > .card-tab-tip::after{content:"";position:absolute;top:100%;left:var(--tip-pointer,50%);border:7px solid transparent;border-top-color:#30244e}
+body > .card-tab-tip.tip-below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#30244e}
+body > .card-tab-tip .card-tip-close{
+ position:absolute;top:4px;right:5px;width:34px;height:34px;min-height:34px;
+ display:grid;place-items:center;padding:0!important;border:0!important;
+ background:transparent!important;color:#fff!important;font-size:25px!important;
+ border-radius:9px;cursor:pointer;touch-action:manipulation;
+}
+body > .card-tab-tip .card-tip-close:active{background:#ffffff2a!important}
+@media(max-width:480px){body > .card-tab-tip{font-size:12px!important;line-height:1.5!important}}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
@@ -515,49 +540,55 @@ function answer(i){if(answered||quizHistory[done])return;answered=true;const x=d
 
 function initializeTabTips(){
  document.querySelectorAll('.card-tab-wrap').forEach(wrap=>{
-  const trigger=wrap.querySelector('button[id^="tab-"]');
-  const tip=wrap.querySelector('.card-tab-tip');
-  const closeButton=tip&&tip.querySelector('.card-tip-close');
-  if(!trigger||!tip||!closeButton)return;
-  let timer=null,suppressed=false;
+  const trigger=wrap.querySelector('button[id^="tab-"]'),tip=wrap.querySelector('.card-tab-tip');
+  const close=tip&&tip.querySelector('.card-tip-close');
+  if(!trigger||!tip||!close)return;
+  document.body.appendChild(tip);
+  let timer=null,open=false,suppressed=false;
   const hide=()=>{
    if(timer!==null){clearTimeout(timer);timer=null}
-   tip.classList.remove('tip-open');
+   open=false;tip.classList.remove('tip-open','tip-below');
+   tip.setAttribute('aria-hidden','true');
    trigger.setAttribute('aria-expanded','false');
   };
   const position=()=>{
-   if(!tip.classList.contains('tip-open'))return;
-   const rect=trigger.getBoundingClientRect();
-   const viewportWidth=document.documentElement.clientWidth;
-   const viewportHeight=window.innerHeight;
-   const width=tip.offsetWidth,height=tip.offsetHeight;
-   const left=Math.min(Math.max(10,rect.left+rect.width/2-width/2),Math.max(10,viewportWidth-width-10));
-   const above=rect.top>=height+18;
-   const top=above?rect.top-height-11:Math.min(rect.bottom+11,viewportHeight-height-12);
+   if(!open)return;
+   const v=window.visualViewport, vw=v?v.width:window.innerWidth, vh=v?v.height:window.innerHeight;
+   const ox=v?v.offsetLeft:0,oy=v?v.offsetTop:0;
+   const rect=trigger.getBoundingClientRect(),width=tip.offsetWidth,height=tip.offsetHeight;
+   const left=Math.max(ox+8,Math.min(rect.left+rect.width/2-width/2,ox+vw-width-8));
+   const above=rect.top-oy-8,below=oy+vh-rect.bottom-8;
+   const showBelow=below>=height+12&&(above<height+12||below>above);
+   const preferred=showBelow?rect.bottom+10:rect.top-height-10;
+   const top=Math.max(oy+8,Math.min(preferred,oy+vh-height-8));
    tip.style.left=Math.round(left)+'px';
-   tip.style.top=Math.round(Math.max(10,top))+'px';
-   tip.style.setProperty('--tip-pointer',Math.min(Math.max(14,rect.left+rect.width/2-left-7),width-20)+'px');
-   tip.classList.toggle('tip-below',!above);
+   tip.style.top=Math.round(top)+'px';
+   tip.style.setProperty('--tip-pointer',Math.round(Math.max(15,Math.min(width-22,rect.left+rect.width/2-left-7)))+'px');
+   tip.classList.toggle('tip-below',showBelow);
   };
   const show=()=>{
    if(suppressed)return;
-   hide();
-   tip.classList.add('tip-open');
+   hide();open=true;tip.classList.add('tip-open');
+   tip.setAttribute('aria-hidden','false');
    trigger.setAttribute('aria-expanded','true');
    position();
    timer=setTimeout(()=>{hide();suppressed=true},5000);
   };
-  wrap.addEventListener('pointerenter',show);
-  wrap.addEventListener('pointerleave',()=>{hide();suppressed=false});
-  trigger.addEventListener('focus',show);
-  trigger.addEventListener('blur',()=>{if(!tip.contains(document.activeElement))hide()});
-  closeButton.addEventListener('click',event=>{
-   event.preventDefault();event.stopPropagation();
-   hide();suppressed=true;
-   closeButton.blur();
+  trigger.addEventListener('pointerenter',show);
+  trigger.addEventListener('pointerleave',()=>{suppressed=false});
+  trigger.addEventListener('click',()=>{if(!open){suppressed=false;show()}});
+  trigger.addEventListener('focus',()=>{if(!open){suppressed=false;show()}});
+  close.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();hide();suppressed=true});
+  document.addEventListener('pointerdown',e=>{
+   if(open&&!tip.contains(e.target)&&e.target!==trigger)hide();
   });
   window.addEventListener('resize',position);
   window.addEventListener('scroll',position,{passive:true});
+  if(window.visualViewport){
+   window.visualViewport.addEventListener('resize',position);
+   window.visualViewport.addEventListener('scroll',position);
+  }
+  tip.setAttribute('aria-hidden','true');
  });
 }
 initializeTabTips();
