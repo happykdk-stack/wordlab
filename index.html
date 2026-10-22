@@ -62,6 +62,9 @@
 .study-card-shell .memory-scene .scene-to{transform:rotate(7deg) translateY(-3px)}
 .study-card-shell .memory-scene .scene-link{font-size:18px;color:#a18ad7;font-weight:800;margin:0 -2px;align-self:center}
 @media(max-width:520px){.study-card-shell .study-polished .memory-scene,.study-card-shell .study-polished:has(.study-examples) .memory-scene{width:120px!important;height:82px!important;min-height:82px!important;max-height:82px!important}.study-card-shell .memory-scene .scene-icon{font-size:34px!important}.study-card-shell .memory-scene .scene-link{font-size:15px}}
+
+/* Allow longer Korean meanings to wrap and scale without covering card details. */
+.study-card-shell .study-polished .study-main-meaning{box-sizing:border-box!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:keep-all!important;line-height:1.25!important}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
@@ -245,7 +248,28 @@ const face=flipped?'<div class="study-face-label">뒷면 · 뜻과 예문 보기
 const front='<div class="study-front"><div class="study-main-word">'+esc(x[0])+'</div><div class="study-tap-hint">카드를 눌러 뜻과 예문 확인 · 🔊</div></div>';
 const back='<div class="study-back"><div class="study-main-meaning">'+esc(x[1])+'</div><div class="study-etymology"><b>어원</b> '+esc(x[2])+'</div><div class="study-examples"><div class="example-pair"><div class="example-title">1</div><div class="example-text"><div class="example">'+esc(x[3])+'</div><div class="ko">'+esc(x[4])+'</div></div><button type="button" class="example-audio" aria-label="첫 번째 예문 듣기" onclick="event.stopPropagation();speakExample(0)">🔊</button></div>'+extraExample(x)+'</div></div>';
 app.innerHTML='<div class="meta"><span>'+(mode==='review'?'틀린 단어 복습':'전체카드')+'</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><div class="fill" style="width:'+((index+1)/deck.length*100)+'%"></div></div><div class="study-card-shell"><div class="card study-polished" onclick="flipStudyCard()">'+face+'<div class="study-feature-row">'+memoryVisual(x)+(flipped?back:front)+'</div></div><button class="card-side-arrow card-side-prev" type="button" aria-label="이전 단어" onclick="prev()" '+(index===0?'disabled':'')+'>‹</button><button class="card-side-arrow card-side-next" type="button" aria-label="다음 단어" onclick="nextCard()">›</button></div><div class="controls '+(mode==='review'?'review-action-controls':'')+'"><button class="bad" onclick="mark(false)">'+keepLabel+'</button><button class="good" onclick="mark(true)">'+removeLabel+'</button></div>'+(mode==='review'?'<button class="review-autoplay" onclick="toggleReviewAutoPlay()" aria-pressed="'+reviewAutoPlay+'">'+(reviewAutoPlay?'⏸ 자동 재생 끄기':'▶ 자동 재생 켜기')+'</button>':'');
+if(flipped)requestAnimationFrame(fitLongKoreanMeaning);
 }
+function fitLongKoreanMeaning(){
+  const el=document.querySelector('.study-card-shell .study-main-meaning');
+  if(!el)return;
+  const mobile=window.matchMedia('(max-width:520px)').matches;
+  const maxSize=mobile?32:42;
+  const minSize=mobile?13:15;
+  const maxHeight=mobile?58:72;
+  el.style.setProperty('white-space','normal','important');
+  el.style.setProperty('overflow-wrap','anywhere','important');
+  el.style.setProperty('word-break','keep-all','important');
+  el.style.setProperty('line-height','1.25','important');
+  el.style.setProperty('max-height',maxHeight+'px','important');
+  el.style.setProperty('overflow','visible','important');
+  let size=maxSize;
+  for(;size>minSize;size--){
+    el.style.setProperty('font-size',size+'px','important');
+    if(el.scrollHeight<=maxHeight+1&&el.scrollWidth<=el.clientWidth+1)break;
+  }
+}
+window.addEventListener('resize',()=>{if(document.querySelector('.study-card-shell .study-main-meaning'))requestAnimationFrame(fitLongKoreanMeaning)});
 function stopReviewVoice(){
 reviewVoiceToken++;
 if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
