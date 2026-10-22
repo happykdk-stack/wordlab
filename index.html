@@ -422,6 +422,111 @@ function mnemonicArtwork(word){
   p('M'+(x+7)+' '+(y+13)+'h19 M'+(x+7)+' '+(y+21)+'h15 M'+(x+7)+' '+(y+29)+'h18','#a3a0bc',1.8)+
   circle(x+9,y+38,2,teal)+'</g>';
  const accent=()=>circle(14,13,2.2,gold)+circle(158,18,3,teal)+p('M151 82l6 -4',gold,3);
+
+ const leaf=(x,y,c=teal)=>'<g transform="translate('+x+' '+y+')">'+
+  '<path d="M0 0q8-10 14-4q-2 10-14 10Z" fill="'+c+'" opacity=".68"/>'+p('M0 5L12-3','#fff',1)+'</g>';
+ const gloss=(x,y,w,h)=>'<path d="M'+(x+4)+' '+(y+6)+'q'+(w/4)+' -7 '+(w/2)+' -4" fill="none" stroke="#fff" stroke-opacity=".72" stroke-width="2.3" stroke-linecap="round"/>';
+ const sparkle=(x,y,c=gold)=>p('M'+x+' '+(y-5)+'v10 M'+(x-5)+' '+y+'h10',c,1.6)+circle(x+7,y-7,1.2,c);
+ const badge=(x,y,name,c=teal)=>circle(x,y,12,'#fff')+
+  '<circle cx="'+x+'" cy="'+y+'" r="11" fill="none" stroke="'+c+'" stroke-opacity=".48" stroke-width="1.4"/>'+
+  icon(name,x-8,y-8,16,c);
+ const sceneDetail=()=>{
+  let d='';
+  // Single narrative focus per vocabulary word. Small props are visual clues, not another icon row.
+  switch(word){
+   case 'Mitigate':d=p('M118 20l7-7m-3 15 11-1','#e29491',2.3)+
+    p('M42 70q17 9 31-1',teal,2.2)+sparkle(99,24,teal);break;
+   case 'Bottleneck':d=p('M21 22l-4-7m13 8-1-8',gold,2)+
+    p('M101 73q20-6 37-2',line,1.5)+circle(52,48,3,'#ef9c91');break;
+   case 'Expedite':d=p('M22 36h28m-24 7h22m-13 5h14',gold,2.6)+
+    sparkle(145,37,teal)+p('M58 78h85','#9ac6cc',2);break;
+   case 'Reconcile':d=p('M52 54h15m47 8h-10',teal,1.6)+badge(85,20,'check',teal);break;
+   case 'Redact':d=rect(59,51,23,6,'#38304f',2)+rect(80,58,16,5,'#38304f',2)+
+    badge(117,36,'lock',purple);break;
+   case 'Workaround':d=p('M33 53q17-27 37-31',gold,2.4)+
+    p('M107 22q22 10 24 25',gold,2.4)+sparkle(145,70,gold);break;
+   case 'Handover':d=p('M61 43q15-9 22 0',gold,2)+
+    sparkle(89,28,gold);break;
+   case 'Compensate':d=badge(86,22,'heart',purple)+
+    sparkle(100,73,gold);break;
+   case 'Reimburse':d=badge(89,19,'coins',teal)+
+    p('M63 19q24-12 43 0',gold,2);break;
+   case 'Quantify':d=badge(39,22,'ruler',purple)+sparkle(136,74,teal);break;
+   case 'Remediate':case 'Rectify':d=badge(146,22,'check',teal)+sparkle(79,24,gold);break;
+   case 'Allocate':d=badge(82,20,'users',purple)+
+    p('M79 55l-19 14m36-14 23 14',gold,2);break;
+   case 'Assess':d=badge(137,24,'search',purple)+p('M62 76l20-6',gold,2);break;
+   case 'Anticipate':case 'Forecast':d=p('M120 25l9-6 9 3',teal,2)+sparkle(133,18,gold);break;
+   case 'Corroborate':case 'Substantiate':d=badge(83,19,'check',teal)+
+    p('M66 76h39',gold,2);break;
+   case 'Defer':d=badge(23,26,'clock',purple)+
+    p('M65 63h39',gold,2);break;
+   case 'Liaise':case 'Touchpoint':d=badge(86,18,'chat',purple)+
+    p('M63 80q25 9 46-1',teal,2);break;
+   case 'Discrepancy':d=badge(84,20,'warning','#df8589')+
+    p('M60 72l15-3m17 3 15-3',gold,2);break;
+   case 'Backlog':d=badge(141,23,'clock',purple)+
+    p('M27 81h106',teal,1.4);break;
+   case 'Prioritize':d=badge(136,21,'star',gold)+sparkle(44,23,gold);break;
+   case 'Clarify':d=badge(100,19,'light',gold)+
+    p('M119 65q8-5 13-3',purple,2);break;
+   case 'Accountability':case 'Ownership':d=badge(130,23,'check',teal)+sparkle(84,22,gold);break;
+   case 'Deliverable':case 'Follow-through':d=badge(141,22,'flag',teal)+sparkle(84,69,gold);break;
+   case 'Milestone':d=badge(145,20,'flag',purple)+sparkle(60,65,gold);break;
+   case 'Dependency':d=p('M52 22q35 17 71 0',gold,2.8)+
+    badge(85,22,'link',purple);break;
+   case 'Feasibility':d=badge(131,21,'check',teal)+sparkle(105,82,gold);break;
+   case 'Trade-off':case 'Negotiate':d=badge(86,20,'scale',gold)+
+    p('M55 75q30 10 58-1',purple,1.5);break;
+   case 'Scope':case 'Constraint':d=p('M18 18v10m0-10h10m120 0h10v10',gold,2.2)+
+    sparkle(146,70,teal);break;
+   case 'Actionable':case 'Initiative':d=badge(137,23,'play',gold)+
+    p('M67 23h13',teal,2);break;
+   case 'Stakeholder':case 'Alignment meeting':d=badge(87,18,'users',purple)+
+    p('M56 79q29 11 60 0',gold,2);break;
+   case 'Leverage':d=badge(140,23,'up',teal)+sparkle(49,32,gold);break;
+   case 'Rollout':d=badge(84,20,'globe',teal)+sparkle(40,38,gold);break;
+   case 'Implication':d=sparkle(100,14,gold)+
+    p('M45 88q43-8 83 1',teal,1.5);break;
+   case 'Cadence':d=badge(139,22,'repeat',purple)+
+    p('M44 79h85',gold,2);break;
+   case 'Bandwidth':d=badge(131,19,'battery',teal)+sparkle(65,26,gold);break;
+   case 'Buy-in':d=badge(143,24,'thumb',teal)+
+    p('M49 80q26 9 65 0',gold,2);break;
+   case 'Alignment':d=badge(89,21,'target',purple)+
+    p('M43 78h86',gold,2);break;
+   case 'Benchmark':d=badge(141,20,'star',gold)+sparkle(66,25,teal);break;
+   case 'Escalation':case 'Escalate':d=badge(144,27,'up','#d88785')+
+    p('M58 20l-4-7m0 7-8-4',gold,2);break;
+   case 'Momentum':d=p('M21 70q28-40 55-39',gold,2.7)+sparkle(139,11,teal);break;
+   case 'Onboarding':d=badge(139,20,'heart',purple)+
+    p('M74 81q27 4 48-4',gold,2);break;
+   case 'Proactive':d=badge(133,19,'clock',purple)+sparkle(73,29,teal);break;
+   case 'Retention':d=badge(134,19,'heart','#d7909e')+sparkle(85,75,gold);break;
+   case 'Transparency':d=badge(144,20,'eye',teal)+sparkle(50,28,gold);break;
+   case 'Streamline':d=p('M32 87h108',gold,2)+
+    sparkle(92,18,teal);break;
+   case 'Delegate':d=badge(82,22,'users',purple)+sparkle(113,77,gold);break;
+   case 'Consolidate':d=badge(88,21,'folder',teal)+sparkle(48,72,gold);break;
+   case 'Facilitate':d=badge(138,21,'gear',purple)+sparkle(76,32,gold);break;
+   case 'Verify':d=badge(136,20,'check',teal)+sparkle(73,72,gold);break;
+   case 'Implement':d=badge(141,19,'tools',purple)+
+    p('M61 75q28 9 46 0',teal,2);break;
+   case 'Resolve':d=badge(142,19,'check',teal)+sparkle(105,37,gold);break;
+   case 'Coordinate':d=badge(90,19,'calendar',purple)+
+    p('M52 80q37 9 73-3',teal,2);break;
+   case 'Amend':d=badge(135,19,'pen',purple)+sparkle(62,74,gold);break;
+   case 'Authorize':d=badge(140,20,'key',teal)+sparkle(74,18,gold);break;
+   case 'Investigate':d=badge(139,20,'search',purple)+sparkle(83,70,gold);break;
+   case 'Monitor':d=badge(137,20,'eye',teal)+sparkle(69,25,gold);break;
+   case 'Diagnose':d=badge(140,20,'search',purple)+sparkle(56,20,gold);break;
+   case 'Document':d=badge(139,21,'pen',teal)+sparkle(97,76,gold);break;
+   case 'Comply':d=badge(135,21,'check',teal)+sparkle(48,30,gold);break;
+   case 'Safeguard':d=badge(140,20,'lock',purple)+sparkle(79,20,gold);break;
+  }
+  return d;
+ };
+
  let art='';
  switch(kind){
  case 'protect':case 'prevent':
@@ -552,11 +657,13 @@ function mnemonicArtwork(word){
    '<stop offset="0" stop-color="#fcf8ff"/><stop offset=".58" stop-color="#eff7ff"/><stop offset="1" stop-color="#fff5ea"/></linearGradient>'+
    '<linearGradient id="ground" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#e2f6ef"/><stop offset="1" stop-color="#d5e7fa"/></linearGradient></defs>'+
   '<rect x="1" y="1" width="168" height="98" rx="19" fill="url(#sky)" stroke="#ece4fb"/>'+
+  '<rect x="4" y="4" width="162" height="92" rx="16" fill="none" stroke="#ffffff" stroke-opacity=".88" stroke-width="2"/>'+
+  '<path d="M9 32Q22 7 54 9" stroke="#fff" stroke-width="2.4" stroke-opacity=".85" fill="none" stroke-linecap="round"/>'+
   '<path d="M2 79Q39 69 82 78T168 75V82Q162 98 150 98H19Q2 97 2 81Z" fill="url(#ground)" opacity=".85"/>'+
   '<path d="M18 22q9-13 20 0m-12 0h22M119 13q9-11 19 0h7" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".95"/>'+
   '<circle cx="145" cy="29" r="15" fill="#ffe9b5" opacity=".75"/>'+
   '<ellipse cx="86" cy="87" rx="61" ry="5" fill="#9084ab" opacity=".12"/>'+
-  '<g>'+accent()+art+'</g>'+
+  '<g>'+accent()+art+sceneDetail()+'</g>'+
   '<circle cx="152" cy="69" r="2" fill="'+gold+'"/>'+
   '<path d="M13 63l4-5m-2 8 5-3" stroke="'+teal+'" stroke-width="2" stroke-linecap="round"/>'+
   '</svg>';
