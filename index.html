@@ -135,9 +135,9 @@
 .study-card-shell .study-polished .memory-illustration svg{width:112px!important;height:80px!important;max-width:100%!important}
 @media(max-width:520px){.study-card-shell .study-polished .memory-illustration svg{width:103px!important;height:70px!important}}
 
-/* Story-based semantic illustrations retain identical flashcard geometry. */
-.study-card-shell .study-polished .memory-illustration svg{width:155px!important;height:91px!important;max-width:100%!important}
-@media(max-width:520px){.study-card-shell .study-polished .memory-illustration svg{width:120px!important;height:72px!important}}
+/* Layered storybook illustrations, scaled up without moving vocabulary labels. */
+.study-card-shell .study-polished .memory-illustration svg{width:157px!important;height:92px!important;max-width:100%!important;filter:drop-shadow(0 4px 6px #9584c522)!important}
+@media(max-width:520px){.study-card-shell .study-polished .memory-illustration svg{width:121px!important;height:74px!important}}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
@@ -397,15 +397,30 @@ function mnemonicArtwork(word){
   return '<g transform="translate('+x+' '+y+') scale('+(sz/24)+')" fill="none" stroke="'+c+'" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">'+raw+'</g>';
  };
  const person=(x,y,shirt=purple,pose='normal')=>{
-  const arms=pose==='point'?p('M'+(x-6)+' '+(y+17)+'l-8 6 M'+(x+7)+' '+(y+17)+'l14 -10',line,2.8):
-   pose==='carry'?p('M'+(x-6)+' '+(y+17)+'l-7 -3 M'+(x+7)+' '+(y+17)+'l9 -5',line,2.8):
-   p('M'+(x-6)+' '+(y+18)+'l-7 10 M'+(x+6)+' '+(y+18)+'l8 10',line,2.8);
-  return circle(x,y,7,'#ffd6ba')+p('M'+(x-6)+' '+(y-4)+'q6 -7 12 0',line,2.2)+
-   rect(x-8,y+8,16,22,shirt,7)+arms+
-   p('M'+(x-4)+' '+(y+29)+'l-3 10 M'+(x+4)+' '+(y+29)+'l3 10',line,2.5);
+  // Small illustrated character: hair, facial expression, sleeves, hands, shoes and shirt shading.
+  const right=pose==='point'?[x+21,y+7]:pose==='carry'?[x+16,y+12]:[x+15,y+26];
+  const left=pose==='carry'?[x-13,y+14]:[x-15,y+27];
+  const skin='#ffd9bd',hair=n%2?'#725776':'#63567c';
+  const legs=p('M'+(x-4)+' '+(y+29)+'l-3 10 M'+(x+4)+' '+(y+29)+'l3 10',line,3)+
+    p('M'+(x-7)+' '+(y+39)+'h-5 M'+(x+7)+' '+(y+39)+'h5',hair,3.6);
+  const arms=p('M'+(x-7)+' '+(y+17)+'L'+left[0]+' '+left[1]+' M'+(x+7)+' '+(y+17)+'L'+right[0]+' '+right[1],line,3.7);
+  const face=circle(x,y,8.2,skin)+
+   '<path d="M'+(x-8)+' '+(y-2)+'q1-13 11-9q7 0 7 9l-5-5q-7 3-13 5Z" fill="'+hair+'"/>'+
+   circle(x-3,y+1,0.95,hair)+circle(x+3,y+1,0.95,hair)+
+   p('M'+(x-2.5)+' '+(y+4)+'q2.5 3 5 0','#bc7b85',1.1);
+  return '<ellipse cx="'+x+'" cy="'+(y+44)+'" rx="16" ry="3.5" fill="#8d7da2" opacity=".14"/>'+
+   legs+rect(x-9,y+9,18,22,shirt,7)+
+   p('M'+(x-5)+' '+(y+12)+'h10', '#fff',1.4)+
+   '<path d="M'+(x+3)+' '+(y+10)+'q7 9 3 16" stroke="#fff" opacity=".33" stroke-width="3" fill="none"/>'+
+   arms+circle(left[0],left[1],2.65,skin)+circle(right[0],right[1],2.65,skin)+face;
  };
  const arrow=(x1,y1,x2,y2,c=teal)=>p('M'+x1+' '+y1+' L'+x2+' '+y2,c,3)+p('M'+(x2-6)+' '+(y2-5)+'L'+x2+' '+y2+'L'+(x2-6)+' '+(y2+5),c,2.4);
- const sheet=(x,y,fill='#fff')=>rect(x,y,34,45,fill,5,'#dad3ec')+p('M'+(x+7)+' '+(y+12)+'h19 M'+(x+7)+' '+(y+20)+'h15 M'+(x+7)+' '+(y+28)+'h18','#a3a0bc',2);
+ const sheet=(x,y,fill='#fff')=>'<g>'+
+  '<rect x="'+(x+3)+'" y="'+(y+4)+'" width="34" height="45" rx="5" fill="#a99dc8" opacity=".14"/>'+
+  rect(x,y,34,45,fill,5,'#dad3ec')+
+  '<path d="M'+(x+25)+' '+y+'l9 9h-9Z" fill="#ece5fb"/>'+
+  p('M'+(x+7)+' '+(y+13)+'h19 M'+(x+7)+' '+(y+21)+'h15 M'+(x+7)+' '+(y+29)+'h18','#a3a0bc',1.8)+
+  circle(x+9,y+38,2,teal)+'</g>';
  const accent=()=>circle(14,13,2.2,gold)+circle(158,18,3,teal)+p('M151 82l6 -4',gold,3);
  let art='';
  switch(kind){
@@ -533,10 +548,18 @@ function mnemonicArtwork(word){
   art=person(37,34,purple,'point')+rect(83,34,52,42,'#eff8f3',7,'#c3e8dc')+icon(subject,95,42,26,teal);
  }
  return '<svg viewBox="0 0 170 100" width="170" height="100" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">'+
-  '<rect x="1" y="1" width="168" height="98" rx="19" fill="#fcfaff" stroke="#eee8fb"/>'+
-  circle(139,20,22,'#fff1d8')+circle(26,79,26,'#edeaff')+
-  '<path d="M14 84Q85 78 158 85" fill="none" stroke="#e6dafa" stroke-width="2"/>'+
-  accent()+art+'</svg>';
+  '<defs><linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">'+
+   '<stop offset="0" stop-color="#fcf8ff"/><stop offset=".58" stop-color="#eff7ff"/><stop offset="1" stop-color="#fff5ea"/></linearGradient>'+
+   '<linearGradient id="ground" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#e2f6ef"/><stop offset="1" stop-color="#d5e7fa"/></linearGradient></defs>'+
+  '<rect x="1" y="1" width="168" height="98" rx="19" fill="url(#sky)" stroke="#ece4fb"/>'+
+  '<path d="M2 79Q39 69 82 78T168 75V82Q162 98 150 98H19Q2 97 2 81Z" fill="url(#ground)" opacity=".85"/>'+
+  '<path d="M18 22q9-13 20 0m-12 0h22M119 13q9-11 19 0h7" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".95"/>'+
+  '<circle cx="145" cy="29" r="15" fill="#ffe9b5" opacity=".75"/>'+
+  '<ellipse cx="86" cy="87" rx="61" ry="5" fill="#9084ab" opacity=".12"/>'+
+  '<g>'+accent()+art+'</g>'+
+  '<circle cx="152" cy="69" r="2" fill="'+gold+'"/>'+
+  '<path d="M13 63l4-5m-2 8 5-3" stroke="'+teal+'" stroke-width="2" stroke-linecap="round"/>'+
+  '</svg>';
 }
 function memoryVisual(x){return '<div class="memory-drawing memory-scene memory-illustration" role="img" aria-label="'+esc(x[0])+' 의미를 표현하는 컬러 연상 그림">'+mnemonicArtwork(x[0])+'</div>'}
 function extraExample(x){const v=MEMORY_VISUALS[x[0]];return v?'<div class="example-pair"><div class="example-title">2</div><div class="example-text"><div class="example">'+esc(v[0])+'</div><div class="ko">'+esc(v[1])+'</div></div><button type="button" class="example-audio" aria-label="두 번째 예문 듣기" onclick="event.stopPropagation();speakExample(1)">🔊</button></div>':''}
