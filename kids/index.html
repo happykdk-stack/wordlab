@@ -159,75 +159,90 @@ let transitionTimer=null,transitionLocked=false;
 let rankComments=[],commentError='',commentBusy=false;
 
 let reviewAutoPlaying=false,reviewAutoToken=0,reviewAutoTimer=null;
+let reviewAutoWatchdog=null;
+function clearReviewAutoTimers(){
+ if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
+ if(reviewAutoWatchdog!==null){clearTimeout(reviewAutoWatchdog);reviewAutoWatchdog=null}
+}
 function stopReviewAutoPlay(){
-  reviewAutoPlaying=false;
-  reviewAutoToken++;
-  if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
-  if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
-  const b=document.querySelector('[data-action="review-autoplay"]');
-  if(b){b.textContent='▶ 영어·한글 자동 재생';b.setAttribute('aria-pressed','false')}
+ reviewAutoPlaying=false;
+ ++reviewAutoToken;
+ clearReviewAutoTimers();
+ if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
+ const b=document.querySelector('[data-action="review-autoplay"]');
+ if(b){b.textContent='▶ 영어·한글 자동 재생';b.setAttribute('aria-pressed','false')}
 }
 function playReviewSequence(){
-  if(!reviewAutoPlaying||mode!=='review'||transitionLocked||!deck.length||!deck[index]){stopReviewAutoPlay();return}
-  if(!('speechSynthesis' in window)){stopReviewAutoPlay();return}
-  const current=deck[index],currentIndex=index,token=reviewAutoToken;
-  const valid=()=>reviewAutoPlaying&&token===reviewAutoToken&&mode==='review'&&index===currentIndex&&deck[index]===current;
-  const later=(fn,delay)=>{
-    if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);
-    reviewAutoTimer=setTimeout(()=>{reviewAutoTimer=null;if(valid())fn()},delay);
-  };
-  let phase='english';
-  const next=()=>{
-    if(!valid()||phase!=='next')return;
-    // Cycle through all remaining missed words until the child presses stop.
-    index=(index+1)%deck.length;
-    flipped=false;
-    render();
-    // The next card has a new index, so use the session token rather than old-card validity.
-    if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);
-    reviewAutoTimer=setTimeout(()=>{
-      reviewAutoTimer=null;
-      if(reviewAutoPlaying&&reviewAutoToken===token&&mode==='review')playReviewSequence();
-    },400);
-  };
-  const afterKorean=()=>{
-    if(!valid()||phase!=='korean')return;
-    phase='next';
-    later(next,650);
-  };
-  const toKorean=()=>{
-    if(!valid()||phase!=='english')return;
-    phase='korean';
-    // Move the card to the meaning side before reading Korean.
-    flipped=true;render();
-    try{speechSynthesis.cancel()}catch(e){}
-    const ko=new SpeechSynthesisUtterance(current[1]);
-    ko.lang='ko-KR';ko.rate=.87;ko.pitch=1;
-    const voice=bestVoice('ko-KR');if(voice)ko.voice=voice;
-    ko.onend=afterKorean;
-    ko.onerror=afterKorean;
-    later(()=>{try{speechSynthesis.cancel()}catch(e){}afterKorean()},Math.max(3200,current[1].length*350+1800));
-    try{speechSynthesis.speak(ko)}catch(e){afterKorean()}
-  };
+ if(!reviewAutoPlaying||mode!=='review'||transitionLocked||!deck[index]){
+  stopReviewAutoPlay();return;
+ }
+ if(!('speechSynthesis' in window)){stopReviewAutoPlay();return}
+ clearReviewAutoTimers();
+ const word=deck[index],wordIndex=index,session=reviewAutoToken;
+ const active=()=>reviewAutoPlaying&&reviewAutoToken===session&&mode==='review'&&index===wordIndex&&deck[index]===word;
+ let phase='english';
+ const schedule=(fn,ms)=>{
+  if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);
+  reviewAutoTimer=setTimeout(()=>{reviewAutoTimer=null;if(active())fn()},ms);
+ };
+ const watchdog=(fn,ms)=>{
+  if(reviewAutoWatchdog!==null)clearTimeout(reviewAutoWatchdog);
+  reviewAutoWatchdog=setTimeout(()=>{reviewAutoWatchdog=null;if(active())fn()},ms);
+ };
+ const advance=()=>{
+  if(!active()||phase!=='advance')return;
+  clearReviewAutoTimers();
+  index=(index+1)%deck.length;
+  flipped=false;
+  render();
+  // Do not reuse the previous card's index-based guard for the new card.
+  reviewAutoTimer=setTimeout(()=>{
+   reviewAutoTimer=null;
+   if(reviewAutoPlaying&&reviewAutoToken===session&&mode==='review')playReviewSequence();
+  },450);
+ };
+ const koreanEnded=()=>{
+  if(!active()||phase!=='korean')return;
+  phase='advance';
+  if(reviewAutoWatchdog!==null){clearTimeout(reviewAutoWatchdog);reviewAutoWatchdog=null}
+  schedule(advance,700);
+ };
+ const playKorean=()=>{
+  if(!active()||phase!=='english')return;
+  phase='korean';
+  if(reviewAutoWatchdog!==null){clearTimeout(reviewAutoWatchdog);reviewAutoWatchdog=null}
+  flipped=true;
+  render();
+  // The Korean voice is queued after English without cancelling the engine.
   try{
-    const en=new SpeechSynthesisUtterance(current[0]);
-    en.lang='en-US';en.rate=.82;en.pitch=1;
-    const voice=bestVoice('en-US');if(voice)en.voice=voice;
-    en.onend=()=>later(toKorean,250);
-    en.onerror=()=>later(toKorean,250);
-    later(()=>{try{speechSynthesis.cancel()}catch(e){}toKorean()},Math.max(3500,current[0].length*300+1800));
-    speechSynthesis.speak(en);
-  }catch(e){stopReviewAutoPlay()}
+   const ko=new SpeechSynthesisUtterance(word[1]);ko.lang='ko-KR';ko.rate=.87;ko.pitch=1;
+   const v=bestVoice('ko-KR');if(v)ko.voice=v;
+   ko.onend=koreanEnded;ko.onerror=koreanEnded;
+   if(speechSynthesis.paused)speechSynthesis.resume();
+   speechSynthesis.speak(ko);
+   watchdog(koreanEnded,Math.max(5000,word[1].length*420+2300));
+  }catch(e){koreanEnded()}
+ };
+ try{
+  const en=new SpeechSynthesisUtterance(word[0]);en.lang='en-US';en.rate=.82;en.pitch=1;
+  const voice=bestVoice('en-US');if(voice)en.voice=voice;
+  en.onend=()=>{if(active()&&phase==='english')schedule(playKorean,250)};
+  en.onerror=()=>{if(active()&&phase==='english')schedule(playKorean,250)};
+  if(speechSynthesis.paused)speechSynthesis.resume();
+  speechSynthesis.speak(en);
+  // Some mobile browsers fail to send onend; move forward only after generous fallback.
+  watchdog(playKorean,Math.max(4800,word[0].length*360+2300));
+ }catch(e){schedule(playKorean,250)}
 }
 function toggleReviewAutoPlay(){
-  if(mode!=='review'||!deck.length)return;
-  if(reviewAutoPlaying){stopReviewAutoPlay();return}
-  if(!('speechSynthesis' in window)){alert('이 브라우저는 음성 재생을 지원하지 않아요.');return}
-  stopReviewAutoPlay();
-  reviewAutoPlaying=true;
-  const b=document.querySelector('[data-action="review-autoplay"]');
-  if(b){b.textContent='■ 자동 재생 정지';b.setAttribute('aria-pressed','true')}
-  playReviewSequence();
+ if(mode!=='review'||!deck.length)return;
+ if(reviewAutoPlaying){stopReviewAutoPlay();return}
+ if(!('speechSynthesis' in window)){alert('이 브라우저는 음성 재생을 지원하지 않아요.');return}
+ stopReviewAutoPlay();
+ reviewAutoPlaying=true;
+ const b=document.querySelector('[data-action="review-autoplay"]');
+ if(b){b.textContent='■ 자동 재생 정지';b.setAttribute('aria-pressed','true')}
+ playReviewSequence();
 }
 function cancelTransition(){stopReviewAutoPlay();if(transitionTimer!==null){clearTimeout(transitionTimer);transitionTimer=null}transitionLocked=false}
 const ADMIN_EMAIL='happykdk@gmail.com';
