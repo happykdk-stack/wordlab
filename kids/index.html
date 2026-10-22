@@ -183,7 +183,12 @@ function playReviewSequence(){
     index=(index+1)%deck.length;
     flipped=false;
     render();
-    later(playReviewSequence,400);
+    // The next card has a new index, so use the session token rather than old-card validity.
+    if(reviewAutoTimer!==null)clearTimeout(reviewAutoTimer);
+    reviewAutoTimer=setTimeout(()=>{
+      reviewAutoTimer=null;
+      if(reviewAutoPlaying&&reviewAutoToken===token&&mode==='review')playReviewSequence();
+    },400);
   };
   const afterKorean=()=>{
     if(!valid()||phase!=='korean')return;
