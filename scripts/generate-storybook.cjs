@@ -1,7 +1,8 @@
 'use strict';
 const fs=require('fs'),path=require('path'),crypto=require('crypto');
 const root=path.resolve(__dirname,'..'),htmlPath=path.join(root,'index.html'),dir=path.join(root,'assets/illustrations/words'),manifestPath=path.join(root,'assets/illustrations/generated-manifest.json');
-const scenes=JSON.parse(fs.readFileSync(path.join(root,'assets/illustrations/scene-descriptions.json'),'utf8'));
+const scenesFile=path.join(root,'assets/illustrations/scene-descriptions.json');
+const scenes=JSON.parse(fs.readFileSync(scenesFile,'utf8'));
 const html=fs.readFileSync(htmlPath,'utf8'),data=html.match(/const DATA=(\[[^\n]+?\]);/);
 if(!data)throw Error('Could not read DATA');const words=JSON.parse(data[1]);
 if(new Set(words.map(r=>r[0].toLowerCase())).size!==words.length)throw Error('Duplicate word');
@@ -47,6 +48,16 @@ async function review(w,m,scene,img){
  let text=(v.output||[]).flatMap(x=>x.content||[]).map(x=>x.text||'').join('')||v.output_text||'';
  const o=JSON.parse(text.trim());return {pass:o.pass===true,reason:String(o.reason||'').slice(0,180)};
 }
+async function describeScene(w,m){
+ const v=await api('responses',{model:qaModel,input:[{role:'user',content:[{
+  type:'input_text',
+  text:'You are an educational art director. For English word "'+w+'" with Korean meaning "'+m+'", invent ONE visually compelling, easy-to-remember picture book scene conveying this precise meaning. Output only 1 or 2 short English sentences describing characters, objects, actions and cause-and-effect. Be concrete and memorable, no labels, no text inside picture, no abstract infographic.'
+ }]}]});
+ const answer=(v.output||[]).flatMap(x=>x.content||[]).map(x=>x.text||'').join('')||v.output_text||'';
+ const result=answer.trim().replace(/\s+/g,' ').slice(0,500);
+ if(result.length<30)throw Error('Scene analysis empty or too short for '+w);
+ return result;
+}
 function sync(){
  const map={};for(const [w,e] of Object.entries(manifest.images)){
   const row=words.find(r=>r[0]===w);if(!row)continue;
@@ -60,8 +71,18 @@ function sync(){
  return Object.keys(map).length;
 }
 async function main(){
+ if(new Set(words.map(r=>filename(r[0]))).size!==words.length)throw Error('Image filename collision');
+ for(const [w,m] of words){
+  if(scenes[w])continue;
+  if(dry){scenes[w]='[Scene will be automatically analyzed for this new word: '+m+']';continue}
+  if(!process.env.OPENAI_API_KEY){console.log('New word '+w+': missing API key; retain SVG fallback');continue}
+  const description=await describeScene(w,m);
+  scenes[w]=description;
+  fs.writeFileSync(scenesFile,JSON.stringify(scenes,null,2)+'\n');
+  console.log('NEW SCENE '+w+': '+description);
+ }
  const todo=[];for(const [w,m] of words){
-  if(!scenes[w])throw Error('Missing story: '+w);
+  if(!scenes[w])continue;
   const p=prompt(w,m,scenes[w]),ph=sha('v1|'+model+'|'+p);
   if(force||!valid(manifest.images[w],w,m,ph))todo.push({w,m,p,ph});
  }

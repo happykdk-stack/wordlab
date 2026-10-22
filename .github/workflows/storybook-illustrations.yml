@@ -37,7 +37,9 @@ jobs:
         run: |
           git config user.name "wordlab-illustration-bot"
           git config user.email "wordlab-illustration-bot@users.noreply.github.com"
-          git add index.html assets/illustrations/generated-manifest.json assets/illustrations/words || true
+          git add index.html assets/illustrations/scene-descriptions.json
+          if [ -f assets/illustrations/generated-manifest.json ]; then git add assets/illustrations/generated-manifest.json; fi
+          if [ -d assets/illustrations/words ]; then git add assets/illustrations/words; fi
           if ! git diff --cached --quiet; then
             git commit -m "art: add approved storybook vocabulary illustrations"
             git push
