@@ -161,6 +161,26 @@
  .study-card-shell .study-polished .study-main-word,
  .study-card-shell .study-polished .study-main-meaning{top:43%!important}
 }
+
+/* Real storybook paintings, displayed without SVG icon overlays. */
+.study-card-shell .study-polished .memory-drawing.storybook-illustration,
+.study-card-shell .study-polished:has(.study-examples) .memory-drawing.storybook-illustration{
+ overflow:hidden!important;isolation:isolate;border-radius:14px!important;
+ background:#f7efff!important;border:1px solid #e9def6!important;
+ box-shadow:0 4px 12px #8470b323!important;
+}
+.study-card-shell .study-polished .memory-illustration .storybook-picture{
+ display:block;width:100%;height:100%;min-height:100%;
+ border-radius:inherit;
+ background-image:url('assets/illustrations/storybook-six.webp?v=20261022');
+ background-size:300% 200%;background-repeat:no-repeat;
+}
+@media(max-width:520px){
+ .study-card-shell .study-polished .study-feature-row .memory-drawing.storybook-illustration,
+ .study-card-shell .study-polished:has(.study-examples) .study-feature-row .memory-drawing.storybook-illustration{
+  overflow:hidden!important;max-width:calc(100% - 116px)!important;
+ }
+}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
@@ -651,7 +671,15 @@ function mnemonicArtwork(word){
   '<path d="M13 63l4-5m-2 8 5-3" stroke="'+teal+'" stroke-width="2" stroke-linecap="round"/>'+
   '</svg>';
 }
-function memoryVisual(x){return '<div class="memory-drawing memory-scene memory-illustration" role="img" aria-label="'+esc(x[0])+' 의미를 표현하는 컬러 연상 그림">'+mnemonicArtwork(x[0])+'</div>'}
+const STORYBOOK_ART_COORDS={"Mitigate":[0,0],"Bottleneck":[1,0],"Expedite":[2,0],"Reconcile":[0,1],"Prioritize":[1,1],"Handover":[2,1]};
+function memoryVisual(x){
+ const scene=STORYBOOK_ART_COORDS[x[0]];
+ if(scene){
+  const px=['0%','50%','100%'][scene[0]],py=scene[1]?'100%':'0%';
+  return '<div class="memory-drawing memory-scene memory-illustration storybook-illustration" role="img" aria-label="'+esc(x[0])+' 의미를 보여주는 그림동화풍 장면"><span class="storybook-picture" style="background-position:'+px+' '+py+'"></span></div>';
+ }
+ return '<div class="memory-drawing memory-scene memory-illustration" role="img" aria-label="'+esc(x[0])+' 의미를 표현하는 컬러 연상 그림">'+mnemonicArtwork(x[0])+'</div>';
+}
 function extraExample(x){const v=MEMORY_VISUALS[x[0]];return v?'<div class="example-pair"><div class="example-title">2</div><div class="example-text"><div class="example">'+esc(v[0])+'</div><div class="ko">'+esc(v[1])+'</div></div><button type="button" class="example-audio" aria-label="두 번째 예문 듣기" onclick="event.stopPropagation();speakExample(1)">🔊</button></div>':''}
 function speakExample(which){if(!deck[index]||!('speechSynthesis' in window))return;const x=deck[index],v=MEMORY_VISUALS[x[0]],sentence=which===0?x[3]:(v?v[0]:'');if(!sentence)return;stopReviewVoice();try{const u=new SpeechSynthesisUtterance(sentence);u.lang='en-US';u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
 function render(){
