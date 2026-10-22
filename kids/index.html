@@ -337,21 +337,19 @@ function playReviewSequence(){
   render();
   // The Korean voice is queued after English without cancelling the engine.
   try{
-   const ko=new SpeechSynthesisUtterance(word[1]);ko.lang='ko-KR';ko.rate=.87;ko.pitch=1;
-   const v=bestVoice('ko-KR');if(v)ko.voice=v;
+   const ko=kidsUtterance(word[1],'ko-KR',.87);
    ko.onend=koreanEnded;ko.onerror=koreanEnded;
    if(speechSynthesis.paused)speechSynthesis.resume();
-   speechSynthesis.speak(ko);
+   kidsStartSpeech(ko);
    watchdog(koreanEnded,Math.max(5000,word[1].length*420+2300));
   }catch(e){koreanEnded()}
  };
  try{
-  const en=new SpeechSynthesisUtterance(word[0]);en.lang='en-US';en.rate=.82;en.pitch=1;
-  const voice=bestVoice('en-US');if(voice)en.voice=voice;
+  const en=kidsUtterance(word[0],'en-US',.82);
   en.onend=()=>{if(active()&&phase==='english')schedule(playKorean,250)};
   en.onerror=()=>{if(active()&&phase==='english')schedule(playKorean,250)};
   if(speechSynthesis.paused)speechSynthesis.resume();
-  speechSynthesis.speak(en);
+  kidsStartSpeech(en);
   // Some mobile browsers fail to send onend; move forward only after generous fallback.
   watchdog(playKorean,Math.max(4800,word[0].length*360+2300));
  }catch(e){schedule(playKorean,250)}
@@ -594,15 +592,59 @@ function unlockQuizAudio(){const ctx=getAudioContext();if(!ctx)return;try{const 
 document.addEventListener('pointerdown',()=>{unlockQuizAudio();if(!iosFanfareAudio){iosFanfareAudio=new Audio('./success-fanfare.wav');iosFanfareAudio.preload='auto';iosFanfareAudio.load()}},{passive:true});
 document.addEventListener('touchstart',unlockQuizAudio,{passive:true});
 if('speechSynthesis' in window){try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices())}catch(e){}}
-function bestVoice(lang){
-if(!('speechSynthesis' in window))return null;
-const voices=speechSynthesis.getVoices(),prefix=lang.slice(0,2).toLowerCase();
-const matches=voices.filter(v=>v.lang.toLowerCase().startsWith(prefix));
-return matches.find(v=>/Google US English|Microsoft (Aria|Jenny|Guy|Samantha|SunHi|Heami)/i.test(v.name))||matches.find(v=>v.lang.toLowerCase()===lang.toLowerCase()&&/natural|neural|premium|enhanced/i.test(v.name))||matches.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||matches[0]||null;
+// Android/Samsung Internet: cloud/system voices exposed by getVoices() may not be playable.
+const kidsAndroid=/Android/i.test(navigator.userAgent||'');
+let kidsVoiceWarm=false;
+function warmKidsVoices(){
+ if(!('speechSynthesis' in window))return;
+ try{speechSynthesis.getVoices();kidsVoiceWarm=true;if(speechSynthesis.paused)speechSynthesis.resume()}catch(e){}
 }
+document.addEventListener('pointerdown',warmKidsVoices,{passive:true});
+document.addEventListener('touchstart',warmKidsVoices,{passive:true});
+function bestVoice(lang){
+ if(!('speechSynthesis' in window))return null;
+ let voices=[];try{voices=speechSynthesis.getVoices()}catch(e){}
+ const key=lang.slice(0,2).toLowerCase();
+ const matches=voices.filter(v=>String(v.lang||'').toLowerCase().startsWith(key));
+ // Prefer the device TTS default on Android rather than an incompatible enumerated voice.
+ if(kidsAndroid)return null;
+ return matches.find(v=>v.default&&v.localService)||
+ matches.find(v=>v.localService&&v.lang.toLowerCase()===lang.toLowerCase())||
+ matches.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||
+ matches.find(v=>v.localService)||matches[0]||null;
+}
+function kidsUtterance(text,lang,rate,useVoice=true){
+ const u=new SpeechSynthesisUtterance(String(text));
+ u.lang=lang;u.rate=rate;u.pitch=1;u.volume=1;
+ if(useVoice&&!kidsAndroid){const v=bestVoice(lang);if(v)u.voice=v}
+ return u;
+}
+function kidsStartSpeech(u){
+ try{
+  if(speechSynthesis.paused)speechSynthesis.resume();
+  speechSynthesis.speak(u);
+  return true;
+ }catch(e){console.warn('Kids TTS:',e);return false}
+}
+let kidsManualSpeechTicket=0;
 function speakNatural(text,lang='en-US',rate=.94){
-if(!('speechSynthesis' in window))return;
-try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1;u.volume=1;const v=bestVoice(lang);if(v)u.voice=v;u.onerror=()=>{if(!u.voice)return;try{const fallback=new SpeechSynthesisUtterance(text);fallback.lang=lang;fallback.rate=rate;fallback.volume=1;speechSynthesis.speak(fallback)}catch(e){}};speechSynthesis.speak(u)}catch(e){}
+ if(!('speechSynthesis' in window)){alert('음성 엔진을 사용할 수 없습니다. 삼성 TTS 또는 Google 음성 서비스를 확인해 주세요.');return}
+ const ticket=++kidsManualSpeechTicket;
+ try{
+  speechSynthesis.cancel();
+  const first=kidsUtterance(text,lang,rate);
+  let retried=false,started=false;
+  const tryFallback=()=>{
+   if(ticket!==kidsManualSpeechTicket||retried)return;
+   retried=true;
+   try{speechSynthesis.cancel();const fallback=kidsUtterance(text,lang,rate,false);kidsStartSpeech(fallback)}catch(e){}
+  };
+  first.onstart=()=>{started=true};
+  first.onerror=()=>{if(!started)tryFallback()};
+  kidsStartSpeech(first);
+  // Samsung WebView sometimes drops the first utterance without onstart/onerror.
+  setTimeout(()=>{if(ticket===kidsManualSpeechTicket&&!started&&!speechSynthesis.speaking)tryFallback()},1300);
+ }catch(e){console.warn('Kids speakNatural:',e)}
 }
 let iosFanfareAudio=null;
 function makeFanfareWav(){
@@ -696,10 +738,10 @@ function speakAnswerPair(english,korean,context='quiz'){
 if(!('speechSynthesis' in window))return;
 try{
 speechSynthesis.cancel();
-const en=new SpeechSynthesisUtterance(english);en.lang='en-US';en.rate=.91;const ev=bestVoice('en-US');if(ev)en.voice=ev;
-const ko=new SpeechSynthesisUtterance(korean);ko.lang='ko-KR';ko.rate=.94;const kv=bestVoice('ko-KR');if(kv)ko.voice=kv;
-en.onend=()=>{if((context==='quiz'&&mode==='quiz'&&answered)||(context==='card'&&mode!=='quiz'&&transitionLocked))speechSynthesis.speak(ko)};
-speechSynthesis.speak(en);
+const en=kidsUtterance(english,'en-US',.91);
+const ko=kidsUtterance(korean,'ko-KR',.94);
+en.onend=()=>{if((context==='quiz'&&mode==='quiz'&&answered)||(context==='card'&&mode!=='quiz'&&transitionLocked))kidsStartSpeech(ko)};
+kidsStartSpeech(en);
 }catch(e){}
 }
 function quizBeep(){
