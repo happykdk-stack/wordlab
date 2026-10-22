@@ -980,7 +980,17 @@ if(reviewAutoPlay&&deck[index]){acquireStudyWakeLock();speakReviewPair()}
 }
 function nextCard(){if(mode!=='card'&&mode!=='review')return;reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock();index++;flipped=false;render();if(mode==='review'&&reviewAutoPlay&&deck[index])speakReviewPair()}
 function prev(){reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock();index=Math.max(0,index-1);flipped=false;render();if(mode==='review'&&reviewAutoPlay&&deck[index])speakReviewPair()}
-function mark(ok){reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock();recordProgress(deck[index][0],ok?'known':'missed',false);index++;flipped=false;render();if(mode==='review'&&reviewAutoPlay&&deck[index])speakReviewPair()}
+function mark(ok){
+ if((mode!=='card'&&mode!=='review')||!deck[index])return;
+ const continueAuto=reviewAutoPlay;
+ stopReviewVoice();
+ recordProgress(deck[index][0],ok?'known':'missed',false);
+ index++;
+ if(continueAuto&&index>=deck.length)index=0;
+ flipped=false;
+ render();
+ if(continueAuto&&deck[index])speakReviewPair();
+}
 function speak(){if(!('speechSynthesis' in window)||!deck[index])return;reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock();const u=new SpeechSynthesisUtterance(deck[index][0]);u.lang='en-US';u.volume=.64;speechSynthesis.speak(u)}
 function options(x){const distractors=shuffle(DATA.filter(y=>y[0]!==x[0])).slice(0,3);return shuffle([x,...distractors])}
 function renderQuiz(){if(done>=deck.length){app.innerHTML='<h2 class="center">퀴즈 완료 🎉</h2><p class="center">정답 '+score+' / '+deck.length+'</p><div class="controls"><button onclick="tab(\'quiz\')">다시 도전</button><button class="secondary" onclick="tab(\'review\')">틀린 단어 복습</button></div>';return}const x=deck[done];window.quizOptions=quizHistory[done]?quizHistory[done].choices:options(x);window.quizAt=done;window.quizWord=x[0];answered=!!quizHistory[done];app.innerHTML='<div class="meta"><span>뜻을 보고 영어 단어 고르기</span><span>'+(done+1)+' / '+deck.length+'</span></div><div class="bar"><div class="fill" style="width:'+(done/deck.length*100)+'%"></div></div><div class="card" style="min-height:145px;cursor:default"><div class="meaning">'+esc(x[1])+'</div></div><div id="choices">'+window.quizOptions.map((o,i)=>'<button class="choice" id="choice'+i+'" onclick="answer('+i+')">'+String.fromCharCode(65+i)+'. '+esc(o[0])+'</button>').join('')+'</div><div id="result"></div><div class="quiz-nav"><button class="secondary" onclick="moveQuiz(-1)" '+(done===0?'disabled':'')+'>← 이전</button><button class="secondary" onclick="moveQuiz(1)">다음 →</button></div><div style="margin-top:16px;font-size:13px;color:#526079"><label for="quizVolume">🔉 퀴즈 음성 볼륨 <b id="quizVolumeValue">'+Math.round(quizVolume*100)+'%</b></label><input id="quizVolume" type="range" min="0" max="100" step="5" value="'+Math.round(quizVolume*100)+'" oninput="setQuizVolume(this.value)" style="display:block;width:100%;margin-top:7px"></div>';if(quizHistory[done]){const r=quizHistory[done];window.quizOptions.forEach((o,j)=>{const b=document.getElementById('choice'+j);b.disabled=true;if(o[0]===x[0])b.classList.add('correct');else if(j===r.selected)b.classList.add('wrong')});document.getElementById('result').innerHTML='<div class="feedback"><b>'+(r.ok?'✓ 정답':'✕ 오답')+'</b><p>'+esc(x[0])+' · '+esc(x[1])+'</p></div>'}}
