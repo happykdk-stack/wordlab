@@ -1029,7 +1029,7 @@ speechSynthesis.speak(en);
 if(auto)fallback=setTimeout(korean,Math.min(6000,Math.max(2000,word[0].length*190+1100)));
 }catch(e){if(auto)korean()}
 }
-function flipStudyCard(){const currentMode=mode;if(reviewAutoPlay){reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock()}flipped=!flipped;render();if(currentMode==='card')speak();else if(currentMode==='review'&&!reviewAutoPlay)speakReviewPair()}
+function flipStudyCard(){const currentMode=mode;if(singleRepeat){flipped=!flipped;render();return}if(reviewAutoPlay){reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock()}flipped=!flipped;render();if(currentMode==='card')speak();else if(currentMode==='review'&&!reviewAutoPlay)speakReviewPair()}
 function toggleReviewAutoPlay(){
 if(mode!=='review'&&mode!=='card')return;
 reviewAutoPlay=!reviewAutoPlay;
