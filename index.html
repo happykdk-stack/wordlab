@@ -945,6 +945,13 @@ function prepareRepeatNavigation(){
  if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
  if(typeof cancelWordAudio==='function')cancelWordAudio();
 }
+function restartRepeatAfterNavigation(){
+ if(!singleRepeat)return;
+ if(!deck[index]){stopSingleRepeat();return}
+ // Give iOS Web Speech time to release the previous utterance after cancel().
+ const token=singleRepeatToken;
+ singleRepeatTimer=setTimeout(()=>{singleRepeatTimer=null;if(singleRepeat&&token===singleRepeatToken&&deck[index])runSingleRepeat()},180);
+}
 function stopSingleRepeat(){
  singleRepeat=false;++singleRepeatToken;
  if(singleRepeatTimer!==null){clearTimeout(singleRepeatTimer);singleRepeatTimer=null}
@@ -1031,8 +1038,8 @@ if(!reviewAutoPlay)releaseStudyWakeLock();
 render();
 if(reviewAutoPlay&&deck[index]){acquireStudyWakeLock();speakReviewPair()}
 }
-function nextCard(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index++;flipped=false;render();if(repeating&&deck[index])runSingleRepeat();else if(repeating)stopSingleRepeat()}
-function prev(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index=Math.max(0,index-1);flipped=false;render();if(repeating&&deck[index])runSingleRepeat()}
+function nextCard(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index++;flipped=false;render();if(repeating&&deck[index])restartRepeatAfterNavigation();else if(repeating)stopSingleRepeat()}
+function prev(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index=Math.max(0,index-1);flipped=false;render();if(repeating&&deck[index])restartRepeatAfterNavigation()}
 function mark(ok){
  if((mode!=='card'&&mode!=='review')||!deck[index])return;
  const continueAuto=reviewAutoPlay,repeating=singleRepeat;
@@ -1042,7 +1049,7 @@ function mark(ok){
  if(continueAuto&&index>=deck.length)index=0;
  flipped=false;
  render();
- if(repeating&&deck[index])runSingleRepeat();else if(repeating)stopSingleRepeat();
+ if(repeating&&deck[index])restartRepeatAfterNavigation();else if(repeating)stopSingleRepeat();
  else if(continueAuto&&deck[index])speakReviewPair();
 }
 // Recorded pronunciation is attempted first on iOS; Web Speech remains the fallback.
