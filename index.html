@@ -873,7 +873,7 @@ const keepLabel=mode==='review'?'남기기':'다시 복습',removeLabel=mode==='
 const face=flipped?'<div class="study-face-label">뒷면 · 뜻과 예문 보기</div>':'<div class="study-face-label">앞면 · 단어만 보기</div>';
 const front='<div class="study-front"><div class="study-main-word">'+esc(x[0])+'</div><div class="study-tap-hint">카드를 눌러 뜻과 예문 확인 · 🔊</div></div>';
 const back='<div class="study-back"><div class="study-main-meaning">'+esc(x[1])+'</div><div class="study-etymology"><b>어원</b> '+esc(x[2])+'</div><div class="study-examples"><div class="example-pair"><div class="example-title">1</div><div class="example-text"><div class="example">'+esc(x[3])+'</div><div class="ko">'+esc(x[4])+'</div></div><button type="button" class="example-audio" aria-label="첫 번째 예문 듣기" onclick="event.stopPropagation();speakExample(0)">🔊</button></div>'+extraExample(x)+'</div></div>';
-app.innerHTML='<div class="meta"><span>'+(mode==='review'?'틀린 단어 복습':'전체카드')+'</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><div class="fill" style="width:'+((index+1)/deck.length*100)+'%"></div></div><div class="study-card-shell"><div class="card study-polished" onclick="flipStudyCard()">'+face+'<div class="study-feature-row">'+memoryVisual(x)+(flipped?back:front)+'</div></div><button class="card-side-arrow card-side-prev" type="button" aria-label="이전 단어" onclick="prev()" '+(index===0?'disabled':'')+'>‹</button><button class="card-side-arrow card-side-next" type="button" aria-label="다음 단어" onclick="nextCard()">›</button></div><div class="controls '+(mode==='review'?'review-action-controls':'')+'"><button class="bad" onclick="mark(false)">'+keepLabel+'</button><button class="good" onclick="mark(true)">'+removeLabel+'</button></div>'+((mode==='review'||mode==='card')?'<button class="review-autoplay" onclick="toggleReviewAutoPlay()" aria-pressed="'+reviewAutoPlay+'">'+(reviewAutoPlay?'⏸ 자동 재생 정지':'▶ 영어·한글 자동 재생')+'</button><div id="study-wake-status" class="study-wake-status" aria-live="polite"></div>':'');
+app.innerHTML='<div class="meta"><span>'+(mode==='review'?'틀린 단어 복습':'전체카드')+'</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar"><div class="fill" style="width:'+((index+1)/deck.length*100)+'%"></div></div><div class="study-card-shell"><div class="card study-polished" onclick="flipStudyCard()">'+face+'<div class="study-feature-row">'+memoryVisual(x)+(flipped?back:front)+'</div></div><button class="card-side-arrow card-side-prev" type="button" aria-label="이전 단어" onclick="prev()" '+(index===0?'disabled':'')+'>‹</button><button class="card-side-arrow card-side-next" type="button" aria-label="다음 단어" onclick="nextCard()">›</button></div><div class="controls '+(mode==='review'?'review-action-controls':'')+'"><button class="bad" onclick="mark(false)">'+keepLabel+'</button><button class="good" onclick="mark(true)">'+removeLabel+'</button></div>'+((mode==='review'||mode==='card')?'<button class="review-autoplay" onclick="toggleReviewAutoPlay()" aria-pressed="'+reviewAutoPlay+'">'+(reviewAutoPlay?'⏸ 자동 재생 정지':'▶ 영어·한글 자동 재생')+'</button><button id="singleRepeatBtn" class="review-autoplay" type="button" onclick="toggleSingleRepeat()" aria-pressed="'+singleRepeat+'">'+(singleRepeat?'■ 현재 단어 반복 정지':'🔁 현재 단어 반복')+'</button><div id="study-wake-status" class="study-wake-status" aria-live="polite"></div>':'');
 if(flipped)requestAnimationFrame(fitLongKoreanMeaning);
 }
 function fitLongKoreanMeaning(){
@@ -937,7 +937,48 @@ function releaseStudyWakeLock(){
 document.addEventListener('visibilitychange',()=>{
  if(document.visibilityState==='visible'&&reviewAutoPlay)acquireStudyWakeLock();
 });
+// Repeat only the selected card: English word, then Korean meaning.
+let singleRepeat=false,singleRepeatToken=0,singleRepeatTimer=null;
+function stopSingleRepeat(){
+ singleRepeat=false;++singleRepeatToken;
+ if(singleRepeatTimer!==null){clearTimeout(singleRepeatTimer);singleRepeatTimer=null}
+ if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
+ const b=document.getElementById('singleRepeatBtn');
+ if(b){b.textContent='🔁 현재 단어 반복';b.setAttribute('aria-pressed','false')}
+}
+function runSingleRepeat(){
+ if(!singleRepeat||!deck[index]||(mode!=='review'&&mode!=='card')){stopSingleRepeat();return}
+ const token=singleRepeatToken,word=deck[index],position=index,activeMode=mode;
+ const valid=()=>singleRepeat&&singleRepeatToken===token&&mode===activeMode&&index===position&&deck[index]===word;
+ if(!('speechSynthesis' in window)){stopSingleRepeat();return}
+ let phase=0,watchdog=null;
+ const clear=()=>{if(watchdog!==null){clearTimeout(watchdog);watchdog=null}};
+ const wait=(fn,ms)=>{clear();singleRepeatTimer=setTimeout(()=>{singleRepeatTimer=null;if(valid())fn()},ms)};
+ const korean=()=>{
+  if(!valid()||phase!==1)return;phase=2;clear();
+  try{
+   const ko=new SpeechSynthesisUtterance(word[1]);ko.lang='ko-KR';ko.rate=.9;ko.volume=1;
+   ko.onend=()=>{if(valid()&&phase===2){phase=3;wait(runSingleRepeat,850)}};
+   ko.onerror=ko.onend;speechSynthesis.speak(ko);
+   watchdog=setTimeout(ko.onend,Math.max(2600,word[1].length*320+1300));
+  }catch(e){phase=3;wait(runSingleRepeat,850)}
+ };
+ try{
+  speechSynthesis.cancel();phase=1;
+  const en=new SpeechSynthesisUtterance(word[0]);en.lang='en-US';en.rate=.88;en.volume=1;
+  en.onend=()=>{if(valid()&&phase===1)wait(korean,300)};
+  en.onerror=en.onend;speechSynthesis.speak(en);
+  watchdog=setTimeout(en.onend,Math.max(2600,word[0].length*260+1200));
+ }catch(e){stopSingleRepeat()}
+}
+function toggleSingleRepeat(){
+ if(singleRepeat){stopSingleRepeat();return}
+ if(!deck[index]||(mode!=='review'&&mode!=='card'))return;
+ stopReviewVoice();reviewAutoPlay=false;releaseStudyWakeLock();cancelWordAudio();
+ singleRepeat=true;++singleRepeatToken;render();runSingleRepeat();
+}
 function stopReviewVoice(){
+stopSingleRepeat();
 if(typeof cancelWordAudio==='function')cancelWordAudio();
 reviewVoiceToken++;
 if(reviewAutoTimer!==null){clearTimeout(reviewAutoTimer);reviewAutoTimer=null}
