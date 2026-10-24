@@ -963,7 +963,7 @@ function runSingleRepeat(){
  if(!singleRepeat||!deck[index]||(mode!=='review'&&mode!=='card')){stopSingleRepeat();return}
  const token=singleRepeatToken,word=deck[index],position=index,activeMode=mode;
  const valid=()=>singleRepeat&&singleRepeatToken===token&&mode===activeMode&&index===position&&deck[index]===word;
- if(!('speechSynthesis' in window)){stopSingleRepeat();return}
+ if(!('speechSynthesis' in window)){console.warn('Repeat audio unavailable');return}
  let phase=0,watchdog=null;
  const clear=()=>{if(watchdog!==null){clearTimeout(watchdog);watchdog=null}};
  const wait=(fn,ms)=>{clear();singleRepeatTimer=setTimeout(()=>{singleRepeatTimer=null;if(valid())fn()},ms)};
@@ -982,7 +982,7 @@ function runSingleRepeat(){
   en.onend=()=>{if(valid()&&phase===1)wait(korean,300)};
   en.onerror=en.onend;speechSynthesis.speak(en);
   watchdog=setTimeout(en.onend,Math.max(2600,word[0].length*260+1200));
- }catch(e){stopSingleRepeat()}
+ }catch(e){console.warn('Repeat audio failed:',e);if(valid())wait(runSingleRepeat,1200)}
 }
 function toggleSingleRepeat(){
  if(singleRepeat){stopSingleRepeat();return}
@@ -1038,7 +1038,7 @@ if(!reviewAutoPlay)releaseStudyWakeLock();
 render();
 if(reviewAutoPlay&&deck[index]){acquireStudyWakeLock();speakReviewPair()}
 }
-function nextCard(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index++;flipped=false;render();if(repeating&&deck[index])restartRepeatAfterNavigation();else if(repeating)stopSingleRepeat()}
+function nextCard(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index++;if(repeating&&index>=deck.length)index=0;flipped=false;render();if(repeating&&deck[index])restartRepeatAfterNavigation();else if(repeating)stopSingleRepeat()}
 function prev(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index=Math.max(0,index-1);flipped=false;render();if(repeating&&deck[index])restartRepeatAfterNavigation()}
 function mark(ok){
  if((mode!=='card'&&mode!=='review')||!deck[index])return;
@@ -1046,7 +1046,7 @@ function mark(ok){
  if(repeating)prepareRepeatNavigation();else stopReviewVoice();
  recordProgress(deck[index][0],ok?'known':'missed',false);
  index++;
- if(continueAuto&&index>=deck.length)index=0;
+ if((continueAuto||repeating)&&index>=deck.length)index=0;
  flipped=false;
  render();
  if(repeating&&deck[index])restartRepeatAfterNavigation();else if(repeating)stopSingleRepeat();
