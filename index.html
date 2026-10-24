@@ -939,6 +939,12 @@ document.addEventListener('visibilitychange',()=>{
 });
 // Repeat only the selected card: English word, then Korean meaning.
 let singleRepeat=false,singleRepeatToken=0,singleRepeatTimer=null;
+function prepareRepeatNavigation(){
+ ++singleRepeatToken;
+ if(singleRepeatTimer!==null){clearTimeout(singleRepeatTimer);singleRepeatTimer=null}
+ if('speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
+ if(typeof cancelWordAudio==='function')cancelWordAudio();
+}
 function stopSingleRepeat(){
  singleRepeat=false;++singleRepeatToken;
  if(singleRepeatTimer!==null){clearTimeout(singleRepeatTimer);singleRepeatTimer=null}
@@ -1025,18 +1031,19 @@ if(!reviewAutoPlay)releaseStudyWakeLock();
 render();
 if(reviewAutoPlay&&deck[index]){acquireStudyWakeLock();speakReviewPair()}
 }
-function nextCard(){if(mode!=='card'&&mode!=='review')return;reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock();index++;flipped=false;render();if(mode==='review'&&reviewAutoPlay&&deck[index])speakReviewPair()}
-function prev(){reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock();index=Math.max(0,index-1);flipped=false;render();if(mode==='review'&&reviewAutoPlay&&deck[index])speakReviewPair()}
+function nextCard(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index++;flipped=false;render();if(repeating&&deck[index])runSingleRepeat();else if(repeating)stopSingleRepeat()}
+function prev(){if(mode!=='card'&&mode!=='review')return;const repeating=singleRepeat;reviewAutoPlay=false;if(repeating)prepareRepeatNavigation();else stopReviewVoice();releaseStudyWakeLock();index=Math.max(0,index-1);flipped=false;render();if(repeating&&deck[index])runSingleRepeat()}
 function mark(ok){
  if((mode!=='card'&&mode!=='review')||!deck[index])return;
- const continueAuto=reviewAutoPlay;
- stopReviewVoice();
+ const continueAuto=reviewAutoPlay,repeating=singleRepeat;
+ if(repeating)prepareRepeatNavigation();else stopReviewVoice();
  recordProgress(deck[index][0],ok?'known':'missed',false);
  index++;
  if(continueAuto&&index>=deck.length)index=0;
  flipped=false;
  render();
- if(continueAuto&&deck[index])speakReviewPair();
+ if(repeating&&deck[index])runSingleRepeat();else if(repeating)stopSingleRepeat();
+ else if(continueAuto&&deck[index])speakReviewPair();
 }
 // Recorded pronunciation is attempted first on iOS; Web Speech remains the fallback.
 let wordAudio=null,wordAudioRequest=0;
