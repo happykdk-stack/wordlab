@@ -1,0 +1,57 @@
+name: Add daily WordLab words
+on:
+  schedule:
+    - cron: "0 23 * * *" # 08:00 KST
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/daily-words.yml"
+      - "scripts/add-daily-words.cjs"
+      - "data/word-bank.json"
+permissions:
+  contents: write
+concurrency:
+  group: wordlab-daily-vocabulary
+  cancel-in-progress: false
+jobs:
+  update-words:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generate new words and verify counts
+        run: |
+          node --check scripts/add-daily-words.cjs
+          node scripts/add-daily-words.cjs
+      - name: Verify app JavaScript
+        run: |
+          node - <<'NODE'
+          const fs = require('fs'), vm = require('vm');
+          for (const file of ['index.html','kids/index.html']) {
+            const html = fs.readFileSync(file,'utf8');
+            const blocks = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
+            for (const block of blocks) {
+              if (!block[1].trim()) continue;
+              if (/type=["']module["']/.test(block[0].slice(0,block[0].indexOf('>')))) continue;
+              new vm.Script(block[1], {filename:file});
+            }
+            console.log(file+': scripts valid');
+          }
+          NODE
+      - name: Commit updated word data and history
+        run: |
+          git config user.name "wordlab-daily-bot"
+          git config user.email "wordlab-daily-bot@users.noreply.github.com"
+          git add index.html kids/index.html data/word-update-history.json
+          if ! git diff --cached --quiet; then
+            git commit -m "vocab: add daily adult and grade-specific Kids words"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          else
+            echo "Already updated for today; no changes to publish."
+          fi
