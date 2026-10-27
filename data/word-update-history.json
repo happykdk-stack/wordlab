@@ -112,6 +112,61 @@
           "Legislation"
         ]
       }
+    },
+    {
+      "date": "2026-10-27",
+      "type": "manual",
+      "reason": "User requested extra batch, independent of daily 08:00 KST update",
+      "adult": [
+        "Delegation",
+        "Concise",
+        "Elaborate",
+        "Cumulative",
+        "Provisional",
+        "Correlate",
+        "Reinforce",
+        "Constraint-based",
+        "Operationalize",
+        "Capacity"
+      ],
+      "kids": {
+        "1-2": [
+          "Towel",
+          "Brush",
+          "Mirror",
+          "Stairs",
+          "Fence",
+          "Bridge",
+          "Beach",
+          "Jungle",
+          "Snowman",
+          "Snowflake"
+        ],
+        "3-4": [
+          "Crater",
+          "Earthquake",
+          "Tornado",
+          "Hurricane",
+          "Drought",
+          "Flood",
+          "Erosion",
+          "Map",
+          "Scale",
+          "Distance"
+        ],
+        "5-6": [
+          "Constitution",
+          "Citizen",
+          "Rights",
+          "Equality",
+          "Justice",
+          "Culture",
+          "Heritage",
+          "Economy",
+          "Scarcity",
+          "Supply"
+        ]
+      }
     }
   ],
   "notes": "2026-10-26 additions already present in pre-existing main commit; start automatic recovery from 2026-10-25, skip 2026-10-26 to avoid double counting."
