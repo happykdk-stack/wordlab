@@ -547,8 +547,37 @@ if(rankTimer){clearInterval(rankTimer);rankTimer=null}if(m==='rank'){rankComment
 function progressHeader(){const pct=Math.round((index+1)/deck.length*100);return '<div class="meta"><span>'+esc(level)+'학년</span><span>'+(index+1)+' / '+deck.length+'</span></div><div class="bar pretty-progress" role="progressbar" aria-label="학습 진행률" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100" style="--progress:'+pct+'%"><span style="width:'+pct+'%"></span><span class="unicorn-runner" aria-hidden="true"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAmCAMAAABQzS1fAAAAwFBMVEUAAAD25+3loeT73GrzXq33maP45JHrbMytnOr69P2ma/Dmoenboez8zDCwqvv/A//4evTbmuxkovD3oR/4sXPvXailbe6a6vzgOKn983X8sy36p1v0fBRp0fmno+73CwfhKKb5phv/7xCrIqKc1frQL6b7cXL9qKyuafGq5frx1OoCD/Z/f39vZ+FoovKspayf2froBG7v1N+jnK3kMKLrWazzds7802Tz2pn86qBxIeBubuhZm/Jr+v+RL9qua+3dL06GAAAAQHRSTlMA/Pb5+vn5+vgG+Rpl8xUBBaH5HvsXFu/vC+QYEPtZBBtbBBBoVgYOUxmbCAL9FQOpCGv8m2SimxhhERmTBRej8l5Z4gAAA/lJREFUeNrdlul2qkoQhYumGRoQZBY1OMUxiRoznozv/1Znd+NATDT3rnV/3VJYgvTHrl3VDUT/w+j0/hNMr/hXlzevd7+EaE56FEynE3XYJYrjf4wJJGDLqbhyt8IWU+9J79J5VNE5/HbdarAgb+P2m5R6XoozMcVPers3HJ7j7P8UwLDwQypzhadpGnskhv0DdSg29fZA5neSUhRSr4K55DFEptJaaJLEjUQ3jZQGutlod38rh653h7hIrEQzZCzMBL24s1AzDE3jhmHoOg1MvdFA/U8yplLKk6kPlIgrIoBmJIVZTGMGNhmg4NvuFuckDXQZDZnefH0Z+FeZS4TxUo7cLIAMqQcOnRIUzN2FiBsVqRHTOs+XdIuSQ4+uJ6zKTUmD0+1JseuM48Dp0CVJajQaA6LLnIo0TPvgWIlOHJKk3ZaUZCYQNDnqXYQoiuJ5IhZwmiSmHdOfYrlcUl96YnFmcN5imgoLxyYM76Wo3uRHSRutdLN2o41vt2tup6XkGKbBW7ziaNCHE6aJ+j1QWkvIdd3pdPr8XDwvSx9uD7pxG4o6w+v3GDTODXQO5zuOZlnQZ8jgabBXlFU9p2m4hYkqfMw8b5Z141Xgl+K9q+MsrE8MTlo9QGKMP1SzR8VEuB5is/mDGL6EmuqUEL2zzmUj6RKEe9/YX0DI7xFp3Z6of8YqDuLzZZ2vL9f5XZIgB+fmRjsK9nXoFflSkHBDd1h8oI1tx7Ztx7HZ51ue51p+EUWRHUUHQXdkkzrIpjWjyadSOrSYMY8ycBxbemUajmM5Fxf5BSJS5L0SWw6TP17p+lAufz73fd91RVYl5FSuwxXHcd4iiYmkSocdcrrDF5sWpuL6uzsvn4pjV9ZigieOEyIl25ana5waMdzNEJTrUsUSTfCK2zqObqLSsgOxV8McFbXRjO2JrL9NLpTHcDR/pgIfZCFbRnH20wFdjP7Tfghcl+7WceXRfP7eMbFoXL1d7Dk3ETtK47j2Mh7JDY6ec8joCcuZKVtYcmR94bH9bfgXUCq2fR00hRDv7mLTIVlybceh6G1RH/VVyHa+PT5Wz6rDEjRdbKiTqMUMHDjC7ejqVEa2TSX6V85tqs2z/WJPHSNJ1FyAzzyKvFPO2EwL1fwSzVVwTBFQRQ8AcEPVi+yzHnM+crPViafy7eSWZJ05t1qHdeen1MCxvqxmx28KRPe4xLLonn3vvv0ZWIgbjc+ApKx+fzzuEzHO6pbUeQbjLcSIgnOP177a37aqNRX1QYUyvyypLMusDDEjpI1jGv/CgahRPw1o3OItK/zEikR+/d9XT97ifkT0G2cX4zHuSbMZ3kGy65Wv4hXvNtS/b4EzGn3j/AXiV0s+brsSMAAAAABJRU5ErkJggg==" alt="" width="72" height="38" style="display:block;width:100%;height:100%;object-fit:contain"></span></div>'}
 function quizScoreboard(){const done=index+(answered?1:0);return '<div class="quiz-scoreboard" aria-live="polite"><span class="quiz-score-correct">✓ 맞힌 문제 <b>'+score+'</b></span><span class="quiz-score-wrong">✕ 틀린 문제 <b>'+(done-score)+'</b></span><span class="quiz-score-remaining">남은 문제 <b>'+(deck.length-done)+'</b></span></div>'}
 function kidsVocabHistoryHTML(){
-const count=DATA[level].length;
-return '<section class="vocab-history"><h3>📅 단어 업데이트 이력</h3><p class="sub">최근 단어 업데이트: <b>2026.10.24</b> · 현재 학년 <b>'+count+'개</b> · 전체 <b>'+Object.values(DATA).reduce((n,a)=>n+a.length,0)+'개</b></p><div class="vocab-history-item"><b>2026.10.24</b><span>1~2·3~4·5~6학년 각 10개(한국 기초 8개 + 미국식 확장 2개) 추가 · 전체 210 → 240개</span></div><div class="vocab-history-item"><b>2026.10.23</b><span>각 학년 10개씩 추가 · 전체 180 → 210개</span></div><div class="vocab-history-item"><b>2026.10.22</b><span>각 학년 10개씩 추가 · 전체 150 → 180개</span></div><div class="vocab-history-item"><b>2026.10.21</b><span>각 학년 10개씩 추가 · 전체 120 → 150개</span></div><div class="vocab-history-item"><b>2026.10.20</b><span>각 학년 10개씩 추가 · 전체 90 → 120개</span></div><div class="vocab-history-item"><b>2026.10.20</b><span>학년별 30개로 확대 · 전체 90개</span></div><div class="vocab-history-item"><b>2026.10.20</b><span>학년별 단어 추가 및 확장 시작</span></div><p class="sub">GitHub 단어 변경 기록을 기준으로 정리했습니다.</p></section>';
+ const count=DATA[level].length;
+ return '<section class="vocab-history" data-wordlab-history="kids"><h3>📅 단어 업데이트 이력</h3><p class="sub">최근 단어 업데이트: <b data-history-latest>확인 중…</b> · 현재 학년 <b>'+count+'개</b> · 전체 <b>'+Object.values(DATA).reduce((n,a)=>n+a.length,0)+'개</b></p><div data-history-list class="vocab-history-list">업데이트 기록을 확인하고 있습니다.</div></section>';
+}
+
+async function refreshWordlabHistory(){
+ const section=document.querySelector('[data-wordlab-history="kids"]');
+ if(!section)return;
+ const status=section.querySelector('[data-history-latest]');
+ const list=section.querySelector('[data-history-list]');
+ try{
+  const url='../data/word-update-history.json?v='+Date.now();
+  const response=await fetch(url,{cache:'no-store'});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const payload=await response.json();
+  if(!payload||!Array.isArray(payload.history))throw new Error('Invalid history');
+  if(!section.isConnected)return;
+  const entries=[...payload.history].sort((a,b)=>b.date.localeCompare(a.date));
+  const latest=entries[0];
+  if(!latest){status.textContent='추가 이력 없음';list.textContent='등록된 업데이트 이력이 없습니다.';return}
+  status.textContent=latest.date.replace(/-/g,'.');
+  list.innerHTML=entries.slice(0,12).map(entry=>{
+   const amount=Object.values(entry.kids||{}).reduce((total,words)=>total+(Array.isArray(words)?words.length:0),0);
+   const note=entry.type==='manual'?'추가 요청':'자동 추가';
+   return '<div class="vocab-history-item"><b>'+esc(entry.date.replace(/-/g,'.'))+'</b><span>'+note+' · '+amount+'개'+' (학년별 '+Object.entries(entry.kids||{}).map(([grade,words])=>grade+'학년 '+words.length+'개').join(', ')+')'+'</span></div>';
+  }).join('');
+ }catch(err){
+  if(!section.isConnected)return;
+  status.textContent='확인 불가';
+  list.textContent='단어는 앱에 등록되어 있지만 날짜 기록을 불러오지 못했습니다. 페이지를 다시 열어 주세요.';
+  console.warn('WordLab history:',err);
+ }
 }
 function render(){
 if(!user){app.innerHTML='<div class="login-gate"><div style="font-size:50px">🔐</div><h2>로그인하고 영어 공부 시작!</h2><p>Google 계정으로 로그인하면 아이별 학습 기록과 복습을 관리할 수 있어요.</p><button type="button" data-action="login-now">Google 로그인하기</button></div>';return}
@@ -561,7 +590,7 @@ app.innerHTML='<h2>🏆 '+gradeName(level)+' 퀴즈 순위</h2><p class="sub">�
 '<section class="rank-comments"><h3>친구 응원 댓글</h3><p class="sub">현재 학년 친구들에게 따뜻한 응원 한마디를 남겨요. 개인정보는 쓰지 마세요.</p><div class="rank-comment-compose"><input id="rankCommentInput" type="text" maxlength="100" placeholder="친구에게 응원 한마디 (100자 이내)" aria-label="응원 댓글"><button data-action="post-comment">등록</button></div><p class="sub">'+esc(commentError)+'</p>'+
 (rankComments.length?rankComments.map(c=>'<div class="rank-comment"><div><div class="rank-comment-heading"><strong>'+esc(c.name||'친구')+'</strong><time class="rank-comment-time">'+esc(formatCommentTime(c.createdAt))+'</time></div><p>'+esc(c.text||'')+'</p></div>'+((isKidsAdmin()||c.ownerUid===user.uid)?'<button class="secondary" data-action="delete-comment" data-comment-id="'+esc(c.id)+'">삭제</button>':'')+'</div>').join(''):'<p class="sub">첫 번째 응원 댓글을 남겨보세요!</p>')+'</section>';return}
 if(mode==='stats'){const s=state(),t=stats(),known=Object.values(s).filter(v=>v==='known').length,missed=Object.values(s).filter(v=>v==='missed').length,pct=t.attempts?Math.round((t.correct||0)/t.attempts*100):0;
-app.innerHTML='<h2>⭐ 나의 영어 성장 기록</h2><div class="stats">'+[['학습 완료',known+'개'],['복습할 단어',missed+'개'],['퀴즈 정답률',pct+'%'],['푼 문제',t.attempts||0]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'</div>'+kidsVocabHistoryHTML()+'<div class="notice" style="margin-top:18px">🌟 '+(known>=18?'영어 탐험왕!':known>=10?'멋진 영어 탐험가!':known>=3?'반짝반짝 성장 중!':'오늘 첫 단어부터 시작해요!')+'</div>';return}
+app.innerHTML='<h2>⭐ 나의 영어 성장 기록</h2><div class="stats">'+[['학습 완료',known+'개'],['복습할 단어',missed+'개'],['퀴즈 정답률',pct+'%'],['푼 문제',t.attempts||0]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'</div>'+kidsVocabHistoryHTML()+'<div class="notice" style="margin-top:18px">🌟 '+(known>=18?'영어 탐험왕!':known>=10?'멋진 영어 탐험가!':known>=3?'반짝반짝 성장 중!':'오늘 첫 단어부터 시작해요!')+'</div>';refreshWordlabHistory();return}
 if(mode==='review'&&deck.length){/* review controls shown above cards */}
 if(!deck.length){app.innerHTML='<h2>🎉 복습할 단어가 없어요!</h2><p>다시 공부할 단어를 선택해 보세요.</p>'+(mode==='review'?'<button class="secondary" data-action="reset-review">복습 목록 초기화</button>':'');return}
 if(index>=deck.length){

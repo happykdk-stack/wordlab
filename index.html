@@ -425,13 +425,43 @@ function maskedEmail(email){const p=String(email||'').split('@');if(p.length!==2
 function safeRankLabel(entry){const label=String(entry.nickname||'');const at=label.indexOf('@');return at>0&&label.includes('***')&&label.slice(at+1).includes('.')?' '+label.trim():'기존 사용자 (재로그인 필요)'}
 
 function vocabHistoryHTML(){
-return '<section class="vocab-history"><h3>📅 단어 업데이트 이력</h3><p class="small">최근 단어 업데이트: <b>2026.10.24</b> · 현재 <b>'+DATA.length+'개</b></p><div class="vocab-history-item"><b>2026.10.24</b><span>실무 영어 단어 10개 추가 · 81 → 91개</span></div><div class="vocab-history-item"><b>2026.10.23</b><span>실무 영어 단어 10개 추가 · 71 → 81개</span></div><div class="vocab-history-item"><b>2026.10.22</b><span>실무 영어 단어 10개 추가 · 61 → 71개</span></div><div class="vocab-history-item"><b>2026.10.21</b><span>실무 영어 단어 10개 추가 · 51 → 61개</span></div><div class="vocab-history-item"><b>2026.10.20</b><span>실무 영어 단어 10개 추가 · 41 → 51개</span></div><div class="vocab-history-item"><b>2026.10.20</b><span>실무 영어 단어 10개 추가 · 31 → 41개</span></div><div class="vocab-history-item"><b>2026.10.20</b><span>성인용 단어 카드 31개 등록</span></div><p class="small">GitHub 단어 변경 기록을 기준으로 정리했습니다.</p></section>';
+ return '<section class="vocab-history" data-wordlab-history="adult"><h3>📅 단어 업데이트 이력</h3><p class="small">최근 단어 업데이트: <b data-history-latest>확인 중…</b> · 현재 <b>'+DATA.length+'개</b></p><div data-history-list class="vocab-history-list">업데이트 기록을 확인하고 있습니다.</div></section>';
+}
+
+async function refreshWordlabHistory(){
+ const section=document.querySelector('[data-wordlab-history="adult"]');
+ if(!section)return;
+ const status=section.querySelector('[data-history-latest]');
+ const list=section.querySelector('[data-history-list]');
+ try{
+  const url='data/word-update-history.json?v='+Date.now();
+  const response=await fetch(url,{cache:'no-store'});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const payload=await response.json();
+  if(!payload||!Array.isArray(payload.history))throw new Error('Invalid history');
+  if(!section.isConnected)return;
+  const entries=[...payload.history].sort((a,b)=>b.date.localeCompare(a.date));
+  const latest=entries[0];
+  if(!latest){status.textContent='추가 이력 없음';list.textContent='등록된 업데이트 이력이 없습니다.';return}
+  status.textContent=latest.date.replace(/-/g,'.');
+  list.innerHTML=entries.slice(0,12).map(entry=>{
+   const amount=(Array.isArray(entry.adult)?entry.adult.length:0);
+   const note=entry.type==='manual'?'추가 요청':'자동 추가';
+   return '<div class="vocab-history-item"><b>'+esc(entry.date.replace(/-/g,'.'))+'</b><span>'+note+' · '+amount+'개'+''+'</span></div>';
+  }).join('');
+ }catch(err){
+  if(!section.isConnected)return;
+  status.textContent='확인 불가';
+  list.textContent='단어는 앱에 등록되어 있지만 날짜 기록을 불러오지 못했습니다. 페이지를 다시 열어 주세요.';
+  console.warn('WordLab history:',err);
+ }
 }
 function renderStats(){
 const n=statNumbers(),pct=n.attempts?Math.round(n.correct/n.attempts*100):0;
 app.innerHTML='<h2>📊 나의 학습 통계</h2>'+vocabHistoryHTML()+'<p class="small">내 계정의 학습 현황입니다.</p><div class="stats-grid">'+
 [['암기한 단어',n.known+'개'],['틀린 단어',n.missed+'개'],['퀴즈 정답률',pct+'%'],['누적 퀴즈 풀이',n.attempts+'문제']].map(x=>'<div class="stat"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+
 '</div><div class="rank-level"><b>🌟 '+levelName(n.known)+'</b><p class="small">암기한 단어 '+n.known+'개 · 개인 점수 '+scoreValue()+'점</p></div><p class="small">통계는 이 기능이 추가된 이후의 퀴즈 기록부터 누적됩니다. 이전의 정답·오답 상태는 암기 단어 수에 반영됩니다.</p>';
+refreshWordlabHistory();
 }
 function renderRank(){
 const n=statNumbers();
