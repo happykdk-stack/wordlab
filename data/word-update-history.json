@@ -1,9 +1,118 @@
 {
   "version": 1,
   "completedDates": [
-    "2026-10-26"
+    "2026-10-25",
+    "2026-10-26",
+    "2026-10-27"
   ],
-  "lastUpdatedKST": null,
-  "history": [],
+  "lastUpdatedKST": "2026-10-27",
+  "history": [
+    {
+      "date": "2026-10-25",
+      "adult": [
+        "Escalatory",
+        "Prerequisite",
+        "Viability",
+        "Accountable",
+        "Rectification",
+        "Facilitator",
+        "Deprioritize",
+        "Benchmarking",
+        "Reallocate",
+        "Streamlining"
+      ],
+      "kids": {
+        "1-2": [
+          "Butterfly",
+          "Squirrel",
+          "Whale",
+          "Dolphin",
+          "Giraffe",
+          "Penguin",
+          "Ant",
+          "Spider",
+          "Lemon",
+          "Grape"
+        ],
+        "3-4": [
+          "Predator",
+          "Prey",
+          "Camouflage",
+          "Migrate",
+          "Hibernate",
+          "Pollinate",
+          "Seedling",
+          "Sapling",
+          "Nectar",
+          "Pollen"
+        ],
+        "5-6": [
+          "Argument",
+          "Bias",
+          "Credibility",
+          "Reliable",
+          "Justify",
+          "Illustrate",
+          "Distinguish",
+          "Relevant",
+          "Accurate",
+          "Precise"
+        ]
+      }
+    },
+    {
+      "date": "2026-10-27",
+      "adult": [
+        "Resilience",
+        "Oversight",
+        "Compliance",
+        "Mitigation",
+        "Disseminate",
+        "Interdependency",
+        "Subsequent",
+        "Turnaround",
+        "Replenish",
+        "Conformance"
+      ],
+      "kids": {
+        "1-2": [
+          "Peach",
+          "Corn",
+          "Potato",
+          "Tomato",
+          "Cucumber",
+          "Carrot",
+          "Pillow",
+          "Blanket",
+          "Basket",
+          "Fork"
+        ],
+        "3-4": [
+          "Roots",
+          "Stem",
+          "Petal",
+          "Thorn",
+          "Meadow",
+          "Cliff",
+          "Waterfall",
+          "Stream",
+          "Glacier",
+          "Lava"
+        ],
+        "5-6": [
+          "Complex",
+          "Abstract",
+          "Concrete",
+          "Cause",
+          "Effect",
+          "Sequence",
+          "Chronology",
+          "Era",
+          "Republic",
+          "Legislation"
+        ]
+      }
+    }
+  ],
   "notes": "2026-10-26 additions already present in pre-existing main commit; start automatic recovery from 2026-10-25, skip 2026-10-26 to avoid double counting."
 }
