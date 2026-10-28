@@ -1430,7 +1430,7 @@ function renderAssemble(){
  const blank=x[3].replace(contextPattern(x[0]),'________');
  app.innerHTML='<div class="meta"><span>📖 예문 속 빈칸에 알맞은 단어는?</span><span>'+(done+1)+' / '+deck.length+'</span></div>'+
  '<div class="bar"><div class="fill" style="width:'+(done/deck.length*100)+'%"></div></div>'+
- '<div class="card" style="min-height:155px;cursor:default"><div class="example" style="font-size:clamp(19px,4vw,24px);font-weight:750;text-align:center">'+esc(blank)+'</div></div>'+
+ '<div class="card" style="min-height:155px;cursor:default"><div class="example" style="font-size:clamp(19px,4vw,24px);font-weight:750;text-align:center">'+esc(blank)+'</div><div class="ko" style="margin-top:14px;font-size:clamp(15px,3vw,18px);line-height:1.55;text-align:center;color:#64748b">'+esc(x[4])+'</div></div>'+
  '<p class="center small">문장의 상황을 생각하며 가장 자연스러운 단어를 선택하세요.</p>'+
  '<div class="context-choices">'+contextChoices.map((o,i)=>'<button class="choice" onclick="chooseContext('+i+')" '+(contextAnswered?'disabled':'')+'>'+esc(o[0])+'</button>').join('')+'</div>'+
  (contextAnswered?'<div class="context-feedback"><strong>'+(correct?'✅ 정답입니다!':'❌ 정답: '+esc(x[0]))+'</strong><p>'+esc(x[3])+'</p><p>'+esc(x[4])+'</p><p><strong>'+esc(x[0])+'</strong> · '+esc(x[1])+'</p></div><div class="controls"><button onclick="nextContext()">다음 문제 →</button></div>':'');
