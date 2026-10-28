@@ -212,6 +212,7 @@
 @media(max-width:520px){.assemble-answer .assemble-given,.assemble-answer .assemble-blank{min-width:32px;height:40px;font-size:16px}}
 
 .context-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.context-choices .choice{width:100%;min-height:55px;white-space:normal;overflow-wrap:anywhere}.context-feedback{padding:15px;background:#f3f0ff;border-radius:14px;color:#302957;line-height:1.55}.context-feedback p{margin:7px 0}@media(max-width:520px){.context-choices{grid-template-columns:1fr}.context-choices .choice{min-height:48px}}
+.context-pron{font-size:14px;font-weight:650;color:#5b4c8c;line-height:1.6}.context-feedback button.secondary{margin-top:6px}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
@@ -1464,7 +1465,7 @@ function renderAssemble(){
  '<div class="card" style="min-height:155px;cursor:default"><div class="example" style="font-size:clamp(19px,4vw,24px);font-weight:750;text-align:center">'+esc(blank)+'</div><div class="ko" style="margin-top:14px;font-size:clamp(15px,3vw,18px);line-height:1.55;text-align:center;color:#64748b">'+esc(x[4])+'</div></div>'+
  '<p class="center small">틀릴 기회는 총 3번입니다. 최고 점수에 도전하세요!</p>'+
  '<div class="context-choices">'+contextChoices.map((o,i)=>'<button class="choice" onclick="chooseContext('+i+')" '+(contextAnswered?'disabled':'')+'>'+esc(o[0])+'</button>').join('')+'</div>'+
- (contextAnswered?'<div class="context-feedback"><strong>'+(correct?'✅ +10점!':'❌ 오답 '+contextMistakes+'/3')+'</strong><p>'+esc(x[3])+'</p><p>'+esc(x[4])+'</p><p><strong>'+esc(x[0])+'</strong> · '+esc(x[1])+'</p></div><div class="controls"><button onclick="nextContext()">'+(contextMistakes>=3?'결과 보기':'다음 문제 →')+'</button></div>':'');
+ (contextAnswered?'<div class="context-feedback"><strong>'+(correct?'✅ +10점!':'❌ 오답 '+contextMistakes+'/3')+'</strong><p>'+esc(x[3])+'</p><p>'+esc(x[4])+'</p><p><strong>'+esc(x[0])+'</strong> · '+esc(x[1])+'</p><p class="context-pron">'+(window.WORDLAB_PRONUNCIATIONS?.[x[0]]?.[0]?'<span>발음기호: '+esc(window.WORDLAB_PRONUNCIATIONS[x[0]][0])+'</span>':'<span>발음기호 정보 없음</span>')+' · '+(window.WORDLAB_PRONUNCIATIONS?.[x[0]]?.[1]?'<span>한글 발음: '+esc(window.WORDLAB_PRONUNCIATIONS[x[0]][1])+'</span>':'<span>한글 발음 정보 없음</span>')+'</p><button class="secondary" onclick="playRecordedWord(deck[done][0])">🔊 단어 발음 듣기</button></div><div class="controls"><button onclick="nextContext()">'+(contextMistakes>=3?'결과 보기':'다음 문제 →')+'</button></div>':'');
 }
 function chooseContext(i){
  if(contextAnswered||!contextChoices[i])return;
