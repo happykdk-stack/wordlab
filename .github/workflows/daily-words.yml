@@ -1,7 +1,9 @@
 name: Add daily WordLab words
 on:
   schedule:
-    - cron: "0 23 * * *" # 08:00 KST
+    - cron: "0 23 * * *" # primary: 08:00 KST
+    - cron: "17,43 23 * * *" # retries: 08:17 and 08:43 KST
+    - cron: "17 0,1 * * *" # fallback checks: 09:17 and 10:17 KST
   workflow_dispatch:
   push:
     paths:
