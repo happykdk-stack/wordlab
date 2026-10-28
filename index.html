@@ -181,6 +181,23 @@
   overflow:hidden!important;max-width:calc(100% - 116px)!important;
  }
 }
+
+/* Readability refinement: larger etymology and more central example on back face. */
+.study-card-shell .card.study-polished .study-etymology-expanded .etymology-heading{font-size:15px!important;line-height:1.35!important}
+.study-card-shell .card.study-polished .study-etymology-expanded .etymology-origin{font-size:15px!important;line-height:1.4!important}
+.study-card-shell .card.study-polished .study-etymology-expanded .etymology-note{font-size:14px!important;line-height:1.4!important}
+.study-card-shell .card.study-polished .study-feature-row .study-etymology.study-etymology-expanded,
+.study-card-shell .card.study-polished:has(.study-single-example) .study-feature-row .study-etymology.study-etymology-expanded{max-height:150px!important}
+.study-card-shell .card.study-polished .study-feature-row .study-examples.study-single-example{
+ bottom:52px!important;max-height:130px!important;
+}
+.study-card-shell .card.study-polished .study-examples.study-single-example .example{font-size:16px!important;line-height:1.5!important}
+.study-card-shell .card.study-polished .study-examples.study-single-example .ko{font-size:14px!important;line-height:1.45!important}
+@media(max-width:520px){
+ .study-card-shell .card.study-polished .study-feature-row .study-etymology.study-etymology-expanded,
+ .study-card-shell .card.study-polished:has(.study-single-example) .study-feature-row .study-etymology.study-etymology-expanded{max-height:145px!important}
+ .study-card-shell .card.study-polished .study-feature-row .study-examples.study-single-example{bottom:43px!important;max-height:128px!important}
+}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
