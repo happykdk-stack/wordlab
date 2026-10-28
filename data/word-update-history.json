@@ -3,9 +3,10 @@
   "completedDates": [
     "2026-10-25",
     "2026-10-26",
-    "2026-10-27"
+    "2026-10-27",
+    "2026-10-28"
   ],
-  "lastUpdatedKST": "2026-10-27",
+  "lastUpdatedKST": "2026-10-28",
   "history": [
     {
       "date": "2026-10-25",
@@ -165,6 +166,59 @@
           "Economy",
           "Scarcity",
           "Supply"
+        ]
+      }
+    },
+    {
+      "date": "2026-10-28",
+      "adult": [
+        "Escalation path",
+        "Deliverability",
+        "Threshold",
+        "Resolution",
+        "Revise",
+        "Solicit",
+        "Feasible",
+        "Consistent",
+        "Proportionate",
+        "Scrutinize"
+      ],
+      "kids": {
+        "1-2": [
+          "Thunder",
+          "Sunrise",
+          "Sunset",
+          "Feather",
+          "Button",
+          "Pocket",
+          "Zipper",
+          "Helmet",
+          "Scooter",
+          "Playground"
+        ],
+        "3-4": [
+          "Latitude",
+          "Longitude",
+          "Hemisphere",
+          "Equator",
+          "Continent",
+          "Climate",
+          "Weathering",
+          "Mineral",
+          "Fossil",
+          "Skeleton"
+        ],
+        "5-6": [
+          "Demand",
+          "Budget",
+          "Investment",
+          "Revenue",
+          "Profit",
+          "Expense",
+          "Probability",
+          "Fraction",
+          "Decimal",
+          "Percentage"
         ]
       }
     }
