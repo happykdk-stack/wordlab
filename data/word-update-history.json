@@ -4,9 +4,10 @@
     "2026-10-25",
     "2026-10-26",
     "2026-10-27",
-    "2026-10-28"
+    "2026-10-28",
+    "2026-10-29"
   ],
-  "lastUpdatedKST": "2026-10-28",
+  "lastUpdatedKST": "2026-10-29",
   "history": [
     {
       "date": "2026-10-25",
@@ -219,6 +220,59 @@
           "Fraction",
           "Decimal",
           "Percentage"
+        ]
+      }
+    },
+    {
+      "date": "2026-10-29",
+      "adult": [
+        "Unambiguous",
+        "Stakeholder mapping",
+        "Interim",
+        "Abstain",
+        "Consolidation",
+        "Remediation plan",
+        "Synchrony",
+        "Variance",
+        "Equitable",
+        "Unify"
+      ],
+      "kids": {
+        "1-2": [
+          "Sandbox",
+          "Swing",
+          "Slide",
+          "Robot",
+          "Rocket",
+          "Camera",
+          "Picture",
+          "Painting",
+          "Music",
+          "Piano"
+        ],
+        "3-4": [
+          "Muscle",
+          "Joint",
+          "Organ",
+          "Lungs",
+          "Nutrition",
+          "Digestion",
+          "Friction",
+          "Magnet",
+          "Electricity",
+          "Circuit"
+        ],
+        "5-6": [
+          "Ratio",
+          "Proportion",
+          "Equation",
+          "Expression",
+          "Coefficient",
+          "Exponent",
+          "Geometry",
+          "Diameter",
+          "Radius",
+          "Circumference"
         ]
       }
     }
