@@ -5,9 +5,10 @@
     "2026-10-26",
     "2026-10-27",
     "2026-10-28",
-    "2026-10-29"
+    "2026-10-29",
+    "2026-10-30"
   ],
-  "lastUpdatedKST": "2026-10-29",
+  "lastUpdatedKST": "2026-10-30",
   "history": [
     {
       "date": "2026-10-25",
@@ -273,6 +274,59 @@
           "Diameter",
           "Radius",
           "Circumference"
+        ]
+      }
+    },
+    {
+      "date": "2026-10-30",
+      "adult": [
+        "Attainable",
+        "Reconfirm",
+        "Convene again",
+        "Underscore",
+        "Detrimental",
+        "Expediency",
+        "Alignment gap",
+        "Adherence",
+        "Caveat",
+        "Escalate promptly"
+      ],
+      "kids": {
+        "1-2": [
+          "Violin",
+          "Dance",
+          "Yawn",
+          "Stretch",
+          "Hop",
+          "Crawl",
+          "Float",
+          "Dive",
+          "Pour",
+          "Stir"
+        ],
+        "3-4": [
+          "Battery",
+          "Conductor",
+          "Insulator",
+          "Reflection",
+          "Refraction",
+          "Transparent",
+          "Opaque",
+          "Flexible",
+          "Fragile",
+          "Durable"
+        ],
+        "5-6": [
+          "Volume",
+          "Density",
+          "Mass",
+          "Velocity",
+          "Acceleration",
+          "Force",
+          "Momentum",
+          "Kinetic",
+          "Potential",
+          "Respiration"
         ]
       }
     }
