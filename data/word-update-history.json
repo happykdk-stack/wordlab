@@ -6,9 +6,13 @@
     "2026-10-27",
     "2026-10-28",
     "2026-10-29",
-    "2026-10-30"
+    "2026-10-30",
+    "2026-10-31",
+    "2026-11-01",
+    "2026-11-02",
+    "2026-11-03"
   ],
-  "lastUpdatedKST": "2026-10-30",
+  "lastUpdatedKST": "2026-11-03",
   "history": [
     {
       "date": "2026-10-25",
@@ -328,6 +332,113 @@
           "Potential",
           "Respiration"
         ]
+      }
+    },
+    {
+      "date": "2026-10-31",
+      "adult": [
+        "Nuance",
+        "Pragmatic",
+        "Compelling",
+        "Tangible",
+        "Inherent",
+        "Ambiguous",
+        "Plausible",
+        "Robust",
+        "Scalable",
+        "Sustainable"
+      ],
+      "kids": {
+        "1-2": [
+          "Fold",
+          "Wrap",
+          "Clap",
+          "Cheer"
+        ],
+        "3-4": [
+          "Absorb",
+          "Dissolve",
+          "Mixture",
+          "Evaporate",
+          "Condense",
+          "Precipitate",
+          "Record",
+          "Classify",
+          "Summarize",
+          "Conclude"
+        ],
+        "5-6": [
+          "Organism",
+          "Genetics",
+          "Cellular",
+          "Molecule",
+          "Atom",
+          "Element",
+          "Compound",
+          "Reaction",
+          "Data",
+          "Variable control"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-01",
+      "adult": [
+        "Viable",
+        "Credible",
+        "Subtle",
+        "Preliminary",
+        "Definitive",
+        "Tentative",
+        "Explicit",
+        "Implicit",
+        "Consecutive",
+        "Concurrent"
+      ],
+      "kids": {
+        "1-2": [],
+        "3-4": [],
+        "5-6": []
+      }
+    },
+    {
+      "date": "2026-11-02",
+      "adult": [
+        "Incremental",
+        "Fundamental",
+        "Underlying",
+        "Overarching",
+        "Strategic",
+        "Tactical",
+        "Holistic",
+        "Granular",
+        "Objective",
+        "Subjective"
+      ],
+      "kids": {
+        "1-2": [],
+        "3-4": [],
+        "5-6": []
+      }
+    },
+    {
+      "date": "2026-11-03",
+      "adult": [
+        "Proficient",
+        "Competent",
+        "Versatile",
+        "Resourceful",
+        "Meticulous",
+        "Diligent",
+        "Candid",
+        "Constructive",
+        "Conciliatory",
+        "Assertive"
+      ],
+      "kids": {
+        "1-2": [],
+        "3-4": [],
+        "5-6": []
       }
     }
   ],
