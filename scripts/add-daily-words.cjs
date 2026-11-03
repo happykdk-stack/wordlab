@@ -40,15 +40,17 @@ function build(){
     children[grade]=bank.kids[grade].filter(w=>Array.isArray(w)&&w.length===4&&w.every(Boolean)&&!provisional.has(key(w[0]))).slice(0,DAILY_KIDS);
     children[grade].forEach(w=>provisional.add(key(w[0])));
    }
+   // Exhausted grade banks must not block adult or other grade updates.
+   // Publish only unique available entries and report shortages explicitly.
+   const remaining={adult:adults.length,...Object.fromEntries(Object.entries(children).map(([g,v])=>[g,v.length]))};
    if(adults.length!==DAILY_ADULT||Object.values(children).some(words=>words.length!==DAILY_KIDS)){
-    const remaining={adult:adults.length,...Object.fromEntries(Object.entries(children).map(([g,v])=>[g,v.length]))};
-    throw Error('Not enough NEW curated words for '+day+': '+JSON.stringify(remaining)+'. Refusing incomplete update.');
+    console.warn('PARTIAL vocabulary inventory for '+day+': '+JSON.stringify(remaining)+'. Add more curated words to depleted banks.');
    }
    adults.forEach(w=>{a.data.push(w);adultSeen.add(key(w[0]))});
    for(const grade of ['1-2','3-4','5-6'])children[grade].forEach(w=>{k.data[grade].push(w);kidsSeen.add(key(w[0]))});
    history.history.push({date:day,adult:adults.map(w=>w[0]),kids:Object.fromEntries(Object.entries(children).map(([g,v])=>[g,v.map(w=>w[0])]))});
    completed.add(day);addedDays++;
-   console.log(day+': +10 Adult, +10 Kids per grade (+30).');
+   console.log(day+': Adult +'+adults.length+', Kids '+Object.entries(children).map(([g,v])=>g+' +'+v.length).join(', ')+'.');
   }
   day=nextDay(day);
  }
