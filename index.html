@@ -883,7 +883,7 @@ function renderStories(){
  const tiles=visible.map(({lesson,i})=>{
   const read=Number(storyReadCounts[lesson.title])||0;
   return '<button type="button" class="story-tile'+(i===storyIndex?' active':'')+'" onclick="storyOpen('+i+')" aria-pressed="'+(i===storyIndex)+'">'+
-   '<span class="story-tile-badge">'+(read>0?'✓ 읽음':'NEW · '+esc(storyThemeFor(lesson)))+'</span>'+
+   '<span class="story-tile-badge">'+(read>0?'✓ 읽음':'읽기 전 · '+esc(storyThemeFor(lesson)))+'</span>'+
    '<span class="story-tile-title">'+esc(lesson.title)+'</span>'+
    '<span class="story-tile-meta">'+esc(lesson.topic||'')+' · 단어 '+lesson.words.length+'개'+(read?' · '+read+'회 읽음':'')+'</span></button>';
  }).join('');
@@ -902,7 +902,7 @@ function renderStories(){
  '<div class="story-heading"><div><h2>'+esc(story.title)+'</h2><p class="small">'+esc(story.topic)+' · 약 1분 · 단어 '+story.words.length+'개</p></div></div>'+
  '<div class="story-reading"><p class="story-instruction">밑줄 친 단어를 눌러 뜻을 확인해 보세요.</p>'+paragraphs+'<div class="story-word-detail" id="storyWordDetail" hidden aria-live="polite"></div></div>'+
  '<div class="story-actions"><button type="button" class="secondary" id="storyListenButton" onclick="storyReadAloud()">🔊 영어로 듣기</button><button type="button" class="secondary" id="storyTranslationToggle" onclick="toggleStoryTranslation()">전체 한국어 해석</button><button type="button" onclick="storyMarkRead()">✓ 읽기 완료</button></div>'+
- '<div class="story-translation" id="storyTranslation" hidden><h3>한국어 해석</h3>'+esc(story.translation).split('\\n\\n').map(t=>'<p>'+t+'</p>').join('')+'</div>'+
+ '<div class="story-translation" id="storyTranslation" hidden><h3>한국어 해석</h3>'+esc(story.translation).split('\n\n').map(t=>'<p>'+t+'</p>').join('')+'</div>'+
  '<p class="story-footnote">스토리가 추가되어도 테마별로 간편하게 탐색할 수 있습니다. 읽은 횟수는 현재 브라우저에 저장됩니다.</p></div>';
 }
 function renderStats(){
