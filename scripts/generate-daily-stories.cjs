@@ -25,7 +25,7 @@ function loadStories(source){
 function getWords(html){
  const m=html.match(/const DATA=(\[[^\n]+?\]);/);
  if(!m)throw Error('Adult word data missing');
- return new Map(JSON.parse(m[1]).map(x=>[key(x[0]),x[1]]));
+ return new Map(JSON.parse(m[1]).map(x=>[x[0],x[1]]));
 }
 function chooseWords(date,definitions,stories){
  const used=new Set(stories.filter(x=>Array.isArray(x.words)).map(x=>x.words.map(key).sort().join('|')));
@@ -60,7 +60,7 @@ function validate(obj,task,titles){
  return {title:obj.title.trim(),topic:obj.topic,words:task.words,paragraphs:obj.paragraphs,translation:obj.translation.trim(),sourceDate:task.date,sourceSlot:task.slot};
 }
 async function generate(task,definitions,titles){
- const words=task.words.map(word=>({word,meaning:definitions.get(key(word))}));
+ const words=task.words.map(word=>({word,meaning:definitions.get(word)}));
  if(words.some(x=>!x.meaning))throw Error('Missing Korean meaning for scheduled word');
  const instructions=[
  'Create an original realistic adult workplace English learning story with a beginning, problem and resolution, about 100-150 English words.',
