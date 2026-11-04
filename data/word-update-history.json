@@ -10,9 +10,10 @@
     "2026-10-31",
     "2026-11-01",
     "2026-11-02",
-    "2026-11-03"
+    "2026-11-03",
+    "2026-11-04"
   ],
-  "lastUpdatedKST": "2026-11-03",
+  "lastUpdatedKST": "2026-11-04",
   "history": [
     {
       "date": "2026-10-25",
@@ -353,7 +354,13 @@
           "Fold",
           "Wrap",
           "Clap",
-          "Cheer"
+          "Cheer",
+          "Little ball",
+          "Little bag",
+          "Little box",
+          "Little cup",
+          "Little hat",
+          "Little shirt"
         ],
         "3-4": [
           "Absorb",
@@ -379,7 +386,8 @@
           "Data",
           "Variable control"
         ]
-      }
+      },
+      "backfilledAtKST": "2026-11-04"
     },
     {
       "date": "2026-11-01",
@@ -396,10 +404,44 @@
         "Concurrent"
       ],
       "kids": {
-        "1-2": [],
-        "3-4": [],
-        "5-6": []
-      }
+        "1-2": [
+          "Little sock",
+          "Little book",
+          "Little pencil",
+          "Little balloon",
+          "Little toy car",
+          "Little kite",
+          "Little bicycle",
+          "Little door",
+          "Little window",
+          "Little flower"
+        ],
+        "3-4": [
+          "Tropical ecosystem",
+          "Tropical habitat",
+          "Tropical landscape",
+          "Tropical climate",
+          "Tropical temperature",
+          "Tropical water cycle",
+          "Tropical animal migration",
+          "Tropical plant life",
+          "Tropical soil layer",
+          "Tropical rock formation"
+        ],
+        "5-6": [
+          "Economic development",
+          "Economic growth",
+          "Economic change",
+          "Economic system",
+          "Economic policy",
+          "Economic resources",
+          "Economic research",
+          "Economic innovation",
+          "Economic cooperation",
+          "Economic challenges"
+        ]
+      },
+      "backfilledAtKST": "2026-11-04"
     },
     {
       "date": "2026-11-02",
@@ -416,10 +458,44 @@
         "Subjective"
       ],
       "kids": {
-        "1-2": [],
-        "3-4": [],
-        "5-6": []
-      }
+        "1-2": [
+          "Little chair",
+          "Little desk",
+          "Little umbrella",
+          "Little boat",
+          "Little apple",
+          "Little cookie",
+          "Little ribbon",
+          "Little teddy bear",
+          "Little butterfly",
+          "Little bird"
+        ],
+        "3-4": [
+          "Tropical fossil record",
+          "Tropical food chain",
+          "Tropical energy source",
+          "Tropical weather pattern",
+          "Tropical exploration",
+          "Tropical discovery",
+          "Tropical region",
+          "Tropical environment",
+          "Tropical research",
+          "Tropical species"
+        ],
+        "5-6": [
+          "Economic perspective",
+          "Economic principles",
+          "Economic framework",
+          "Economic responsibility",
+          "Economic impact",
+          "Economic influence",
+          "Economic structure",
+          "Economic institutions",
+          "Economic opportunities",
+          "Economic process"
+        ]
+      },
+      "backfilledAtKST": "2026-11-04"
     },
     {
       "date": "2026-11-03",
@@ -436,9 +512,96 @@
         "Assertive"
       ],
       "kids": {
-        "1-2": [],
-        "3-4": [],
-        "5-6": []
+        "1-2": [
+          "Big ball",
+          "Big bag",
+          "Big box",
+          "Big cup",
+          "Big hat",
+          "Big shirt",
+          "Big sock",
+          "Big book",
+          "Big pencil",
+          "Big balloon"
+        ],
+        "3-4": [
+          "Tropical water supply",
+          "Ancient ecosystem",
+          "Ancient habitat",
+          "Ancient landscape",
+          "Ancient climate",
+          "Ancient temperature",
+          "Ancient water cycle",
+          "Ancient animal migration",
+          "Ancient plant life",
+          "Ancient soil layer"
+        ],
+        "5-6": [
+          "Economic progress",
+          "Environmental development",
+          "Environmental growth",
+          "Environmental change",
+          "Environmental system",
+          "Environmental policy",
+          "Environmental resources",
+          "Environmental research",
+          "Environmental innovation",
+          "Environmental cooperation"
+        ]
+      },
+      "backfilledAtKST": "2026-11-04"
+    },
+    {
+      "date": "2026-11-04",
+      "adult": [
+        "Diplomatic",
+        "Persuasive",
+        "Proactive approach",
+        "Root cause",
+        "Pain point",
+        "Value proposition",
+        "Opportunity cost",
+        "Risk appetite",
+        "Decision-making",
+        "Cross-functional"
+      ],
+      "kids": {
+        "1-2": [
+          "Big toy car",
+          "Big kite",
+          "Big bicycle",
+          "Big door",
+          "Big window",
+          "Big flower",
+          "Big chair",
+          "Big desk",
+          "Big umbrella",
+          "Big boat"
+        ],
+        "3-4": [
+          "Ancient rock formation",
+          "Ancient fossil record",
+          "Ancient food chain",
+          "Ancient energy source",
+          "Ancient weather pattern",
+          "Ancient exploration",
+          "Ancient discovery",
+          "Ancient region",
+          "Ancient environment",
+          "Ancient research"
+        ],
+        "5-6": [
+          "Environmental challenges",
+          "Environmental perspective",
+          "Environmental principles",
+          "Environmental framework",
+          "Environmental responsibility",
+          "Environmental impact",
+          "Environmental influence",
+          "Environmental structure",
+          "Environmental institutions",
+          "Environmental opportunities"
+        ]
       }
     }
   ],
