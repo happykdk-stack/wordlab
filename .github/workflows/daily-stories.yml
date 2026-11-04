@@ -1,0 +1,56 @@
+name: Generate daily WordLab Stories
+on:
+  workflow_run:
+    workflows: ["Add daily WordLab words"]
+    types: [completed]
+  schedule:
+    - cron: "30 0 * * *" # 09:30 KST, automatic fallback
+    - cron: "0 2 * * *" # 11:00 KST, catch-up
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: wordlab-daily-stories
+  cancel-in-progress: false
+jobs:
+  generate-stories:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check story generator syntax
+        run: node --check scripts/generate-daily-stories.cjs
+      - name: Generate missing WordLab stories
+        id: generate
+        continue-on-error: true
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          WORDLAB_STORY_MODEL: gpt-4.1-mini
+          WORDLAB_STORY_MAX_DAYS: "4"
+        run: node scripts/generate-daily-stories.cjs
+      - name: Verify generated JavaScript
+        run: node --check assets/wordlab-stories.js
+      - name: Commit generated stories including successful partial batches
+        run: |
+          git config user.name "wordlab-stories-bot"
+          git config user.email "wordlab-stories-bot@users.noreply.github.com"
+          git add assets/wordlab-stories.js
+          if ! git diff --cached --quiet; then
+            git commit -m "stories: publish lessons for new vocabulary"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          else
+            echo "No new stories."
+          fi
+      - name: Fail visibly if content generation failed
+        if: steps.generate.outcome == 'failure'
+        run: |
+          echo "::error::Some WordLab Stories did not generate. Rerun to catch up."
+          exit 1
