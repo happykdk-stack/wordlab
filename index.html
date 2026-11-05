@@ -1080,25 +1080,43 @@ refreshWordlabHistory();
 }
 function renderRank(){
 const n=statNumbers();
-app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">이메일 일부를 가려 표시합니다. 기존 닉네임은 더 이상 노출하지 않습니다. 참여 후 학습 완료 수는 자동 갱신됩니다.</p>'+
+app.innerHTML='<h2>🏆 친구 순위표</h2><p class="small">이메일 일부를 가려 표시합니다. 기존 닉네임은 더 이상 노출하지 않습니다. 순위는 한국시간 기준 하루 한 번 인정되는 로그인 방문일로 정해집니다.</p>'+
 '<div class="rank-level">학습 완료 <b>'+n.known+' / '+DATA.length+'개</b> · 복습 필요 '+n.missed+'개</div>'+
 '<div class="opt-row"><strong>'+esc(currentUser?maskedEmail(currentUser.email):'로그인 필요')+'</strong>'+(rankOptIn?'<button class="secondary" onclick="leaveRank()">참여 취소</button>':'<button onclick="joinRank()">순위표 참여</button>')+'</div>'+
-'<p class="small">닉네임 입력은 필요 없습니다. 참여는 선택 사항입니다.</p>'+
+'<p class="small">순위 참여 후 로그인한 날짜만 기록합니다. 같은 날 재접속은 중복 집계되지 않으며 과거 기록은 추정하지 않습니다.</p>'+
 '<div class="rank-level"><strong>📖 예문 대결 최고 점수: '+contextBest()+'점</strong><p class="small">정답 +10점 · 오답 3회 종료 · 온라인 기록은 순위표 참여자만 저장됩니다.</p></div>'+
 (contextRankRows.length?contextRankRows.map((r,i)=>'<div class="leader"><span>'+(i+1)+'위 · '+esc(r.nickname||'참가자')+'</span><strong>'+Number(r.bestScore||0)+'점</strong></div>').join(''):'<p class="small">온라인 예문 대결 순위가 없습니다.</p>')+
 '<div class="opt-row"><button class="secondary" onclick="refreshRanks()">지금 새로고침</button></div>'+
 '<p class="small">'+esc(rankMessage)+'</p>'+(rankRows.length?rankRows.map((r,i)=>'<div class="leader"><span><strong>'+(i+1)+'위 · '+esc(safeRankLabel(r))+'</strong></span><strong>'+Number(r.known||0)+'개 완료</strong></div>').join(''):'<p class="small">아직 참여자가 없습니다.</p>');
 }
+function visitDateKST(){
+ return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+}
+function visitStreak(dates){
+ const set=new Set(dates),cursor=new Date(visitDateKST()+'T00:00:00Z');
+ if(!set.has(cursor.toISOString().slice(0,10)))cursor.setUTCDate(cursor.getUTCDate()-1);
+ let streak=0;
+ while(set.has(cursor.toISOString().slice(0,10))){streak++;cursor.setUTCDate(cursor.getUTCDate()-1)}
+ return streak;
+}
 async function publishRank(){
-if(!currentUser||!firebaseDb||!rankOptIn||!cloudReady)return;
-const n=statNumbers();
-await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'leaderboard',currentUser.uid),{nickname:maskedEmail(currentUser.email),score:n.known,known:n.known,updatedAt:Date.now()});
+ if(!currentUser||!firebaseDb||!rankOptIn||!cloudReady)return;
+ const uid=currentUser.uid,ref=firebaseApi.doc(firebaseDb,'leaderboard',uid);
+ const snap=await firebaseApi.getDoc(ref);
+ if(!currentUser||currentUser.uid!==uid||!rankOptIn)return;
+ const prior=snap.exists()?snap.data():{};
+ const dates=Array.isArray(prior.visitDates)?prior.visitDates.filter(d=>/^\\d{4}-\\d{2}-\\d{2}$/.test(d)):[];
+ const today=visitDateKST();
+ if(!dates.includes(today))dates.push(today);
+ const unique=[...new Set(dates)].sort();
+ const n=statNumbers();
+ await firebaseApi.setDoc(ref,{nickname:maskedEmail(currentUser.email),score:n.known,known:n.known,visitDates:unique,visitCount:unique.length,visitStreak:visitStreak(unique),updatedAt:Date.now()},{merge:true});
 }
 async function joinRank(){
 if(!currentUser){rankMessage='Google 로그인 후 참여할 수 있습니다.';renderRank();return}
 if(!cloudReady){rankMessage='클라우드 연결 후 다시 시도해 주세요.';renderRank();return}
 rankOptIn=true;
-try{await publishRank();localStorage.setItem('wordlab_rank_'+currentUser.uid,JSON.stringify({optIn:true}));rankMessage='참여 완료! 이후 자동으로 갱신됩니다.';await refreshRanks()}
+try{await publishRank();localStorage.setItem('wordlab_rank_'+currentUser.uid,JSON.stringify({optIn:true}));rankMessage='참여 완료! 오늘 방문이 기록되었습니다.';await refreshRanks()}
 catch(e){rankOptIn=false;rankMessage='순위표 저장 오류: '+(e.code||'unknown');renderRank()}
 }
 async function leaveRank(){
@@ -1109,7 +1127,7 @@ catch(e){rankMessage='취소 실패: '+(e.code||'unknown');renderRank()}
 async function refreshRanks(){
 if(mode!=='rank')return;
 if(!currentUser){rankMessage='로그인하면 순위를 볼 수 있습니다.';rankRows=[];renderRank();return}
-try{const snap=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.known||0)-(a.known||0)).slice(0,30);rankMessage='학습 완료 수 기준 · 자동 갱신 (기존 참가자는 재로그인 시 이메일 표시 갱신)'}
+try{const snap=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));rankRows=snap.docs.map(d=>d.data()).filter(d=>Number(d.visitCount||0)>0).sort((a,b)=>(b.visitCount||0)-(a.visitCount||0)||(b.visitStreak||0)-(a.visitStreak||0)).slice(0,30);rankMessage='누적 로그인 방문일 기준 · 하루 최대 1회 · 동률 시 연속 방문일 우선'}
 catch(e){rankRows=[];rankMessage='순위표 오류: '+(e.code||'unknown')}
 renderRank();
 }
