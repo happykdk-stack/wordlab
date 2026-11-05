@@ -1305,12 +1305,9 @@ function loadCustomWords(){
 }
 loadCustomWords();
 function renderAddWord(message=''){
- app.innerHTML='<h2>✏️ 단어 편집</h2><p class="small">새 단어를 추가하거나 전체카드에서 단어를 제외할 수 있습니다.</p>'+
+ app.innerHTML='<h2>✏️ 단어 편집</h2><p class="small">영어 단어만 입력해 전체카드에 추가하거나 기존 단어를 관리할 수 있습니다.</p>'+
  '<form id="customWordForm" onsubmit="saveCustomWord(event)">'+
  '<label for="customWordInput">영어 단어 *</label><input id="customWordInput" required maxlength="80" autocomplete="off" placeholder="예: Resilient" style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px">'+
- '<label for="customMeaningInput">한국어 뜻 (선택)</label><input id="customMeaningInput" maxlength="200" placeholder="예: 회복력 있는" style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px">'+
- '<label for="customExampleInput">영어 예문 (선택)</label><input id="customExampleInput" maxlength="300" placeholder="예: Our team is resilient." style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px">'+
- '<label for="customTranslationInput">예문 해석 (선택)</label><input id="customTranslationInput" maxlength="300" placeholder="예: 우리 팀은 회복력이 있습니다." style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px">'+
  '<button type="submit">전체카드에 추가</button></form><p id="customWordStatus" class="small" role="status">'+esc(message)+'</p>'+
  '<p class="small">추가·제외 내역은 이 브라우저에만 저장됩니다. 기본 단어는 삭제 대신 숨김 처리되며 복원할 수 있습니다.</p>'+renderWordManager();
 }
@@ -1394,15 +1391,13 @@ function restoreManagedWord(word){
 function saveCustomWord(event){
  event.preventDefault();
  const word=document.getElementById('customWordInput').value.trim();
- const meaning=document.getElementById('customMeaningInput').value.trim();
- const example=document.getElementById('customExampleInput').value.trim();
- const translation=document.getElementById('customTranslationInput').value.trim();
+
  const status=document.getElementById('customWordStatus');
  if(!/^[A-Za-z][A-Za-z '-]*$/.test(word)){status.textContent='영어 단어 또는 영어 표현을 입력해 주세요.';return}
  if(DATA.some(w=>w[0].trim().toLowerCase()===word.toLowerCase())){status.textContent='이미 전체카드에 있는 단어입니다.';return}
  let saved=[];try{saved=JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY)||'[]')}catch(e){}
  if(!Array.isArray(saved))saved=[];
- const row=[word,meaning,'',example,translation];
+ const row=[word,'','','',''];
  saved.push(row);
  try{localStorage.setItem(CUSTOM_WORDS_KEY,JSON.stringify(saved))}catch(e){status.textContent='저장 공간 문제로 저장하지 못했습니다.';return}
  DATA.push(row);
