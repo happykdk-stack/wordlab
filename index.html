@@ -246,6 +246,31 @@
 .study-card-shell .card.study-polished .study-pronunciation{top:calc(43% + 26px)!important}
 .study-card-shell .card.study-polished .study-pron-korean{top:calc(43% + 53px)!important}
 }
+
+/* Mobile single-screen review and all-cards layout. Keep navigation and study actions visible. */
+@media(max-width:600px){
+ .wrap{padding:7px 10px 12px!important}
+ header{margin-bottom:6px!important;gap:6px!important}
+ header h1{font-size:20px!important}
+ header .sub{font-size:10px!important}
+ .tabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;scroll-snap-type:x proximity;gap:3px!important;padding:4px!important;margin-bottom:7px!important;scrollbar-width:thin}
+ .tabs button,.tabs .card-tab-wrap{flex:0 0 auto!important;white-space:nowrap!important}
+ .tabs button{padding:7px 9px!important;font-size:11px!important}
+ .panel{padding:9px!important}
+ .panel .meta{margin-bottom:5px!important}
+ .panel .bar{margin-bottom:6px!important}
+ .study-card-shell .card.study-polished{height:clamp(250px,43dvh,280px)!important;min-height:250px!important;max-height:280px!important}
+ .study-card-shell+.controls{margin-top:7px!important;gap:7px!important}
+ .study-card-shell+.controls button{padding:9px!important;min-height:38px!important}
+ .review-autoplay{display:inline-block!important;width:calc(50% - 5px)!important;vertical-align:top;margin:7px 2px 3px!important;padding:8px 5px!important;font-size:11px!important;min-height:40px!important}
+ #study-wake-status{font-size:10px!important;min-height:0!important}
+ footer{margin-top:5px!important;font-size:10px!important}
+}
+@media(max-width:600px) and (max-height:700px){
+ .study-card-shell .card.study-polished{height:250px!important;min-height:250px!important;max-height:250px!important}
+ header .sub{display:none!important}
+ .panel{padding:6px!important}
+}
 </style><style>
 .quiz-overlay{position:fixed;inset:0;background:rgba(20,30,55,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px}
 .quiz-popup{position:relative;background:white;border-radius:22px;max-width:410px;width:100%;padding:28px 22px;text-align:center;box-shadow:0 18px 65px #0003;animation:quiz-pop .22s ease-out}
