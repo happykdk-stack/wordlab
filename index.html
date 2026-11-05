@@ -1842,7 +1842,7 @@ function runSingleRepeat(){
    if(!valid()||phase!==1)return;
    speechSynthesis.speak(en);
    watchdog=setTimeout(en.onend,Math.max(2600,word[0].length*260+1200));
-  },450);
+  },180);
  }catch(e){console.warn('Repeat audio failed:',e);if(valid())wait(runSingleRepeat,1200)}
 }
 function toggleSingleRepeat(){
@@ -1891,7 +1891,7 @@ reviewAutoTimer=setTimeout(()=>{
  if(!valid()||phase!==1)return;
  speechSynthesis.speak(en);
  if(auto)fallback=setTimeout(korean,Math.min(6000,Math.max(2000,word[0].length*190+1100)));
-},450);
+},180);
 }catch(e){if(auto)korean()}
 }
 function flipStudyCard(){const currentMode=mode;if(singleRepeat){flipped=!flipped;render();return}if(reviewAutoPlay){reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock()}flipped=!flipped;render();if(currentMode==='card')speak();else if(currentMode==='review'&&!reviewAutoPlay)speakReviewPair()}
@@ -1954,7 +1954,7 @@ function fallbackWordSpeech(word){
    wordSpeechTimer=null;
    if(ticket!==wordAudioRequest)return;
    try{speechSynthesis.speak(u)}catch(e){console.warn('Speech fallback failed:',e)}
-  },450);
+  },180);
  }catch(e){console.warn('Speech fallback failed:',e)}
 }
 async function playRecordedWord(word){
@@ -1972,7 +1972,7 @@ async function playRecordedWord(word){
    const cleanup=()=>{audio.removeEventListener('canplay',ready);audio.removeEventListener('error',failed);clearTimeout(timeout)};
    const ready=()=>{cleanup();resolve()};
    const failed=()=>{cleanup();reject(new Error('Recording failed to load'))};
-   timeout=setTimeout(()=>{cleanup();reject(new Error('Recording preload timeout'))},3200);
+   timeout=setTimeout(()=>{cleanup();reject(new Error('Recording preload timeout'))},2500);
    audio.addEventListener('canplay',ready,{once:true});
    audio.addEventListener('error',failed,{once:true});
    audio.load();
@@ -1980,7 +1980,7 @@ async function playRecordedWord(word){
   if(ticket!==wordAudioRequest)return;
   try{audio.currentTime=0}catch(e){}
   // Brief settling time after buffering helps avoid clipped initial consonants.
-  await new Promise(resolve=>setTimeout(resolve,140));
+  await new Promise(resolve=>setTimeout(resolve,75));
   if(ticket!==wordAudioRequest)return;
   await audio.play();
  }catch(e){if(ticket===wordAudioRequest)fallbackWordSpeech(word)}
