@@ -1519,8 +1519,13 @@ function runSingleRepeat(){
   speechSynthesis.cancel();phase=1;
   const en=new SpeechSynthesisUtterance(word[0]);en.lang='en-US';en.rate=.88;en.volume=1;
   en.onend=()=>{if(valid()&&phase===1)wait(korean,300)};
-  en.onerror=en.onend;speechSynthesis.speak(en);
-  watchdog=setTimeout(en.onend,Math.max(2600,word[0].length*260+1200));
+  en.onerror=en.onend;
+  singleRepeatTimer=setTimeout(()=>{
+   singleRepeatTimer=null;
+   if(!valid()||phase!==1)return;
+   speechSynthesis.speak(en);
+   watchdog=setTimeout(en.onend,Math.max(2600,word[0].length*260+1200));
+  },230);
  }catch(e){console.warn('Repeat audio failed:',e);if(valid())wait(runSingleRepeat,1200)}
 }
 function toggleSingleRepeat(){
@@ -1564,8 +1569,12 @@ try{
 phase=1;
 const en=new SpeechSynthesisUtterance(word[0]);en.lang='en-US';en.rate=.9;en.volume=.75;
 en.onend=()=>{if(auto)korean()};en.onerror=()=>{if(auto)korean()};
-speechSynthesis.speak(en);
-if(auto)fallback=setTimeout(korean,Math.min(6000,Math.max(2000,word[0].length*190+1100)));
+reviewAutoTimer=setTimeout(()=>{
+ reviewAutoTimer=null;
+ if(!valid()||phase!==1)return;
+ speechSynthesis.speak(en);
+ if(auto)fallback=setTimeout(korean,Math.min(6000,Math.max(2000,word[0].length*190+1100)));
+},230);
 }catch(e){if(auto)korean()}
 }
 function flipStudyCard(){const currentMode=mode;if(singleRepeat){flipped=!flipped;render();return}if(reviewAutoPlay){reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock()}flipped=!flipped;render();if(currentMode==='card')speak();else if(currentMode==='review'&&!reviewAutoPlay)speakReviewPair()}
@@ -1613,11 +1622,23 @@ async function recordedAudioUrl(word){
 }
 function cancelWordAudio(){
  ++wordAudioRequest;
+ if(wordSpeechTimer!==null){clearTimeout(wordSpeechTimer);wordSpeechTimer=null}
  if(wordAudio){wordAudio.pause();wordAudio.removeAttribute('src');wordAudio=null}
 }
+let wordSpeechTimer=null;
 function fallbackWordSpeech(word){
  if(!('speechSynthesis' in window))return;
- try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(word);u.lang='en-US';u.rate=.9;u.volume=1;speechSynthesis.speak(u)}catch(e){console.warn('Speech fallback failed:',e)}
+ const ticket=wordAudioRequest;
+ try{
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(word);u.lang='en-US';u.rate=.9;u.volume=1;
+  if(wordSpeechTimer!==null)clearTimeout(wordSpeechTimer);
+  wordSpeechTimer=setTimeout(()=>{
+   wordSpeechTimer=null;
+   if(ticket!==wordAudioRequest)return;
+   try{speechSynthesis.speak(u)}catch(e){console.warn('Speech fallback failed:',e)}
+  },230);
+ }catch(e){console.warn('Speech fallback failed:',e)}
 }
 async function playRecordedWord(word){
  const ticket=++wordAudioRequest;
@@ -1625,8 +1646,22 @@ async function playRecordedWord(word){
  if(ticket!==wordAudioRequest)return;
  if(!url){fallbackWordSpeech(word);return}
  try{
-  const audio=new Audio(url);audio.preload='auto';audio.volume=1;wordAudio=audio;
-  audio.onerror=()=>{if(ticket===wordAudioRequest)fallbackWordSpeech(word)};
+  const audio=new Audio();audio.preload='auto';audio.volume=1;wordAudio=audio;
+  audio.src=url;
+  // Wait until the beginning of the recording is buffered before starting.
+  await new Promise((resolve,reject)=>{
+   if(audio.readyState>=3){resolve();return}
+   let timeout;
+   const cleanup=()=>{audio.removeEventListener('canplay',ready);audio.removeEventListener('error',failed);clearTimeout(timeout)};
+   const ready=()=>{cleanup();resolve()};
+   const failed=()=>{cleanup();reject(new Error('Recording failed to load'))};
+   timeout=setTimeout(()=>{cleanup();reject(new Error('Recording preload timeout'))},3200);
+   audio.addEventListener('canplay',ready,{once:true});
+   audio.addEventListener('error',failed,{once:true});
+   audio.load();
+  });
+  if(ticket!==wordAudioRequest)return;
+  try{audio.currentTime=0}catch(e){}
   await audio.play();
  }catch(e){if(ticket===wordAudioRequest)fallbackWordSpeech(word)}
 }
