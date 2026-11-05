@@ -2059,18 +2059,19 @@ async function saveContextResult(){
  try{localStorage.setItem(CONTEXT_BEST_KEY,String(best))}catch(e){}
  if(!currentUser||!firebaseDb||!firebaseApi||!rankOptIn||!cloudReady){contextRankMessage='최고 점수는 이 기기에 저장되었습니다. 온라인 순위는 Google 로그인 후 순위표 참여가 필요합니다.';return}
  try{
-  const ref=firebaseApi.doc(firebaseDb,'wordlab_context_leaderboard',currentUser.uid);
+  const ref=firebaseApi.doc(firebaseDb,'leaderboard',currentUser.uid);
   const previous=await firebaseApi.getDoc(ref);
   const prior=previous.exists()?Number(previous.data().bestScore||0):0;
-  if(best>prior)await firebaseApi.setDoc(ref,{nickname:maskedEmail(currentUser.email),bestScore:best,updatedAt:Date.now()});
+  if(best>prior)await firebaseApi.setDoc(ref,{nickname:maskedEmail(currentUser.email),bestScore:best,updatedAt:Date.now()},{merge:true});
   contextRankMessage='온라인 최고 점수 저장 완료';
  }catch(e){contextRankMessage='온라인 순위 저장 실패: '+(e.code||e.message)}
 }
 async function refreshContextRanks(){
  if(!currentUser||!firebaseDb||!firebaseApi||!cloudReady){contextRankRows=[];return}
- try{const snap=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'wordlab_context_leaderboard'));
- contextRankRows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.bestScore||0)-(a.bestScore||0)).slice(0,20)}
- catch(e){contextRankMessage='게임 순위 조회 실패: '+(e.code||e.message)}
+ try{const snap=await firebaseApi.getDocs(firebaseApi.collection(firebaseDb,'leaderboard'));
+ contextRankRows=snap.docs.map(d=>d.data()).filter(r=>Number(r.bestScore||0)>0).sort((a,b)=>(b.bestScore||0)-(a.bestScore||0)).slice(0,20);
+ contextRankMessage=''}
+ catch(e){contextRankRows=[];contextRankMessage=e.code==='permission-denied'?'Firebase 순위표 조회 권한이 없습니다. Firebase Console의 Firestore 보안 규칙에서 로그인 사용자에게 leaderboard 읽기 권한이 허용되는지 확인해 주세요.':'게임 순위 조회 실패: '+(e.code||e.message)}
  if(mode==='rank')renderRank();
 }
 function renderAssemble(){
