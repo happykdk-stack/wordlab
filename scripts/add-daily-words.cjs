@@ -89,7 +89,9 @@ function build(){
   }
   const adults=adultPool.splice(0,neededA);
   const kids=Object.fromEntries(grades.map(g=>[g,kidPools[g].splice(0,neededK[g])]));
-  for(const w of adults){a.data.push(w);seenA.add(key(w[0]))}
+  // Newest adult vocabulary is shown first in the all-cards deck.
+  for(const w of adults)seenA.add(key(w[0]));
+  a.data.unshift(...adults);
   for(const g of grades)for(const w of kids[g]){k.data[g].push(w);seenK.add(key(w[0]))}
   if(!record){record={date,adult:[],kids:Object.fromEntries(grades.map(g=>[g,[]]))};history.history.push(record)}
   record.adult.push(...adults.map(w=>w[0]));

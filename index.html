@@ -1322,7 +1322,7 @@ function loadCustomWords(){
   if(!Array.isArray(w)||w.length!==5||typeof w[0]!=='string')continue;
   const key=w[0].trim().toLowerCase();
   if(!key||seen.has(key))continue;
-  DATA.push(w.map(x=>String(x||'')));seen.add(key);
+  DATA.unshift(w.map(x=>String(x||'')));seen.add(key);
  }
 }
 loadCustomWords();
@@ -1422,7 +1422,7 @@ function saveCustomWord(event){
  const row=[word,'','','',''];
  saved.push(row);
  try{localStorage.setItem(CUSTOM_WORDS_KEY,JSON.stringify(saved))}catch(e){status.textContent='저장 공간 문제로 저장하지 못했습니다.';return}
- DATA.push(row);
+ DATA.unshift(row);
  document.getElementById('total').textContent=visibleWords().length+'개 단어';
  stableCardPosition.card=word;
  tab('card');
