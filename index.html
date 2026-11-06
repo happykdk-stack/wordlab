@@ -1349,10 +1349,21 @@ function editorState(){
  let words=[];try{words=JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY)||'[]')}catch(e){}
  return {customWords:Array.isArray(words)?words:[],hiddenWords:[...hiddenWords]};
 }
+function normalizeEditorWords(words){
+ if(!Array.isArray(words))return [];
+ return words.map(w=>{
+  if(Array.isArray(w))return w.length===5?w.map(v=>String(v||'')):null;
+  if(w&&typeof w==='object'&&typeof w.word==='string')return [w.word,String(w.meaning||''),String(w.origin||''),String(w.example||''),String(w.translation||'')];
+  return null;
+ }).filter(w=>w&&w[0].trim());
+}
+function editorForFirestore(state){
+ return {customWords:normalizeEditorWords(state.customWords).map(w=>({word:w[0],meaning:w[1],origin:w[2],example:w[3],translation:w[4]})),hiddenWords:Array.isArray(state.hiddenWords)?state.hiddenWords:[]};
+}
 function editorStorageKey(uid){return 'wordlab_editor_pending_'+uid}
 function editorMigratedKey(uid){return 'wordlab_editor_migrated_'+uid}
 function applyEditorState(state){
- const custom=Array.isArray(state.customWords)?state.customWords.filter(w=>Array.isArray(w)&&w.length===5&&typeof w[0]==='string'):[];
+ const custom=normalizeEditorWords(state.customWords);
  const hidden=Array.isArray(state.hiddenWords)?state.hiddenWords.filter(w=>typeof w==='string'):[];
  const known=new Set(BUILTIN_WORDS);
  const unique=[];
@@ -1373,7 +1384,7 @@ async function saveEditorCloud(){
  localStorage.setItem(editorStorageKey(uid),JSON.stringify(state));
  editorSyncStatus='☁ 단어 편집 동기화 중…';
  try{
-  await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:state},{merge:true});
+  await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:editorForFirestore(state)},{merge:true});
   if(currentUser&&currentUser.uid===uid){localStorage.removeItem(editorStorageKey(uid));editorSyncStatus='☁ 단어 편집 동기화 완료'}
  }catch(e){editorSyncStatus='☁ 동기화 실패: '+(e.code||e.message)}
  if(mode==='addword')renderAddWord(editorSyncStatus);
@@ -1386,19 +1397,19 @@ async function syncEditorCloud(snapshot,uid){
  if(pending)state=pending;
  else if(!localStorage.getItem(editorMigratedKey(uid))){
   const local=editorState();
-  const combined=new Map((remote&&Array.isArray(remote.customWords)?remote.customWords:[]).map(w=>[String(w[0]).toLowerCase(),w]));
+  const combined=new Map(normalizeEditorWords(remote?.customWords).map(w=>[w[0].toLowerCase(),w]));
   for(const w of local.customWords)if(Array.isArray(w))combined.set(String(w[0]).toLowerCase(),w);
   state={customWords:[...combined.values()],hiddenWords:[...new Set([...(remote?.hiddenWords||[]),...local.hiddenWords])]};
  }
  if(state){
   applyEditorState(state);
   if(pending||!localStorage.getItem(editorMigratedKey(uid))){
-   await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:state},{merge:true});
+   await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:editorForFirestore(state)},{merge:true});
    localStorage.removeItem(pendingKey);
   }
  }else{
   state=editorState();
-  await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:state},{merge:true});
+  await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:editorForFirestore(state)},{merge:true});
  }
  localStorage.setItem(editorMigratedKey(uid),'1');
  editorSyncStatus='☁ 단어 편집 동기화 완료';
