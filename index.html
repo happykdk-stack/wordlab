@@ -1404,9 +1404,10 @@ async function syncEditorCloud(snapshot,uid){
  editorSyncStatus='☁ 단어 편집 동기화 완료';
 }
 function renderAddWord(message=''){
- app.innerHTML='<h2>✏️ 단어 편집</h2><p class="small">영어 단어만 입력해 전체카드에 추가하거나 기존 단어를 관리할 수 있습니다.</p>'+
+ app.innerHTML='<h2>✏️ 단어 편집</h2><p class="small">영어 단어와 한국어 뜻을 입력해 전체카드에 추가하거나 기존 단어를 관리할 수 있습니다.</p>'+
  '<form id="customWordForm" onsubmit="saveCustomWord(event)">'+
  '<label for="customWordInput">영어 단어 *</label><input id="customWordInput" required maxlength="80" autocomplete="off" placeholder="예: Resilient" style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px">'+
+ '<label for="customMeaningInput">한국어 뜻 *</label><input id="customMeaningInput" required maxlength="200" autocomplete="off" placeholder="예: 회복력 있는" style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px">'+
  '<button type="submit">전체카드에 추가</button></form><p id="customWordStatus" class="small" role="status">'+esc(message)+'</p>'+
  '<p class="small">Google 로그인 시 추가·제외 내역을 기기 간 동기화합니다. 기본 단어는 숨김 처리 후 복원할 수 있습니다.</p>'+renderWordManager();
 }
@@ -1490,13 +1491,14 @@ function restoreManagedWord(word){
 function saveCustomWord(event){
  event.preventDefault();
  const word=document.getElementById('customWordInput').value.trim();
-
+ const meaning=document.getElementById('customMeaningInput').value.trim();
  const status=document.getElementById('customWordStatus');
  if(!/^[A-Za-z][A-Za-z '-]*$/.test(word)){status.textContent='영어 단어 또는 영어 표현을 입력해 주세요.';return}
+ if(!meaning){status.textContent='한국어 뜻을 입력해 주세요.';return}
  if(DATA.some(w=>w[0].trim().toLowerCase()===word.toLowerCase())){status.textContent='이미 전체카드에 있는 단어입니다.';return}
  let saved=[];try{saved=JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY)||'[]')}catch(e){}
  if(!Array.isArray(saved))saved=[];
- const row=[word,'','','',''];
+ const row=[word,meaning,'','',''];
  saved.push(row);
  try{localStorage.setItem(CUSTOM_WORDS_KEY,JSON.stringify(saved))}catch(e){status.textContent='저장 공간 문제로 저장하지 못했습니다.';return}
  DATA.unshift(row);
