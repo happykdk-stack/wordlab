@@ -662,16 +662,16 @@
     {
       "date": "2026-11-06",
       "adult": [
-        "Proactive risk assessment",
-        "Proactive quality review",
-        "Proactive process improvement",
-        "Proactive resource planning",
-        "Proactive customer feedback",
-        "Proactive issue resolution",
-        "Proactive team coordination",
-        "Proactive performance analysis",
-        "Proactive root cause analysis",
-        "Proactive service recovery"
+        "Exacerbate",
+        "Delineate",
+        "Repercussion",
+        "Discretion",
+        "Contentious",
+        "Discrepancy analysis",
+        "Concession",
+        "Proficiency",
+        "Trajectory",
+        "Remediation"
       ],
       "kids": {
         "1-2": [
@@ -710,7 +710,9 @@
           "Scientific structure",
           "Scientific institutions"
         ]
-      }
+      },
+      "correctedAtKST": "2026-11-06",
+      "note": "Replaced mechanically generated Proactive phrases with curated business vocabulary."
     }
   ],
   "notes": "2026-10-26 additions already present in pre-existing main commit; start automatic recovery from 2026-10-25, skip 2026-10-26 to avoid double counting."

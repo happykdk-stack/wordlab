@@ -57,7 +57,7 @@ function candidates(curated,grade,seen){
  const n=grade==='adult'?5:4;
  const isValid=w=>Array.isArray(w)&&w.length===n&&w.every(x=>typeof x==='string'&&x.trim())&&!seen.has(key(w[0]));
  const pool=[];
- for(const w of [...curated,...phraseBank(grade)])if(isValid(w)){pool.push(w);seen.add(key(w[0]))}
+ for(const w of (grade==='adult'?curated:[...curated,...phraseBank(grade)]))if(isValid(w)){pool.push(w);seen.add(key(w[0]))}
  return pool;
 }
 function build(){
