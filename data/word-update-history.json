@@ -12,9 +12,10 @@
     "2026-11-02",
     "2026-11-03",
     "2026-11-04",
-    "2026-11-05"
+    "2026-11-05",
+    "2026-11-06"
   ],
-  "lastUpdatedKST": "2026-11-05",
+  "lastUpdatedKST": "2026-11-06",
   "history": [
     {
       "date": "2026-10-25",
@@ -655,6 +656,59 @@
           "Scientific resources",
           "Scientific research",
           "Scientific innovation"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-06",
+      "adult": [
+        "Proactive risk assessment",
+        "Proactive quality review",
+        "Proactive process improvement",
+        "Proactive resource planning",
+        "Proactive customer feedback",
+        "Proactive issue resolution",
+        "Proactive team coordination",
+        "Proactive performance analysis",
+        "Proactive root cause analysis",
+        "Proactive service recovery"
+      ],
+      "kids": {
+        "1-2": [
+          "New hat",
+          "New shirt",
+          "New sock",
+          "New book",
+          "New pencil",
+          "New balloon",
+          "New toy car",
+          "New kite",
+          "New bicycle",
+          "New door"
+        ],
+        "3-4": [
+          "Natural soil layer",
+          "Natural rock formation",
+          "Natural fossil record",
+          "Natural food chain",
+          "Natural energy source",
+          "Natural weather pattern",
+          "Natural exploration",
+          "Natural discovery",
+          "Natural region",
+          "Natural environment"
+        ],
+        "5-6": [
+          "Scientific cooperation",
+          "Scientific challenges",
+          "Scientific perspective",
+          "Scientific principles",
+          "Scientific framework",
+          "Scientific responsibility",
+          "Scientific impact",
+          "Scientific influence",
+          "Scientific structure",
+          "Scientific institutions"
         ]
       }
     }
