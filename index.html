@@ -1223,7 +1223,7 @@ try{
 syncMessage('☁ 연결 중…');
 const snapshot=await firebaseApi.getDoc(ref);
 if(epoch!==authEpoch)return;
-await syncEditorCloud(snapshot,user.uid);
+try{await syncEditorCloud(snapshot,user.uid)}catch(editorError){editorSyncStatus='단어 편집 동기화 실패: '+(editorError.code||editorError.message||'unknown');console.warn('WordLab editor sync:',editorError)}
 if(epoch!==authEpoch)return;
 const remote=snapshot.exists()?(snapshot.data().words||{}):{};
 const remoteMetrics=snapshot.exists()?(snapshot.data().metrics||{}):{};
@@ -1367,7 +1367,7 @@ function applyEditorState(state){
  else if(mode==='addword')renderAddWord(editorSyncStatus);
 }
 async function saveEditorCloud(){
- if(!currentUser||!firebaseDb||!firebaseApi||!cloudReady){editorSyncStatus='이 기기에 저장됨 · Google 로그인 시 동기화됩니다.';return}
+ if(!currentUser||!firebaseDb||!firebaseApi||!cloudReady){editorSyncStatus='이 기기에 저장됨 · 클라우드 연결 후 동기화됩니다.';if(currentUser){try{localStorage.setItem(editorStorageKey(currentUser.uid),JSON.stringify(editorState()))}catch(e){}}return}
  const uid=currentUser.uid;
  const state=editorState();
  localStorage.setItem(editorStorageKey(uid),JSON.stringify(state));
