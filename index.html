@@ -1775,7 +1775,7 @@ if(mode==='quiz')return renderQuiz();
 if(mode==='assemble')return renderAssemble();
 if(mode==='stories')return renderStories();
 if(!deck.length){app.innerHTML=mode==='due'?'<h2 class="center">오늘 복습할 단어가 없어요 🎉</h2><p class="center small">배운 단어는 기억 간격에 맞춰 다시 나타납니다.</p>':'<h2 class="center">복습할 단어가 없습니다 🎉</h2><p class="center small">전체카드에서 다시 복습할 단어를 표시해 주세요.</p>';return}
-const x=deck[index];if(!x){app.innerHTML='<h2 class="center">학습 완료!</h2><p class="center">오늘도 수고하셨습니다.</p><button onclick="tab(\'card\')">처음부터 다시</button>';return}
+const x=deck[index];if(x&&(mode==='card'||mode==='review'))prepareWordAudio(x[0]);if(!x){app.innerHTML='<h2 class="center">학습 완료!</h2><p class="center">오늘도 수고하셨습니다.</p><button onclick="tab(\'card\')">처음부터 다시</button>';return}
 const keepLabel=mode==='review'?'남기기':'다시 복습',removeLabel=mode==='review'?'없애기':'알아요 ✓';
 const face=flipped?'':'<div class="study-face-label">앞면 · 단어만 보기</div>';
 const pron=(window.WORDLAB_PRONUNCIATIONS||{})[x[0]]||null;
@@ -1994,48 +1994,62 @@ function cancelWordAudio(){
  if(wordSpeechTimer!==null){clearTimeout(wordSpeechTimer);wordSpeechTimer=null}
  if(wordAudio){wordAudio.pause();wordAudio.removeAttribute('src');wordAudio=null}
 }
+
 let wordSpeechTimer=null;
+const preparedWordAudio=new Map();
+function prepareWordAudio(word){
+ const key=String(word||'').toLowerCase().trim();
+ if(!key||preparedWordAudio.has(key))return;
+ const entry={audio:null,ready:false};
+ preparedWordAudio.set(key,entry);
+ recordedAudioUrl(word).then(url=>{
+  if(!url)return;
+  const audio=new Audio();
+  audio.preload='auto';audio.src=url;
+  entry.audio=audio;
+  const ready=()=>{entry.ready=true};
+  audio.addEventListener('canplaythrough',ready,{once:true});
+  audio.addEventListener('error',()=>{entry.ready=false},{once:true});
+  audio.load();
+  if(audio.readyState>=3)entry.ready=true;
+ }).catch(()=>{});
+ if(preparedWordAudio.size>24){
+  const oldest=preparedWordAudio.keys().next().value;
+  if(oldest!==key)preparedWordAudio.delete(oldest);
+ }
+}
 function fallbackWordSpeech(word){
  if(!('speechSynthesis' in window))return;
  const ticket=wordAudioRequest;
  try{
   speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(word);u.lang='en-US';u.rate=.9;u.volume=1;
+  const u=new SpeechSynthesisUtterance(' '+word);
+  u.lang='en-US';u.rate=.88;u.volume=1;
+  // Give the synthesizer a short lead-in so the first consonant is less likely to be clipped.
   if(wordSpeechTimer!==null)clearTimeout(wordSpeechTimer);
   wordSpeechTimer=setTimeout(()=>{
    wordSpeechTimer=null;
    if(ticket!==wordAudioRequest)return;
    try{speechSynthesis.speak(u)}catch(e){console.warn('Speech fallback failed:',e)}
-  },180);
+  },100);
  }catch(e){console.warn('Speech fallback failed:',e)}
 }
-async function playRecordedWord(word){
- const ticket=++wordAudioRequest;
- const url=await recordedAudioUrl(word);
- if(ticket!==wordAudioRequest)return;
- if(!url){fallbackWordSpeech(word);return}
- try{
-  const audio=new Audio();audio.preload='auto';audio.volume=1;wordAudio=audio;
-  audio.src=url;
-  // Wait until the beginning of the recording is buffered before starting.
-  await new Promise((resolve,reject)=>{
-   if(audio.readyState>=3){resolve();return}
-   let timeout;
-   const cleanup=()=>{audio.removeEventListener('canplay',ready);audio.removeEventListener('error',failed);clearTimeout(timeout)};
-   const ready=()=>{cleanup();resolve()};
-   const failed=()=>{cleanup();reject(new Error('Recording failed to load'))};
-   timeout=setTimeout(()=>{cleanup();reject(new Error('Recording preload timeout'))},2500);
-   audio.addEventListener('canplay',ready,{once:true});
-   audio.addEventListener('error',failed,{once:true});
-   audio.load();
-  });
-  if(ticket!==wordAudioRequest)return;
-  try{audio.currentTime=0}catch(e){}
-  // Brief settling time after buffering helps avoid clipped initial consonants.
-  await new Promise(resolve=>setTimeout(resolve,75));
-  if(ticket!==wordAudioRequest)return;
-  await audio.play();
- }catch(e){if(ticket===wordAudioRequest)fallbackWordSpeech(word)}
+function playRecordedWord(word){
+ cancelWordAudio();
+ const ticket=wordAudioRequest;
+ const entry=preparedWordAudio.get(String(word).toLowerCase().trim());
+ if(entry&&entry.ready&&entry.audio){
+  try{
+   const audio=entry.audio.cloneNode(true);
+   audio.volume=1;wordAudio=audio;audio.currentTime=0;
+   const p=audio.play();
+   if(p&&p.catch)p.catch(()=>{if(ticket===wordAudioRequest)fallbackWordSpeech(word)});
+   return;
+  }catch(e){console.warn('Prepared audio playback failed:',e)}
+ }
+ // Do not wait for a remote dictionary request after the user taps.
+ fallbackWordSpeech(word);
+ prepareWordAudio(word);
 }
 function speak(){if(!deck[index])return;reviewAutoPlay=false;stopReviewVoice();releaseStudyWakeLock();cancelWordAudio();playRecordedWord(deck[index][0])}
 function options(x){const distractors=shuffle(DATA.filter(y=>y[0]!==x[0])).slice(0,3);return shuffle([x,...distractors])}
