@@ -1213,6 +1213,8 @@ try{
 syncMessage('☁ 연결 중…');
 const snapshot=await firebaseApi.getDoc(ref);
 if(epoch!==authEpoch)return;
+await syncEditorCloud(snapshot,user.uid);
+if(epoch!==authEpoch)return;
 const remote=snapshot.exists()?(snapshot.data().words||{}):{};
 const remoteMetrics=snapshot.exists()?(snapshot.data().metrics||{}):{};
 metrics={...metrics,attempts:Math.max(metrics.attempts||0,remoteMetrics.attempts||0),correct:Math.max(metrics.correct||0,remoteMetrics.correct||0),cardChecks:Math.max(metrics.cardChecks||0,remoteMetrics.cardChecks||0)};saveMetrics();
@@ -1326,12 +1328,77 @@ function loadCustomWords(){
  }
 }
 loadCustomWords();
+const BUILTIN_WORDS=new Set(DATA.map(w=>w[0].toLowerCase()).filter(w=>{
+ let saved=[];try{saved=JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY)||'[]')}catch(e){}
+ return !Array.isArray(saved)||!saved.some(row=>Array.isArray(row)&&String(row[0]).toLowerCase()===w);
+}));
+const initialEditorWords=(()=>{try{return JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY)||'[]')}catch(e){return []}})();
+const initialEditorHidden=[...hiddenWords];
+let editorSyncStatus='';
+function editorState(){
+ let words=[];try{words=JSON.parse(localStorage.getItem(CUSTOM_WORDS_KEY)||'[]')}catch(e){}
+ return {customWords:Array.isArray(words)?words:[],hiddenWords:[...hiddenWords]};
+}
+function editorStorageKey(uid){return 'wordlab_editor_pending_'+uid}
+function editorMigratedKey(uid){return 'wordlab_editor_migrated_'+uid}
+function applyEditorState(state){
+ const custom=Array.isArray(state.customWords)?state.customWords.filter(w=>Array.isArray(w)&&w.length===5&&typeof w[0]==='string'):[];
+ const hidden=Array.isArray(state.hiddenWords)?state.hiddenWords.filter(w=>typeof w==='string'):[];
+ const known=new Set(BUILTIN_WORDS);
+ const unique=[];
+ for(const w of custom){const key=w[0].trim().toLowerCase();if(!key||known.has(key))continue;known.add(key);unique.push(w)}
+ for(let i=DATA.length-1;i>=0;i--)if(!BUILTIN_WORDS.has(DATA[i][0].toLowerCase()))DATA.splice(i,1);
+ DATA.unshift(...unique.slice().reverse());
+ hiddenWords=new Set(hidden.map(w=>w.toLowerCase()));
+ localStorage.setItem(CUSTOM_WORDS_KEY,JSON.stringify(unique));
+ localStorage.setItem(HIDDEN_WORDS_KEY,JSON.stringify([...hiddenWords]));
+ const total=document.getElementById('total');if(total)total.textContent=visibleWords().length+'개 단어';
+ if(mode==='card'||mode==='review')tab(mode);
+ else if(mode==='addword')renderAddWord(editorSyncStatus);
+}
+async function saveEditorCloud(){
+ if(!currentUser||!firebaseDb||!firebaseApi||!cloudReady){editorSyncStatus='이 기기에 저장됨 · Google 로그인 시 동기화됩니다.';return}
+ const uid=currentUser.uid;
+ const state=editorState();
+ localStorage.setItem(editorStorageKey(uid),JSON.stringify(state));
+ editorSyncStatus='☁ 단어 편집 동기화 중…';
+ try{
+  await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:state},{merge:true});
+  if(currentUser&&currentUser.uid===uid){localStorage.removeItem(editorStorageKey(uid));editorSyncStatus='☁ 단어 편집 동기화 완료'}
+ }catch(e){editorSyncStatus='☁ 동기화 실패: '+(e.code||e.message)}
+ if(mode==='addword')renderAddWord(editorSyncStatus);
+}
+async function syncEditorCloud(snapshot,uid){
+ const remote=snapshot.exists()?snapshot.data().editor:null;
+ const pendingKey=editorStorageKey(uid);
+ let pending=null;try{pending=JSON.parse(localStorage.getItem(pendingKey)||'null')}catch(e){}
+ let state=remote;
+ if(pending)state=pending;
+ else if(!localStorage.getItem(editorMigratedKey(uid))){
+  const local=editorState();
+  const combined=new Map((remote&&Array.isArray(remote.customWords)?remote.customWords:[]).map(w=>[String(w[0]).toLowerCase(),w]));
+  for(const w of local.customWords)if(Array.isArray(w))combined.set(String(w[0]).toLowerCase(),w);
+  state={customWords:[...combined.values()],hiddenWords:[...new Set([...(remote?.hiddenWords||[]),...local.hiddenWords])]};
+ }
+ if(state){
+  applyEditorState(state);
+  if(pending||!localStorage.getItem(editorMigratedKey(uid))){
+   await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:state},{merge:true});
+   localStorage.removeItem(pendingKey);
+  }
+ }else{
+  state=editorState();
+  await firebaseApi.setDoc(firebaseApi.doc(firebaseDb,'users',uid,'wordlab','progress'),{editor:state},{merge:true});
+ }
+ localStorage.setItem(editorMigratedKey(uid),'1');
+ editorSyncStatus='☁ 단어 편집 동기화 완료';
+}
 function renderAddWord(message=''){
  app.innerHTML='<h2>✏️ 단어 편집</h2><p class="small">영어 단어만 입력해 전체카드에 추가하거나 기존 단어를 관리할 수 있습니다.</p>'+
  '<form id="customWordForm" onsubmit="saveCustomWord(event)">'+
  '<label for="customWordInput">영어 단어 *</label><input id="customWordInput" required maxlength="80" autocomplete="off" placeholder="예: Resilient" style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px">'+
  '<button type="submit">전체카드에 추가</button></form><p id="customWordStatus" class="small" role="status">'+esc(message)+'</p>'+
- '<p class="small">추가·제외 내역은 이 브라우저에만 저장됩니다. 기본 단어는 삭제 대신 숨김 처리되며 복원할 수 있습니다.</p>'+renderWordManager();
+ '<p class="small">Google 로그인 시 추가·제외 내역을 기기 간 동기화합니다. 기본 단어는 숨김 처리 후 복원할 수 있습니다.</p>'+renderWordManager();
 }
 
 
@@ -1400,14 +1467,14 @@ function removeManagedWord(word){
  if(stableCardPosition.card===word)stableCardPosition.card=null;
  if(stableCardPosition.review===word)stableCardPosition.review=null;
  document.getElementById('total').textContent=visibleWords().length+'개 단어';
- renderAddWord('단어를 전체카드에서 제외했습니다.');
+ renderAddWord('단어를 전체카드에서 제외했습니다.');void saveEditorCloud();
 }
 function restoreManagedWord(word){
  const next=new Set(hiddenWords);next.delete(word.toLowerCase());
  try{localStorage.setItem(HIDDEN_WORDS_KEY,JSON.stringify([...next]))}catch(e){alert('복원 내용을 저장하지 못했습니다.');return}
  hiddenWords=next;
  document.getElementById('total').textContent=visibleWords().length+'개 단어';
- renderAddWord('단어를 복원했습니다.');
+ renderAddWord('단어를 복원했습니다.');void saveEditorCloud();
 }
 
 function saveCustomWord(event){
@@ -1425,6 +1492,7 @@ function saveCustomWord(event){
  DATA.unshift(row);
  document.getElementById('total').textContent=visibleWords().length+'개 단어';
  stableCardPosition.card=word;
+ void saveEditorCloud();
  tab('card');
 }
 
