@@ -14,9 +14,10 @@
     "2026-11-04",
     "2026-11-05",
     "2026-11-06",
-    "2026-11-07"
+    "2026-11-07",
+    "2026-11-08"
   ],
-  "lastUpdatedKST": "2026-11-07",
+  "lastUpdatedKST": "2026-11-08",
   "history": [
     {
       "date": "2026-10-25",
@@ -765,6 +766,59 @@
           "Historical policy",
           "Historical resources",
           "Historical research"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-08",
+      "adult": [
+        "Ratify",
+        "Mandate",
+        "Reconcile accounts",
+        "Service-level agreement",
+        "Stakeholder alignment",
+        "Operational efficiency",
+        "Corrective action",
+        "Actionable insight",
+        "Knowledge transfer",
+        "Capacity utilization"
+      ],
+      "kids": {
+        "1-2": [
+          "New butterfly",
+          "New bird",
+          "Old ball",
+          "Old bag",
+          "Old box",
+          "Old cup",
+          "Old hat",
+          "Old shirt",
+          "Old sock",
+          "Old book"
+        ],
+        "3-4": [
+          "Coastal plant life",
+          "Coastal soil layer",
+          "Coastal rock formation",
+          "Coastal fossil record",
+          "Coastal food chain",
+          "Coastal energy source",
+          "Coastal weather pattern",
+          "Coastal exploration",
+          "Coastal discovery",
+          "Coastal region"
+        ],
+        "5-6": [
+          "Historical innovation",
+          "Historical cooperation",
+          "Historical challenges",
+          "Historical perspective",
+          "Historical principles",
+          "Historical framework",
+          "Historical responsibility",
+          "Historical impact",
+          "Historical influence",
+          "Historical structure"
         ]
       }
     }
