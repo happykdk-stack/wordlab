@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: "30 0 * * *" # 09:30 KST; generator skips alternate dates
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/daily-stories.yml'
+      - 'scripts/generate-daily-stories.cjs'
 permissions:
   contents: write
 concurrency:

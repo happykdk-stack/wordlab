@@ -44,8 +44,12 @@ function chooseWords(date,definitions,stories){
 }
 function missing(history,stories,date,definitions){
  if(!scheduled(date))return [];
- if(stories.some(x=>x.sourceDate===date&&Number(x.sourceSlot||0)===0))return [];
- return [{date,slot:0,words:chooseWords(date,definitions,stories)}];
+ const pending=[];
+ for(let due=START;due<=date;due=new Date(Date.parse(due+'T00:00:00Z')+MS_DAY).toISOString().slice(0,10)){
+  if(!scheduled(due)||stories.some(x=>x.sourceDate===due&&Number(x.sourceSlot||0)===0))continue;
+  pending.push({date:due,slot:0,words:chooseWords(due,definitions,stories)});
+ }
+ return pending.slice(0,3); // retry up to three overdue lessons per run
 }
 function validate(obj,task,titles){
  if(!obj||!themes.includes(obj.topic)||typeof obj.title!=='string'||obj.title.length<10||obj.title.length>95||titles.has(key(obj.title)))throw Error('Invalid theme/title or duplicate title');

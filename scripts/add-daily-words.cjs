@@ -57,7 +57,8 @@ function candidates(curated,grade,seen){
  const n=grade==='adult'?5:4;
  const isValid=w=>Array.isArray(w)&&w.length===n&&w.every(x=>typeof x==='string'&&x.trim())&&!seen.has(key(w[0]));
  const pool=[];
- for(const w of (grade==='adult'?curated:[...curated,...phraseBank(grade)]))if(isValid(w)){pool.push(w);seen.add(key(w[0]))}
+ const source=[...curated,...phraseBank(grade).sort((a,b)=>{const score=s=>[...s].reduce((n,c)=>(Math.imul(n,33)+c.charCodeAt(0))>>>0,5381);return score(a[0])-score(b[0])})];
+ for(const w of source)if(isValid(w)){pool.push(w);seen.add(key(w[0]))}
  return pool;
 }
 function build(){
