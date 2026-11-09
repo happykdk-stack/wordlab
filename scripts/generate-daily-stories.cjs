@@ -43,7 +43,8 @@ function chooseWords(date,definitions,stories){
  throw Error('No unique five-word combination');
 }
 function missing(history,stories,date,definitions){
- if(!scheduled(date))return [];
+ // Always check overdue story dates, even on an off-cycle day.
+ // Otherwise an unsuccessful scheduled run is silently skipped until the next due day.
  const pending=[];
  for(let due=START;due<=date;due=new Date(Date.parse(due+'T00:00:00Z')+MS_DAY).toISOString().slice(0,10)){
   if(!scheduled(due)||stories.some(x=>x.sourceDate===due&&Number(x.sourceSlot||0)===0))continue;
