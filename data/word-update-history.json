@@ -15,9 +15,10 @@
     "2026-11-05",
     "2026-11-06",
     "2026-11-07",
-    "2026-11-08"
+    "2026-11-08",
+    "2026-11-09"
   ],
-  "lastUpdatedKST": "2026-11-08",
+  "lastUpdatedKST": "2026-11-09",
   "history": [
     {
       "date": "2026-10-25",
@@ -819,6 +820,59 @@
           "Historical impact",
           "Historical influence",
           "Historical structure"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-09",
+      "adult": [
+        "Exception handling",
+        "Effective root cause analysis",
+        "Evidence-based performance analysis",
+        "Structured contingency planning",
+        "Evidence-based risk assessment",
+        "Evidence-based stakeholder communication",
+        "Continuous capacity planning",
+        "Collaborative service recovery",
+        "Continuous stakeholder communication",
+        "Comprehensive service evaluation"
+      ],
+      "kids": {
+        "1-2": [
+          "Funny umbrella",
+          "Blue cookie",
+          "Beautiful flower",
+          "Small pencil",
+          "Blue bicycle",
+          "Beautiful bag",
+          "Beautiful box",
+          "Beautiful cup",
+          "Beautiful hat",
+          "Round butterfly"
+        ],
+        "3-4": [
+          "Weather temperature",
+          "Desert habitat",
+          "Rainforest discovery",
+          "Underground temperature",
+          "Earth temperature",
+          "Volcanic weather pattern",
+          "Ocean temperature",
+          "Wild region",
+          "Polar ecosystem",
+          "Volcanic soil layer"
+        ],
+        "5-6": [
+          "Digital progress",
+          "Regional opportunities",
+          "Renewable framework",
+          "Social growth",
+          "Human responsibility",
+          "Human growth",
+          "Technological policy",
+          "Social impact",
+          "Social structure",
+          "Educational change"
         ]
       }
     }
