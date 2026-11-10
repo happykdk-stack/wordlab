@@ -16,9 +16,10 @@
     "2026-11-06",
     "2026-11-07",
     "2026-11-08",
-    "2026-11-09"
+    "2026-11-09",
+    "2026-11-10"
   ],
-  "lastUpdatedKST": "2026-11-09",
+  "lastUpdatedKST": "2026-11-10",
   "history": [
     {
       "date": "2026-10-25",
@@ -873,6 +874,59 @@
           "Social impact",
           "Social structure",
           "Educational change"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-10",
+      "adult": [
+        "Operational case management",
+        "Effective workflow optimization",
+        "Comprehensive case management",
+        "Customer-focused root cause analysis",
+        "Preventive team coordination",
+        "Targeted case management",
+        "Practical data validation",
+        "Cross-functional escalation management",
+        "Thorough service recovery",
+        "Practical performance analysis"
+      ],
+      "kids": {
+        "1-2": [
+          "Shiny umbrella",
+          "Clean bicycle",
+          "Small ribbon",
+          "Blue flower",
+          "Soft pencil",
+          "Green pencil",
+          "Colorful bicycle",
+          "Beautiful ball",
+          "Beautiful bird",
+          "Beautiful boat"
+        ],
+        "3-4": [
+          "River species",
+          "Freshwater soil layer",
+          "Underground climate",
+          "Mountain animal migration",
+          "River temperature",
+          "Underground energy source",
+          "Polar exploration",
+          "Seasonal region",
+          "Weather landscape",
+          "Desert water cycle"
+        ],
+        "5-6": [
+          "Human impact",
+          "International institutions",
+          "Digital policy",
+          "Ecological challenges",
+          "International research",
+          "Democratic change",
+          "Democratic responsibility",
+          "Technological system",
+          "International responsibility",
+          "Digital development"
         ]
       }
     }
