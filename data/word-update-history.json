@@ -18,9 +18,10 @@
     "2026-11-08",
     "2026-11-09",
     "2026-11-10",
-    "2026-11-11"
+    "2026-11-11",
+    "2026-11-12"
   ],
-  "lastUpdatedKST": "2026-11-11",
+  "lastUpdatedKST": "2026-11-12",
   "history": [
     {
       "date": "2026-10-25",
@@ -981,6 +982,59 @@
           "Democratic growth",
           "Social policy",
           "Educational impact"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-12",
+      "adult": [
+        "Strategic case management",
+        "Collaborative resource planning",
+        "Systematic root cause analysis",
+        "Operational customer feedback",
+        "Operational quality review",
+        "Practical customer support",
+        "Comprehensive customer support",
+        "Effective stakeholder communication",
+        "Long-term case management",
+        "Customer-focused workflow optimization"
+      ],
+      "kids": {
+        "1-2": [
+          "Blue chair",
+          "Bright shirt",
+          "Blue shirt",
+          "Soft ribbon",
+          "Green ribbon",
+          "Lovely umbrella",
+          "Bright ribbon",
+          "Small window",
+          "Pretty umbrella",
+          "Pretty teddy bear"
+        ],
+        "3-4": [
+          "Global species",
+          "Desert fossil record",
+          "Weather habitat",
+          "Global landscape",
+          "Seasonal rock formation",
+          "Freshwater water supply",
+          "Wild water cycle",
+          "Freshwater rock formation",
+          "Polar fossil record",
+          "Volcanic rock formation"
+        ],
+        "5-6": [
+          "Sustainable research",
+          "Educational influence",
+          "Social challenges",
+          "Global resources",
+          "Democratic impact",
+          "Global challenges",
+          "Human perspective",
+          "Human policy",
+          "Technological challenges",
+          "Democratic perspective"
         ]
       }
     }
