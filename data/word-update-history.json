@@ -19,9 +19,10 @@
     "2026-11-09",
     "2026-11-10",
     "2026-11-11",
-    "2026-11-12"
+    "2026-11-12",
+    "2026-11-13"
   ],
-  "lastUpdatedKST": "2026-11-12",
+  "lastUpdatedKST": "2026-11-13",
   "history": [
     {
       "date": "2026-10-25",
@@ -1035,6 +1036,59 @@
           "Human policy",
           "Technological challenges",
           "Democratic perspective"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-13",
+      "adult": [
+        "Timely customer support",
+        "Continuous performance analysis",
+        "Preventive training program",
+        "Timely policy implementation",
+        "Evidence-based compliance monitoring",
+        "Continuous resource planning",
+        "Operational service evaluation",
+        "Effective customer feedback",
+        "Timely stakeholder communication",
+        "Consistent service recovery"
+      ],
+      "kids": {
+        "1-2": [
+          "Beautiful pencil",
+          "Small ball",
+          "Small bird",
+          "Small boat",
+          "Small book",
+          "Small desk",
+          "Small door",
+          "Small kite",
+          "Small sock",
+          "Soft window"
+        ],
+        "3-4": [
+          "Mountain discovery",
+          "River energy source",
+          "Mountain climate",
+          "Global rock formation",
+          "Weather ecosystem",
+          "Local exploration",
+          "Seasonal habitat",
+          "Underground weather pattern",
+          "Coastal environment",
+          "Rainforest exploration"
+        ],
+        "5-6": [
+          "International influence",
+          "Sustainable progress",
+          "Social system",
+          "Sustainable responsibility",
+          "Technological process",
+          "Human system",
+          "Educational perspective",
+          "Global structure",
+          "Political principles",
+          "Educational policy"
         ]
       }
     }
