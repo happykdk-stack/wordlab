@@ -20,9 +20,10 @@
     "2026-11-10",
     "2026-11-11",
     "2026-11-12",
-    "2026-11-13"
+    "2026-11-13",
+    "2026-11-14"
   ],
-  "lastUpdatedKST": "2026-11-13",
+  "lastUpdatedKST": "2026-11-14",
   "history": [
     {
       "date": "2026-10-25",
@@ -1089,6 +1090,59 @@
           "Global structure",
           "Political principles",
           "Educational policy"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-14",
+      "adult": [
+        "Timely quality review",
+        "Preventive capacity planning",
+        "Targeted compliance monitoring",
+        "Practical team coordination",
+        "Long-term stakeholder communication",
+        "Long-term customer feedback",
+        "Comprehensive contingency planning",
+        "Thorough stakeholder communication",
+        "Cross-functional workflow optimization",
+        "Comprehensive team coordination"
+      ],
+      "kids": {
+        "1-2": [
+          "Green window",
+          "Beautiful ribbon",
+          "Bright window",
+          "Blue pencil",
+          "Colorful teddy bear",
+          "Yellow butterfly",
+          "Blue ribbon",
+          "Tiny butterfly",
+          "Yellow ball",
+          "Yellow bird"
+        ],
+        "3-4": [
+          "Desert food chain",
+          "Freshwater habitat",
+          "Polar discovery",
+          "Mountain exploration",
+          "Volcanic water cycle",
+          "Global food chain",
+          "Weather exploration",
+          "Underground exploration",
+          "Mountain research",
+          "Polar research"
+        ],
+        "5-6": [
+          "Sustainable change",
+          "Educational research",
+          "Democratic policy",
+          "Human cooperation",
+          "Democratic cooperation",
+          "Renewable influence",
+          "Cultural change",
+          "Democratic research",
+          "International principles",
+          "Educational system"
         ]
       }
     }
