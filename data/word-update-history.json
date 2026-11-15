@@ -21,9 +21,10 @@
     "2026-11-11",
     "2026-11-12",
     "2026-11-13",
-    "2026-11-14"
+    "2026-11-14",
+    "2026-11-15"
   ],
-  "lastUpdatedKST": "2026-11-14",
+  "lastUpdatedKST": "2026-11-15",
   "history": [
     {
       "date": "2026-10-25",
@@ -1143,6 +1144,59 @@
           "Democratic research",
           "International principles",
           "Educational system"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-15",
+      "adult": [
+        "Strategic issue resolution",
+        "Comprehensive workflow optimization",
+        "Effective process improvement",
+        "Proactive data validation",
+        "Consistent contingency planning",
+        "Structured stakeholder communication",
+        "Effective issue resolution",
+        "Preventive policy implementation",
+        "Preventive risk assessment",
+        "Targeted contingency planning"
+      ],
+      "kids": {
+        "1-2": [
+          "Yellow boat",
+          "Yellow book",
+          "Yellow desk",
+          "Yellow door",
+          "Yellow kite",
+          "Yellow sock",
+          "Pretty apple",
+          "Pretty chair",
+          "Beautiful window",
+          "Colorful bag"
+        ],
+        "3-4": [
+          "Local habitat",
+          "Earth research",
+          "Solar fossil record",
+          "River climate",
+          "Earth exploration",
+          "Global ecosystem",
+          "Ocean exploration",
+          "Earth discovery",
+          "Polar rock formation",
+          "Desert environment"
+        ],
+        "5-6": [
+          "Renewable perspective",
+          "Global process",
+          "Educational progress",
+          "Democratic system",
+          "Educational cooperation",
+          "Financial change",
+          "Regional change",
+          "Global framework",
+          "Sustainable growth",
+          "Social institutions"
         ]
       }
     }
