@@ -22,9 +22,10 @@
     "2026-11-12",
     "2026-11-13",
     "2026-11-14",
-    "2026-11-15"
+    "2026-11-15",
+    "2026-11-16"
   ],
-  "lastUpdatedKST": "2026-11-15",
+  "lastUpdatedKST": "2026-11-16",
   "history": [
     {
       "date": "2026-10-25",
@@ -1197,6 +1198,59 @@
           "Global framework",
           "Sustainable growth",
           "Social institutions"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-16",
+      "adult": [
+        "Targeted customer support",
+        "Strategic team coordination",
+        "Long-term training program",
+        "Structured customer feedback",
+        "Customer-focused process improvement",
+        "Consistent quality review",
+        "Long-term contingency planning",
+        "Transparent issue resolution",
+        "Practical case management",
+        "Evidence-based escalation management"
+      ],
+      "kids": {
+        "1-2": [
+          "Colorful box",
+          "Colorful cup",
+          "Colorful hat",
+          "Pretty shirt",
+          "Beautiful balloon",
+          "Round balloon",
+          "Yellow cookie",
+          "Happy butterfly",
+          "Blue window",
+          "Bright butterfly"
+        ],
+        "3-4": [
+          "Rainforest habitat",
+          "Seasonal food chain",
+          "River exploration",
+          "Wild weather pattern",
+          "Volcanic climate",
+          "River water supply",
+          "Wild climate",
+          "Polar region",
+          "Ocean species",
+          "Solar species"
+        ],
+        "5-6": [
+          "Regional research",
+          "Democratic progress",
+          "Cultural responsibility",
+          "Sustainable impact",
+          "Cultural growth",
+          "Regional innovation",
+          "Political responsibility",
+          "Cultural process",
+          "Historical progress",
+          "Digital responsibility"
         ]
       }
     }
