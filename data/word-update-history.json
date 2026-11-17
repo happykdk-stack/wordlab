@@ -23,9 +23,10 @@
     "2026-11-13",
     "2026-11-14",
     "2026-11-15",
-    "2026-11-16"
+    "2026-11-16",
+    "2026-11-17"
   ],
-  "lastUpdatedKST": "2026-11-16",
+  "lastUpdatedKST": "2026-11-17",
   "history": [
     {
       "date": "2026-10-25",
@@ -1251,6 +1252,59 @@
           "Cultural process",
           "Historical progress",
           "Digital responsibility"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-17",
+      "adult": [
+        "Evidence-based team coordination",
+        "Preventive resource planning",
+        "Continuous issue resolution",
+        "Comprehensive root cause analysis",
+        "Cross-functional training program",
+        "Customer-focused customer feedback",
+        "Proactive policy implementation",
+        "Systematic service recovery",
+        "Customer-focused training program",
+        "Practical capacity planning"
+      ],
+      "kids": {
+        "1-2": [
+          "Colorful cookie",
+          "Old balloon",
+          "Lovely bag",
+          "Lovely box",
+          "Lovely cup",
+          "Lovely hat",
+          "Blue teddy bear",
+          "Yellow flower",
+          "Colorful flower",
+          "Clean cookie"
+        ],
+        "3-4": [
+          "Underground rock formation",
+          "Rainforest energy source",
+          "Solar weather pattern",
+          "Wild rock formation",
+          "Local water supply",
+          "Rainforest rock formation",
+          "Earth climate",
+          "Seasonal fossil record",
+          "Weather water supply",
+          "Global climate"
+        ],
+        "5-6": [
+          "Regional progress",
+          "Cultural impact",
+          "Financial growth",
+          "Regional growth",
+          "Regional institutions",
+          "Social process",
+          "Ecological resources",
+          "Renewable cooperation",
+          "Social influence",
+          "Financial impact"
         ]
       }
     }
