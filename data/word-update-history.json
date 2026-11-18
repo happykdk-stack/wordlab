@@ -24,9 +24,10 @@
     "2026-11-14",
     "2026-11-15",
     "2026-11-16",
-    "2026-11-17"
+    "2026-11-17",
+    "2026-11-18"
   ],
-  "lastUpdatedKST": "2026-11-17",
+  "lastUpdatedKST": "2026-11-18",
   "history": [
     {
       "date": "2026-10-25",
@@ -1305,6 +1306,59 @@
           "Renewable cooperation",
           "Social influence",
           "Financial impact"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-18",
+      "adult": [
+        "Timely root cause analysis",
+        "Collaborative data validation",
+        "Structured compliance monitoring",
+        "Systematic process improvement",
+        "Transparent performance analysis",
+        "Targeted escalation management",
+        "Structured issue resolution",
+        "Targeted service evaluation",
+        "Comprehensive capacity planning",
+        "Evidence-based training program"
+      ],
+      "kids": {
+        "1-2": [
+          "Clean teddy bear",
+          "Yellow toy car",
+          "Green butterfly",
+          "Beautiful bicycle",
+          "Round bicycle",
+          "Clean flower",
+          "Funny ball",
+          "Funny bird",
+          "Funny boat",
+          "Funny book"
+        ],
+        "3-4": [
+          "Desert soil layer",
+          "River rock formation",
+          "Volcanic animal migration",
+          "Wild plant life",
+          "Global soil layer",
+          "Weather research",
+          "Global energy source",
+          "Coastal water supply",
+          "Wild environment",
+          "Ocean weather pattern"
+        ],
+        "5-6": [
+          "Regional impact",
+          "International development",
+          "International opportunities",
+          "Regional resources",
+          "Sustainable policy",
+          "Renewable process",
+          "Ecological change",
+          "Renewable principles",
+          "Ecological structure",
+          "Industrial opportunities"
         ]
       }
     }
