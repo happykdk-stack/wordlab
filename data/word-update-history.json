@@ -25,9 +25,10 @@
     "2026-11-15",
     "2026-11-16",
     "2026-11-17",
-    "2026-11-18"
+    "2026-11-18",
+    "2026-11-19"
   ],
-  "lastUpdatedKST": "2026-11-18",
+  "lastUpdatedKST": "2026-11-19",
   "history": [
     {
       "date": "2026-10-25",
@@ -1359,6 +1360,59 @@
           "Renewable principles",
           "Ecological structure",
           "Industrial opportunities"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-19",
+      "adult": [
+        "Comprehensive stakeholder communication",
+        "Customer-focused risk assessment",
+        "Operational training program",
+        "Practical root cause analysis",
+        "Strategic contingency planning",
+        "Collaborative performance analysis",
+        "Strategic customer support",
+        "Timely compliance monitoring",
+        "Transparent customer feedback",
+        "Collaborative root cause analysis"
+      ],
+      "kids": {
+        "1-2": [
+          "Funny desk",
+          "Funny door",
+          "Funny kite",
+          "Funny sock",
+          "Tiny ball",
+          "Tiny bird",
+          "Tiny boat",
+          "Tiny book",
+          "Tiny desk",
+          "Tiny door"
+        ],
+        "3-4": [
+          "Ocean landscape",
+          "Freshwater animal migration",
+          "Mountain plant life",
+          "Weather plant life",
+          "Mountain rock formation",
+          "Seasonal landscape",
+          "Polar weather pattern",
+          "Weather discovery",
+          "River animal migration",
+          "Seasonal soil layer"
+        ],
+        "5-6": [
+          "Cultural policy",
+          "Global opportunities",
+          "Human research",
+          "Regional structure",
+          "Global development",
+          "Political innovation",
+          "Sustainable system",
+          "Ecological development",
+          "Sustainable perspective",
+          "Financial policy"
         ]
       }
     }
