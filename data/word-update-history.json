@@ -26,9 +26,10 @@
     "2026-11-16",
     "2026-11-17",
     "2026-11-18",
-    "2026-11-19"
+    "2026-11-19",
+    "2026-11-20"
   ],
-  "lastUpdatedKST": "2026-11-19",
+  "lastUpdatedKST": "2026-11-20",
   "history": [
     {
       "date": "2026-10-25",
@@ -1413,6 +1414,59 @@
           "Ecological development",
           "Sustainable perspective",
           "Financial policy"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-20",
+      "adult": [
+        "Practical policy implementation",
+        "Strategic capacity planning",
+        "Effective customer support",
+        "Targeted root cause analysis",
+        "Effective quality review",
+        "Evidence-based capacity planning",
+        "Evidence-based workflow optimization",
+        "Proactive root cause analysis",
+        "Consistent customer feedback",
+        "Cross-functional data validation"
+      ],
+      "kids": {
+        "1-2": [
+          "Tiny kite",
+          "Tiny sock",
+          "Old bicycle",
+          "Green apple",
+          "Shiny butterfly",
+          "Green chair",
+          "Bright ball",
+          "Bright bird",
+          "Bright boat",
+          "Bright book"
+        ],
+        "3-4": [
+          "Seasonal research",
+          "Polar species",
+          "Solar water cycle",
+          "Freshwater fossil record",
+          "Freshwater landscape",
+          "River plant life",
+          "Desert rock formation",
+          "Desert animal migration",
+          "Freshwater water cycle",
+          "Freshwater region"
+        ],
+        "5-6": [
+          "Regional policy",
+          "Ecological growth",
+          "Ecological research",
+          "Cultural system",
+          "Political development",
+          "Human progress",
+          "Cultural development",
+          "International innovation",
+          "Political research",
+          "Ecological impact"
         ]
       }
     }
