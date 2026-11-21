@@ -27,9 +27,10 @@
     "2026-11-17",
     "2026-11-18",
     "2026-11-19",
-    "2026-11-20"
+    "2026-11-20",
+    "2026-11-21"
   ],
-  "lastUpdatedKST": "2026-11-20",
+  "lastUpdatedKST": "2026-11-21",
   "history": [
     {
       "date": "2026-10-25",
@@ -1467,6 +1468,59 @@
           "International innovation",
           "Political research",
           "Ecological impact"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-21",
+      "adult": [
+        "Practical resource planning",
+        "Transparent customer support",
+        "Proactive case management",
+        "Continuous customer support",
+        "Structured escalation management",
+        "Continuous risk assessment",
+        "Targeted workflow optimization",
+        "Targeted customer feedback",
+        "Comprehensive resource planning",
+        "Timely team coordination"
+      ],
+      "kids": {
+        "1-2": [
+          "Bright desk",
+          "Bright door",
+          "Bright kite",
+          "Bright sock",
+          "Green shirt",
+          "Bright toy car",
+          "Small balloon",
+          "Shiny bag",
+          "Shiny box",
+          "Shiny cup"
+        ],
+        "3-4": [
+          "Volcanic environment",
+          "Wild water supply",
+          "Freshwater weather pattern",
+          "Global discovery",
+          "Underground landscape",
+          "Global water cycle",
+          "Earth region",
+          "Mountain energy source",
+          "Local weather pattern",
+          "Desert temperature"
+        ],
+        "5-6": [
+          "Human principles",
+          "Industrial responsibility",
+          "Democratic opportunities",
+          "Ecological framework",
+          "Financial system",
+          "Regional system",
+          "Ecological progress",
+          "Regional framework",
+          "Political progress",
+          "Cultural resources"
         ]
       }
     }
