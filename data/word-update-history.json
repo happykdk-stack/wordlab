@@ -28,9 +28,10 @@
     "2026-11-18",
     "2026-11-19",
     "2026-11-20",
-    "2026-11-21"
+    "2026-11-21",
+    "2026-11-22"
   ],
-  "lastUpdatedKST": "2026-11-21",
+  "lastUpdatedKST": "2026-11-22",
   "history": [
     {
       "date": "2026-10-25",
@@ -1521,6 +1522,59 @@
           "Regional framework",
           "Political progress",
           "Cultural resources"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-22",
+      "adult": [
+        "Proactive quality review",
+        "Preventive compliance monitoring",
+        "Preventive root cause analysis",
+        "Structured customer support",
+        "Strategic root cause analysis",
+        "Transparent data validation",
+        "Thorough data validation",
+        "Strategic resource planning",
+        "Timely escalation management",
+        "Comprehensive process improvement"
+      ],
+      "kids": {
+        "1-2": [
+          "Shiny hat",
+          "Yellow pencil",
+          "Colorful pencil",
+          "Yellow teddy bear",
+          "Yellow ribbon",
+          "Blue umbrella",
+          "Colorful ribbon",
+          "Shiny cookie",
+          "Funny teddy bear",
+          "Clean pencil"
+        ],
+        "3-4": [
+          "Local rock formation",
+          "Coastal species",
+          "Ocean ecosystem",
+          "Local fossil record",
+          "Wild animal migration",
+          "Rainforest weather pattern",
+          "Desert water supply",
+          "Ocean climate",
+          "Volcanic energy source",
+          "Solar climate"
+        ],
+        "5-6": [
+          "Global influence",
+          "Sustainable cooperation",
+          "Financial institutions",
+          "Industrial resources",
+          "Political process",
+          "Democratic resources",
+          "Sustainable resources",
+          "Technological research",
+          "Ecological policy",
+          "Regional challenges"
         ]
       }
     }
