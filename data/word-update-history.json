@@ -29,9 +29,10 @@
     "2026-11-19",
     "2026-11-20",
     "2026-11-21",
-    "2026-11-22"
+    "2026-11-22",
+    "2026-11-23"
   ],
-  "lastUpdatedKST": "2026-11-22",
+  "lastUpdatedKST": "2026-11-23",
   "history": [
     {
       "date": "2026-10-25",
@@ -1575,6 +1576,59 @@
           "Technological research",
           "Ecological policy",
           "Regional challenges"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-23",
+      "adult": [
+        "Practical quality review",
+        "Timely service evaluation",
+        "Thorough customer feedback",
+        "Proactive service evaluation",
+        "Timely process improvement",
+        "Practical training program",
+        "Comprehensive training program",
+        "Operational stakeholder communication",
+        "Operational policy implementation",
+        "Timely training program"
+      ],
+      "kids": {
+        "1-2": [
+          "Beautiful teddy bear",
+          "Soft balloon",
+          "Shiny flower",
+          "Clean ribbon",
+          "Tiny toy car",
+          "Soft apple",
+          "Soft chair",
+          "Soft shirt",
+          "Yellow window",
+          "Small bicycle"
+        ],
+        "3-4": [
+          "Seasonal ecosystem",
+          "Desert energy source",
+          "Earth plant life",
+          "Ocean plant life",
+          "Weather rock formation",
+          "Freshwater ecosystem",
+          "Polar energy source",
+          "Ocean rock formation",
+          "Wild temperature",
+          "Underground water supply"
+        ],
+        "5-6": [
+          "Cultural structure",
+          "Financial development",
+          "Financial opportunities",
+          "Political institutions",
+          "Technological progress",
+          "Ecological system",
+          "Social research",
+          "Industrial structure",
+          "Renewable innovation",
+          "Democratic structure"
         ]
       }
     }
