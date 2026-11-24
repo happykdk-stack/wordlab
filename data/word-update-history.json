@@ -30,9 +30,10 @@
     "2026-11-20",
     "2026-11-21",
     "2026-11-22",
-    "2026-11-23"
+    "2026-11-23",
+    "2026-11-24"
   ],
-  "lastUpdatedKST": "2026-11-23",
+  "lastUpdatedKST": "2026-11-24",
   "history": [
     {
       "date": "2026-10-25",
@@ -1629,6 +1630,59 @@
           "Industrial structure",
           "Renewable innovation",
           "Democratic structure"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-24",
+      "adult": [
+        "Collaborative issue resolution",
+        "Proactive compliance monitoring",
+        "Customer-focused stakeholder communication",
+        "Systematic stakeholder communication",
+        "Collaborative case management",
+        "Evidence-based resource planning",
+        "Proactive team coordination",
+        "Transparent root cause analysis",
+        "Cross-functional stakeholder communication",
+        "Cross-functional team coordination"
+      ],
+      "kids": {
+        "1-2": [
+          "Yellow apple",
+          "Yellow chair",
+          "Yellow shirt",
+          "Colorful window",
+          "Happy balloon",
+          "Clean bag",
+          "Clean box",
+          "Clean cup",
+          "Clean hat",
+          "Pretty ball"
+        ],
+        "3-4": [
+          "Seasonal water cycle",
+          "Local food chain",
+          "Underground ecosystem",
+          "Underground habitat",
+          "Polar climate",
+          "Local research",
+          "Solar environment",
+          "River region",
+          "Desert species",
+          "Local landscape"
+        ],
+        "5-6": [
+          "Sustainable structure",
+          "Regional development",
+          "Human resources",
+          "Educational process",
+          "Digital resources",
+          "Technological development",
+          "Financial responsibility",
+          "Global responsibility",
+          "Industrial development",
+          "Social progress"
         ]
       }
     }
