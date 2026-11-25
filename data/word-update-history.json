@@ -31,9 +31,10 @@
     "2026-11-21",
     "2026-11-22",
     "2026-11-23",
-    "2026-11-24"
+    "2026-11-24",
+    "2026-11-25"
   ],
-  "lastUpdatedKST": "2026-11-24",
+  "lastUpdatedKST": "2026-11-25",
   "history": [
     {
       "date": "2026-10-25",
@@ -1683,6 +1684,59 @@
           "Global responsibility",
           "Industrial development",
           "Social progress"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-25",
+      "adult": [
+        "Thorough issue resolution",
+        "Practical process improvement",
+        "Evidence-based data validation",
+        "Collaborative process improvement",
+        "Customer-focused quality review",
+        "Systematic customer feedback",
+        "Structured workflow optimization",
+        "Timely capacity planning",
+        "Targeted quality review",
+        "Proactive issue resolution"
+      ],
+      "kids": {
+        "1-2": [
+          "Pretty bird",
+          "Pretty boat",
+          "Pretty book",
+          "Pretty desk",
+          "Pretty door",
+          "Pretty kite",
+          "Pretty sock",
+          "Clean apple",
+          "Clean chair",
+          "Clean window"
+        ],
+        "3-4": [
+          "Freshwater environment",
+          "Earth fossil record",
+          "Rainforest region",
+          "Polar plant life",
+          "Volcanic temperature",
+          "Solar energy source",
+          "Coastal research",
+          "Volcanic research",
+          "Global environment",
+          "Volcanic water supply"
+        ],
+        "5-6": [
+          "Cultural framework",
+          "Financial research",
+          "Political challenges",
+          "Human structure",
+          "Industrial framework",
+          "Democratic framework",
+          "Sustainable framework",
+          "Human innovation",
+          "Digital structure",
+          "Global progress"
         ]
       }
     }
