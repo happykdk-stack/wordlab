@@ -32,9 +32,10 @@
     "2026-11-22",
     "2026-11-23",
     "2026-11-24",
-    "2026-11-25"
+    "2026-11-25",
+    "2026-11-26"
   ],
-  "lastUpdatedKST": "2026-11-25",
+  "lastUpdatedKST": "2026-11-26",
   "history": [
     {
       "date": "2026-10-25",
@@ -1737,6 +1738,59 @@
           "Human innovation",
           "Digital structure",
           "Global progress"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-26",
+      "adult": [
+        "Constraint-based",
+        "Escalation path",
+        "Stakeholder mapping",
+        "Remediation plan",
+        "Convene again",
+        "Alignment gap",
+        "Escalate promptly",
+        "Proactive approach",
+        "Root cause",
+        "Pain point"
+      ],
+      "kids": {
+        "1-2": [
+          "Funny umbrella",
+          "Blue cookie",
+          "Beautiful flower",
+          "Small pencil",
+          "Blue bicycle",
+          "Beautiful bag",
+          "Beautiful box",
+          "Beautiful cup",
+          "Beautiful hat",
+          "Round butterfly"
+        ],
+        "3-4": [
+          "Coastal water cycle",
+          "Weather temperature",
+          "Desert habitat",
+          "Ancient fossil record",
+          "Rainforest discovery",
+          "Underground temperature",
+          "Earth temperature",
+          "Volcanic weather pattern",
+          "Ocean temperature",
+          "Wild region"
+        ],
+        "5-6": [
+          "Variable control",
+          "Digital progress",
+          "Regional opportunities",
+          "Renewable framework",
+          "Social growth",
+          "Human responsibility",
+          "Human growth",
+          "Technological policy",
+          "Social impact",
+          "Social structure"
         ]
       }
     }
