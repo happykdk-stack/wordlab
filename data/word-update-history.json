@@ -33,9 +33,10 @@
     "2026-11-23",
     "2026-11-24",
     "2026-11-25",
-    "2026-11-26"
+    "2026-11-26",
+    "2026-11-27"
   ],
-  "lastUpdatedKST": "2026-11-26",
+  "lastUpdatedKST": "2026-11-27",
   "history": [
     {
       "date": "2026-10-25",
@@ -1791,6 +1792,59 @@
           "Technological policy",
           "Social impact",
           "Social structure"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-27",
+      "adult": [
+        "Value proposition",
+        "Opportunity cost",
+        "Risk appetite",
+        "Decision-making",
+        "Cross-functional",
+        "Long-standing",
+        "Time-sensitive",
+        "Data-driven",
+        "Evidence-based",
+        "Customer-centric"
+      ],
+      "kids": {
+        "1-2": [
+          "Shiny umbrella",
+          "Clean bicycle",
+          "Small ribbon",
+          "Blue flower",
+          "Soft pencil",
+          "Green pencil",
+          "Colorful bicycle",
+          "Beautiful ball",
+          "Beautiful bird",
+          "Beautiful boat"
+        ],
+        "3-4": [
+          "Ancient animal migration",
+          "Polar ecosystem",
+          "Volcanic soil layer",
+          "River species",
+          "Freshwater soil layer",
+          "Underground climate",
+          "Mountain animal migration",
+          "River temperature",
+          "Underground energy source",
+          "Polar exploration"
+        ],
+        "5-6": [
+          "Educational change",
+          "Human impact",
+          "International institutions",
+          "Digital policy",
+          "Ecological challenges",
+          "Historical perspective",
+          "International research",
+          "Democratic change",
+          "Environmental policy",
+          "Democratic responsibility"
         ]
       }
     }
