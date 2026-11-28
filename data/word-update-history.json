@@ -34,9 +34,10 @@
     "2026-11-24",
     "2026-11-25",
     "2026-11-26",
-    "2026-11-27"
+    "2026-11-27",
+    "2026-11-28"
   ],
-  "lastUpdatedKST": "2026-11-27",
+  "lastUpdatedKST": "2026-11-28",
   "history": [
     {
       "date": "2026-10-25",
@@ -1845,6 +1846,59 @@
           "Democratic change",
           "Environmental policy",
           "Democratic responsibility"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-28",
+      "adult": [
+        "Outcome-oriented",
+        "Forward-looking",
+        "Cost-effective",
+        "High-level",
+        "In-depth",
+        "Discrepancy analysis",
+        "Due diligence",
+        "Reconcile accounts",
+        "Service-level agreement",
+        "Stakeholder alignment"
+      ],
+      "kids": {
+        "1-2": [
+          "Beautiful book",
+          "Beautiful desk",
+          "Beautiful door",
+          "Beautiful kite",
+          "Beautiful sock",
+          "Funny toy car",
+          "Bright apple",
+          "Bright chair",
+          "Bright pencil",
+          "Blue apple"
+        ],
+        "3-4": [
+          "Seasonal region",
+          "Weather landscape",
+          "Desert water cycle",
+          "Local plant life",
+          "Volcanic species",
+          "Earth ecosystem",
+          "Mountain fossil record",
+          "Wild species",
+          "Solar soil layer",
+          "Natural plant life"
+        ],
+        "5-6": [
+          "Technological system",
+          "International responsibility",
+          "Digital development",
+          "Regional principles",
+          "Digital system",
+          "International progress",
+          "Cultural challenges",
+          "Educational growth",
+          "Environmental system",
+          "Social framework"
         ]
       }
     }
